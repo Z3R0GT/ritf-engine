@@ -1,0 +1,63 @@
+﻿Test include: create dialogue
+
+Inicio:
+* Empieza el programa
+
+- Verifica si existe la direccion juego, si no existe:
+* - pregunta por la dirreción
+* -  guarda en un json
+- tambien:
+* - ...
+
+- Verifica si existe un .json, si no:
+* - pregunta por la dirección
+* - guarda la dirección en un archivo .json
+- tambien:
+* -  muestra listado de proyecto (direcciones)
+
+* Solicita número de archivo
++ carga  archivo
++ show Screen
+
++ Esperar input.
+
+** + 1. pregunta; editar existente, agregar al existente, crear nueva, uso
+		   + identifica:      +identifica:         +crea:       +identica:
+			ID              ID                   nombre	  nombre
+		            proper[ID] = crea               
+					DIALOGUE
+			(En el orden que se crea aparece)
+
+
+** + 2. pregunta; uso
+		  +identifica:
+			nombre
+
+** + 3. pregunta; uso
+		  +identifica:
+			nombre
+
+Fin:
+
+Screen:
+
+0123456789012345678901234567890123456789012345678901234
+#######################################################0
+# RIFT engine made by: @Z3R0GT, version: a1.0         #1
+#                  Level 1                            #2
+#                                                     #3
+#                                                     #4
+#                                                     #5
+#                                                     #6
+#              1. Dialogue                            #7
+#                                                     #8
+#              2. Sprite                              #9
+#                                                     #10
+#              3. BackGround                          #11
+#                                                     #12
+#                                                     #13
+#              4. Salir                               #14
+#                                                     #15
+#######################################################16
+
+The thread 'MainThread' (1) has exited with code 0 (0x0).
