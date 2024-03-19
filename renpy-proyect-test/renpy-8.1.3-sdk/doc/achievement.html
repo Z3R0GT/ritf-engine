@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Achievements &mdash; Ren&#39;Py Documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+      <link rel="stylesheet" href="_static/dark_mode_css/general.css" type="text/css" />
+      <link rel="stylesheet" href="_static/dark_mode_css/dark.css" type="text/css" />
+    <link rel="canonical" href="https://www.renpy.org/doc/html/achievement.html" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/dark_mode_js/default_light.js"></script>
+        <script src="_static/dark_mode_js/theme_switcher.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Dialogue History" href="history.html" />
+    <link rel="prev" title="Customizing the Keymap" href="keymap.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+<a href="https://www.renpy.org/" style="margin-bottom: 0">Ren'Py Visual Novel Engine
+<img src="_static/navbar-logo.png" alt="Logo" style="width: 93px; height: 100px; border-radius: 0; margin: 0 auto; padding: 0; margin-top: 5px; background-color: unset;" />
+</a>
+
+<a href="index.html" style="margin-bottom: 0px">8.1.3 Documentation</a>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui.html">GUI Customization Guide</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">The Ren'Py Language</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="language_basics.html">Language Basics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="label.html">Labels &amp; Control Flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dialogue.html">Dialogue and Narration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="displaying_images.html">Displaying Images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="menus.html">In-Game Menus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python.html">Python Statements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="conditional.html">Conditional Statements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="audio.html">Audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="movie.html">Movie</a></li>
+<li class="toctree-l1"><a class="reference internal" href="voice.html">Voice</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Text, Displayables, Transforms, and Transitions</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="text.html">Text</a></li>
+<li class="toctree-l1"><a class="reference internal" href="translation.html">Translation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="displayables.html">Displayables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transforms.html">Transforms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transitions.html">Transitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="atl.html">Animation and Transformation Language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="matrixcolor.html">Matrixcolor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="layeredimage.html">Layered Images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="3dstage.html">3D Stage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="live2d.html">Live2D Cubism</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Customizing Ren'Py</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="style.html">Styles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="style_properties.html">Style Properties</a></li>
+<li class="toctree-l1"><a class="reference internal" href="screens.html">Screens and Screen Language</a></li>
+<li class="toctree-l1"><a class="reference internal" href="screen_actions.html">Screen Actions, Values, and Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="screen_special.html">Special Screen Names</a></li>
+<li class="toctree-l1"><a class="reference internal" href="screen_optimization.html">Screen Language Optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config.html">Configuration Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preferences.html">Preference Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="store_variables.html">Store Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mouse.html">Custom Mouse Cursors</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tools</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="launcher.html">Launcher</a></li>
+<li class="toctree-l1"><a class="reference internal" href="developer_tools.html">Developer Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="director.html">Interactive Director</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Other Functionality</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="nvl_mode.html">NVL-Mode Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bubble.html">Speech Bubbles</a></li>
+<li class="toctree-l1"><a class="reference internal" href="input.html">Text Input</a></li>
+<li class="toctree-l1"><a class="reference internal" href="side_image.html">Side Images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rooms.html">Image Gallery, Music Room, and Replay Actions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="drag_drop.html">Drag and Drop</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sprites.html">Sprites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="keymap.html">Customizing the Keymap</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Achievements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#achievement.Sync"><code class="docutils literal notranslate"><span class="pre">achievement.Sync()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#achievement.clear"><code class="docutils literal notranslate"><span class="pre">achievement.clear()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#achievement.clear_all"><code class="docutils literal notranslate"><span class="pre">achievement.clear_all()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#achievement.get_progress"><code class="docutils literal notranslate"><span class="pre">achievement.get_progress()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#achievement.grant"><code class="docutils literal notranslate"><span class="pre">achievement.grant()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#achievement.has"><code class="docutils literal notranslate"><span class="pre">achievement.has()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#achievement.progress"><code class="docutils literal notranslate"><span class="pre">achievement.progress()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#achievement.register"><code class="docutils literal notranslate"><span class="pre">achievement.register()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#achievement.sync"><code class="docutils literal notranslate"><span class="pre">achievement.sync()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#steamworks-api">Steamworks API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">Dialogue History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multiple.html">Multiple Character Dialogue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="splashscreen_presplash.html">Splashscreen and Presplash</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lifecycle.html">Lifecycle of a Ren'Py game</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python and Ren'Py</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="statement_equivalents.html">Statement Equivalents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="save_load_rollback.html">Saving, Loading, and Rollback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="persistent.html">Persistent Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trans_trans_python.html">Transforms and Transitions in Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gui_advanced.html">Advanced GUI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="screen_python.html">Screens and Python</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modes.html">Modes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cdd.html">Creator-Defined Displayables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cds.html">Creator-Defined Statements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_text_tags.html">Custom Text Tags</a></li>
+<li class="toctree-l1"><a class="reference internal" href="character_callbacks.html">Character Callbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_python.html">File Access</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_class.html">Color Class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="matrix.html">Matrix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model.html">Model-Based Rendering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="other.html">Other Functions and Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ren_py.html">_ren.py Files - Ren'Py in Python</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Building, Updating, and Other Platforms</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="build.html">Building Distributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="android.html">Android</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ios.html">iOS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="web.html">Web / HTML5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="chromeos.html">Chrome OS/Chromebook</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raspi.html">Raspberry Pi</a></li>
+<li class="toctree-l1"><a class="reference internal" href="iap.html">In-App Purchasing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="updater.html">Web Updater</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gesture.html">Gestures</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">End-User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="security.html">Security</a></li>
+<li class="toctree-l1"><a class="reference internal" href="problems.html">Dealing with Problems</a></li>
+<li class="toctree-l1"><a class="reference internal" href="environment_variables.html">Environment Variables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="self_voicing.html">Self-Voicing</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Engine Developer Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="editor.html">Text Editor Integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="skins.html">Skins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="translating_renpy.html">Translating Ren'Py</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Changes, License, and Credits</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog (Ren'Py 7.x-)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog6.html">Changelog (Ren'Py 6.11 - 6.99)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="incompatible.html">Incompatible Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="credits.html">Credits</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sponsors.html">Ren'Py Development Sponsors</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Ren'Py Visual Novel Engine</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li class="breadcrumb-item active">Achievements</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/renpy/renpy/blob/master/sphinx/source/achievement.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="achievements">
+<span id="achievement"></span><h1>Achievements<a class="headerlink" href="#achievements" title="Permalink to this heading"> link</a></h1>
+<p>The Achievement module allows the developer to grant achievements to the
+player, to clear achievements, and to determine if an achievement has been
+granted. It also allows the recording of progress towards an achievement.</p>
+<p>By default, the achievement stores information in the persistent file. If
+Steam support is available and enabled, achievement information is
+automatically synchronized with Steam.</p>
+<p>Steam support must be added to Ren'Py, to ensure that it is only distributed
+by creators that have been accepted to the Steam partner program. To install
+it, choose &quot;preferences&quot;, &quot;Install libraries&quot;, &quot;Install Steam Support&quot;.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="achievement.Sync">
+<span class="sig-prename descclassname"><span class="pre">achievement.</span></span><span class="sig-name descname"><span class="pre">Sync</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#achievement.Sync" title="Permalink to this definition"> link</a></dt>
+<dd><p>An action that calls achievement.sync(). This is only sensitive if
+achievements are out of sync.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="achievement.clear">
+<span class="sig-prename descclassname"><span class="pre">achievement.</span></span><span class="sig-name descname"><span class="pre">clear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#achievement.clear" title="Permalink to this definition"> link</a></dt>
+<dd><p>Clears the achievement with <cite>name</cite>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="achievement.clear_all">
+<span class="sig-prename descclassname"><span class="pre">achievement.</span></span><span class="sig-name descname"><span class="pre">clear_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#achievement.clear_all" title="Permalink to this definition"> link</a></dt>
+<dd><p>Clears all achievements.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="achievement.get_progress">
+<span class="sig-prename descclassname"><span class="pre">achievement.</span></span><span class="sig-name descname"><span class="pre">get_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#achievement.get_progress" title="Permalink to this definition"> link</a></dt>
+<dd><p>Returns the current progress towards the achievement identified
+with <cite>name</cite>, or 0 if no progress has been registered for it or if
+the achievement is not known.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="achievement.grant">
+<span class="sig-prename descclassname"><span class="pre">achievement.</span></span><span class="sig-name descname"><span class="pre">grant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#achievement.grant" title="Permalink to this definition"> link</a></dt>
+<dd><p>Grants the achievement with <cite>name</cite>, if it has not already been
+granted.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="achievement.has">
+<span class="sig-prename descclassname"><span class="pre">achievement.</span></span><span class="sig-name descname"><span class="pre">has</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#achievement.has" title="Permalink to this definition"> link</a></dt>
+<dd><p>Returns true if the player has been granted the achievement with
+<cite>name</cite>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="achievement.progress">
+<span class="sig-prename descclassname"><span class="pre">achievement.</span></span><span class="sig-name descname"><span class="pre">progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">complete</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#achievement.progress" title="Permalink to this definition"> link</a></dt>
+<dd><p>Reports progress towards the achievement with <cite>name</cite>, if that
+achievement has not been granted. The achievement must be defined
+with a completion amount.</p>
+<dl class="simple">
+<dt><cite>name</cite></dt><dd><p>The name of the achievement. This should be the name of the
+achievement, and not the stat.</p>
+</dd>
+<dt><cite>complete</cite></dt><dd><p>An integer giving the number of units completed towards the
+achievement.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="achievement.register">
+<span class="sig-prename descclassname"><span class="pre">achievement.</span></span><span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#achievement.register" title="Permalink to this definition"> link</a></dt>
+<dd><p>Registers an achievement. Achievements are not required to be
+registered, but doing so allows one to pass information to the
+backends.</p>
+<dl class="simple">
+<dt><cite>name</cite></dt><dd><p>The name of the achievement to register.</p>
+</dd>
+</dl>
+<p>The following keyword parameters are optional.</p>
+<dl class="simple">
+<dt><cite>steam</cite></dt><dd><p>The name to use on steam. If not given, defaults to <cite>name</cite>.</p>
+</dd>
+<dt><cite>stat_max</cite></dt><dd><p>The integer value of the stat at which the achievement unlocks.</p>
+</dd>
+<dt><cite>stat_modulo</cite></dt><dd><p>If the progress modulo <cite>stat_max</cite> is 0, progress is displayed
+to the user. For example, if stat_modulo is 10, progress will
+be displayed to the user when it reaches 10, 20, 30, etc. If
+not given, this defaults to 0.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="achievement.sync">
+<span class="sig-prename descclassname"><span class="pre">achievement.</span></span><span class="sig-name descname"><span class="pre">sync</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#achievement.sync" title="Permalink to this definition"> link</a></dt>
+<dd><p>Synchronizes registered achievements between local storage and
+other backends. (For example, Steam.)</p>
+</dd></dl>
+
+<p>Variables that control achievements are:</p>
+<dl class="std var">
+<dt class="sig sig-object std" id="var-achievement.steam_position">
+<span class="sig-name descname"><span class="pre">achievement.steam_position</span></span> <span class="pre">=</span> <span class="pre">None</span><a class="headerlink" href="#var-achievement.steam_position" title="Permalink to this definition"> link</a></dt>
+<dd><p>If not None, this sets the position of the steam notification popup.
+This must be a string, one of &quot;top left&quot;, &quot;top right&quot;, &quot;bottom left&quot;,
+or &quot;bottom right&quot;.</p>
+</dd></dl>
+
+<dl class="std var">
+<dt class="sig sig-object std" id="var-config.steam_appid">
+<span class="pre">define</span> <span class="sig-name descname"><span class="pre">config.steam_appid</span></span> <span class="pre">=</span> <span class="pre">None</span><a class="headerlink" href="#var-config.steam_appid" title="Permalink to this definition"> link</a></dt>
+<dd><p>If not None, this should be the Steam appid. Ren'Py will automatically
+set this appid when it starts. This needs to be set using the define
+statement:</p>
+<div class="highlight-renpy notranslate"><div class="highlight"><pre><span></span><span class="k">define</span> <span class="n">config</span><span class="o">.</span><span class="n">steam_appid</span> <span class="o">=</span> <span class="mi">12345</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<section id="steamworks-api">
+<h2>Steamworks API<a class="headerlink" href="#steamworks-api" title="Permalink to this heading"> link</a></h2>
+<p>When Steam is available, a ctypes-based binding to the Steamworks API is
+available as <code class="docutils literal notranslate"><span class="pre">achievement.steamapi</span></code>. The binding is an instance of the
+steamapi module, as found <a class="reference external" href="https://github.com/renpy/renpy-build/blob/master/steamapi/steamapi.py">here</a>,
+and represents a machine translation of the C++ Steamworks API to Python.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="keymap.html" class="btn btn-neutral float-left" title="Customizing the Keymap" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="history.html" class="btn btn-neutral float-right" title="Dialogue History" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
