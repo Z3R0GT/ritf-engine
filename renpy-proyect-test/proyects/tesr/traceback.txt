@@ -1,0 +1,35 @@
+﻿I'm sorry, but an uncaught exception occurred.
+
+While running game code:
+  File "game/test.rpy", line 6, in script
+    init python:
+  File "game/test.rpy", line 6, in script
+    init python:
+  File "game/test.rpy", line 10, in <module>
+    b.write(list(filter(path.isfile, listdir())))
+TypeError: write() argument must be str, not RevertableList
+
+-- Full Traceback ------------------------------------------------------------
+
+Full traceback:
+  File "C:\Users\jerem\Downloads\renpy-8.2.1-sdk\renpy\bootstrap.py", line 359, in bootstrap
+    renpy.main.main()
+  File "C:\Users\jerem\Downloads\renpy-8.2.1-sdk\renpy\main.py", line 526, in main
+    renpy.game.context().run(node)
+  File "game/test.rpy", line 6, in script
+    init python:
+  File "lib/python3.9/future/utils/__init__.py", line 444, in raise_
+  File "game/test.rpy", line 6, in script
+    init python:
+  File "C:\Users\jerem\Downloads\renpy-8.2.1-sdk\renpy\ast.py", line 823, in execute
+    renpy.python.py_exec_bytecode(self.code.bytecode, self.hide, store=self.store)
+  File "C:\Users\jerem\Downloads\renpy-8.2.1-sdk\renpy\python.py", line 1178, in py_exec_bytecode
+    exec(bytecode, globals, locals)
+  File "game/test.rpy", line 10, in <module>
+    b.write(list(filter(path.isfile, listdir())))
+TypeError: write() argument must be str, not RevertableList
+
+Windows-10-10.0.19041 AMD64
+Ren'Py 8.2.1.24030407
+tesr 1.0
+Mon Mar 18 14:02:59 2024
