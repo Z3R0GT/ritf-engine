@@ -1,0 +1,26 @@
+﻿I'm sorry, but an uncaught exception occurred.
+
+While running game code:
+  File "game/test.rpy", line 6, in script
+    init python:
+  File "game/test.rpy", line 52, in <module>
+    n.write(f"{s}, {type(s)}")
+NameError: name 's' is not defined
+
+-- Full Traceback ------------------------------------------------------------
+
+Full traceback:
+  File "game/test.rpy", line 6, in script
+    init python:
+  File "C:\Users\jerem\OneDrive\Escritorio\rift engine\ritf-engine\pro\tesr-1.0-dists\tesr-1.0-win\tesr-1.0-win\renpy\ast.py", line 1138, in execute
+    renpy.python.py_exec_bytecode(self.code.bytecode, self.hide, store=self.store)
+  File "C:\Users\jerem\OneDrive\Escritorio\rift engine\ritf-engine\pro\tesr-1.0-dists\tesr-1.0-win\tesr-1.0-win\renpy\python.py", line 1122, in py_exec_bytecode
+    exec(bytecode, globals, locals)
+  File "game/test.rpy", line 52, in <module>
+    n.write(f"{s}, {type(s)}")
+NameError: name 's' is not defined
+
+Windows-10-10.0.19041 AMD64
+Ren'Py 8.1.3.23091805
+tesr 1.0
+Sat Mar 23 12:51:52 2024
