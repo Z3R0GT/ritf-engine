@@ -59,9 +59,32 @@ def _paths() -> str:
     return file
 
 def check_paths_all():
-    chdir("proyect")
+    #THIS FOR THE GAME
+    from time import sleep
+    print("select the path of the game")
+    #sleep(3)
+
+    #NOT NECCESARY
+    while True:
+        absolute= _path()
+        match absolute[-4:]:
+            case "mods":
+                break
+            case "ritf":
+                absolute += "/mods"
+                break
+            case _:
+                print("We need the path of the game")
+                #sleep(5)
+
+    chdir(absolute)
+    cur_mods = list(filter(path.isdir, listdir()))
+
     
+
+    """
     if "path.json" in list(filter(path.isfile, listdir())):
         n = load_save(f"{getcwd()}/path.json").split(",")
     else:
         n = _paths().split(",") 
+    """
