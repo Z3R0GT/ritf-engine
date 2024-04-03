@@ -19,24 +19,40 @@ init python:
         
         root = getcwd()
 
-        chdir("./mods")
+        chdir(root+"/mods")
         cur_mods = list(filter(path.isdir, listdir()))
 
         cur_file = []
 
         for name in cur_mods:
             chdir(f"{name}")
-            with open(f"{getcwd()}/base.info", "rt") as file:
-                    for i in file.read().split(";"):
-                        comm = list(i.split(","))
+            file = open(f"{getcwd()}/base.info", "rt")
+            info = file.read().split(";")
+            for i in info:
+                info_mod = list(i.split(","))
 
-                        line = list(comm[1].replace("-", ",").replace("[","").replace("]", "").split(","))    
-                        lb = list(comm[2].replace("-", ",").replace("[","").replace("]", "").split(","))
-                    
+                n = open(root+f"/mods/{name}/n.txt", "a")
+                info_mod.append("s")
+                info_mod.append("s")
+                n.write(f"{info_mod[1]}")
 
+                ln = list(info_mod[1].replace(
+                    "-", ",").replace(
+                        "[","").replace(
+                            "]", "").replace("\ n".replace(" ", ""), "").replace(
+                                "\ ".replace(" ", ""),"").split(","))
 
-
-
+                lb_jmp = list(info_mod[2].replace(
+                    "-", ",").replace(
+                        "[","").replace(
+                            "]", "").replace(
+                                "\ n".replace(" ", ""), "").replace(
+                                    "\ ".replace(" ", ""),"").split(","))
+   
+        
+        #n = open(root+f"/mods/{name}/n.txt", "w")
+        #n.write(info_mod, line, lb)  
+  
 """
         if len(cur_mods) == 0:
             pass #VARIABLE FOR VERIFICATION
@@ -47,29 +63,30 @@ init python:
                 info = file.read().split(";")
 
                 for i in info:
-                    comm = list(i.split(",")) #commands
+                    info_mod = list(i.split(",")) #info_modands
                     chdir(root+"/game")
-                    ftc = open(root+f"/game/{comm[0]}","rt") #file_to_copy   
+                    ftc = open(root+f"/game/{info_mod[0]}","rt") #file_to_copy   
                     ftc_inf = ftc.readlines()
 
                     #Convert all files
-                    line = list(comm[1].replace("-", ",").replace("[","").replace("]", "").split(","))
+                    line = list(info_mod[1].replace("-", ",").replace("[","").replace("]", "").split(","))
                     
-                    lb = list(comm[2].replace("-", ",").replace("[","").replace("]", "").split(","))
+                    lb = list(info_mod[2].replace("-", ",").replace("[","").replace("]", "").split(","))
 
-                    #if ftc_inf[int(com[0])-1].replace("\n", "").replace("\", ") ==com[1]: # DO YOU HAVE THE REFERENCE COMMAND?
+                    #if ftc_inf[int(com[0])-1].replace("\n", "").replace("\", ") ==com[1]: # DO YOU HAVE THE REFERENCE info_modAND?
                     for k in lb:
                         ftc_inf[int(line[0])] = f"jump {k}"
 
-                    with open(root+f"/mods/{name}/{comm[0][:-4]}_modder.rpy", "w") as ftp:  #file_to_paste
+                    with open(root+f"/mods/{name}/{info_mod[0][:-4]}_modder.rpy", "w") as ftp:  #file_to_paste
                         for m in ftc_inf:
                             ftp.write(m)
                     
                     ftp.close()
 
                     chdir(root+f"/mods/{name}")
+"""
 
-label a:
+label start:
     scene hola
 
     show t sad
