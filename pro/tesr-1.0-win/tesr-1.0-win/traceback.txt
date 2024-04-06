@@ -1,28 +1,30 @@
 ﻿I'm sorry, but an uncaught exception occurred.
 
 While running game code:
-  File "game/test.rpy", line 6, in script
+  File "game/test.rpy", line 1, in script
     init python:
-  File "game/test.rpy", line 36, in <module>
-    n.write(f"{info_mod[2]}")
-IndexError: list index out of range
+  File "game/test.rpy", line 116, in <module>
+    check_mods()
+  File "game/test.rpy", line 88, in check_mods
+    lst.write(f"{tag[6:-2]}_mod;")
+UnsupportedOperation: not writable
 
 -- Full Traceback ------------------------------------------------------------
 
 Full traceback:
-  File "game/test.rpy", line 6, in script
+  File "game/test.rpy", line 1, in script
     init python:
   File "C:\Users\jerem\OneDrive\Escritorio\rift_engine\ritf-engine\pro\tesr-1.0-win\tesr-1.0-win\renpy\ast.py", line 1138, in execute
     renpy.python.py_exec_bytecode(self.code.bytecode, self.hide, store=self.store)
   File "C:\Users\jerem\OneDrive\Escritorio\rift_engine\ritf-engine\pro\tesr-1.0-win\tesr-1.0-win\renpy\python.py", line 1122, in py_exec_bytecode
     exec(bytecode, globals, locals)
-  File "game/test.rpy", line 36, in <module>
-    n.write(f"{info_mod[2]}")
-  File "C:\Users\jerem\OneDrive\Escritorio\rift_engine\ritf-engine\pro\tesr-1.0-win\tesr-1.0-win\renpy\revertable.py", line 217, in __getitem__
-    rv = list.__getitem__(self, index)
-IndexError: list index out of range
+  File "game/test.rpy", line 116, in <module>
+    check_mods()
+  File "game/test.rpy", line 88, in check_mods
+    lst.write(f"{tag[6:-2]}_mod;")
+UnsupportedOperation: not writable
 
 Windows-10-10.0.19041 AMD64
 Ren'Py 8.1.3.23091805
 tesr 1.0
-Sat Mar 23 18:10:49 2024
+Sat Apr  6 17:14:15 2024
