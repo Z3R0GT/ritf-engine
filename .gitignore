@@ -162,5 +162,4 @@ cython_debug/
 .vscode/*
 .vs/*
 /pro/ritf
-/dev
 /pro/tesr-1.0-dists
