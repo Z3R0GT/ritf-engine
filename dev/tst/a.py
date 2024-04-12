@@ -89,7 +89,7 @@ def super_deco() -> dict:
 
     return base
 
-sim_var = [["add_history_mod",2,True], ["new_chr_mod", 1, True]] 
+sim_var = [["add_history_mod",2,True], ["new_chr_mod", 1, True], ["translate_mod",4,True], ["new_aspect_mod",3,True]] 
 
 def _lst_coincidense(lst_from:list, lst_to:list) -> list:
     """
@@ -106,7 +106,7 @@ def _lst_coincidense(lst_from:list, lst_to:list) -> list:
                 if rst == 0:
                     rst = []
 
-                rst.append((_from, _to))
+                rst.append((c_from, c_to))
                 c_from, c_to = -1, -1
                 break
     return rst
@@ -137,8 +137,11 @@ def evaluate(lst_to_run:list, info_mods:dict) -> tuple:
                             for i in range(len(lst_nme_run)-nme_run[1]):
                                 lst_nme_run.append(0)
                                 
+                        print(lst_nme_run, nme_run[1], len(lst_nme_run))
                         lst_nme_run[nme_run[1]] = nme_run[0]
 
+    nme_c = {}  #name coincidence
+    #Search the coinciden btw mods.
     for id in info_mods:
         id:str
         c_mod_to = -1
@@ -150,6 +153,10 @@ def evaluate(lst_to_run:list, info_mods:dict) -> tuple:
             if lst_nme_run[i] == info_mods[id][0]:
                 break
 
+        #Not pass the limit
+        if int(id)+1 == len(info_mods):
+            break
+
         info_from = info_mods[str(int(id)+1)]
         while not c_mod_to == len(info_mods):
 
@@ -159,46 +166,36 @@ def evaluate(lst_to_run:list, info_mods:dict) -> tuple:
                 continue
 
             for info_to in info_mods[f"{c_mod_to}"]:
-                print("1", info_to,"\n", "2", info_from, "\n")
-                
-                nme_c = {}  #name coincidence
-
                 #the next staments evaluates all possibles coincidence btw .info archives.
                 for info_lst in info_from:
-                    print(info_to[2], info_lst[2])
+                    if info_lst[1] == info_to[1] and info_lst[0] != info_to[0]:
+                        #THE HELL
+                        if info_lst[4] == False and info_to[4] == False:
+                            pal_c = 0
+                        elif info_lst[4]:
+                            pal_c = [1,0]
+                        elif info_to[4]:
+                            pal_c = [0,1]
+                        else:
+                            #start to erase the label before of.
+                            ...
 
-                    #Search coinciden btw position 
-                    num_c = _lst_coincidense(info_lst[2], info_to[2]) #position of num coincidence
-                    #Search coindicense btw labels (future changes)
-                    lab_c = _lst_coincidense(info_lst[3], info_to[3]) #position of label coincidence
-                    #THE HELL
-                    pal_c = _lst_coincidense(info_lst[4], info_to[4]) #partial-total control coincidence
 
-                    #
-                    if pal_c == 0:
-                        
-                    
-                       
+                        #Search coinciden btw position 
+                        num_c = _lst_coincidense(info_lst[2], info_to[2]) #position of num coincidence
+                        #Search coindicense btw labels (future changes)
+                        lab_c = _lst_coincidense(info_lst[3], info_to[3]) #position of label coincidence
 
-                print(lab_c, num_c)
-                break
-            break
-        break
-                    
-                #i.e of return: "Tha label 1 as coincidence of label 2 in (num), (label) and both/one of them 
-                # as coinciden in partial-total (in this case, the total go first)"
-
-"""
-    for id in info_mods:
-        if id == len(info_mods):
-            break
-        #comparate coincidence
-        for info_from in info_mods[id]:
-            info_from:list
-            for info_to in range(int(id)+1):
-                info_to:list
-                print("info to comparate:", info_to, "info to extrac: ", info_from, "\n")
-"""
+                        if (num_c == lab_c == pal_c): #¿has difference?
+                            nme_c[f"{info_lst[0]}-{info_to[0]}"] = {"con":False,
+                                                                    "ach":info_lst[1]}
+                        else:
+                            nme_c[f"{info_lst[0]}-{info_to[0]}"] = {"num":num_c,
+                                                                    "lab":lab_c,
+                                                                    "pal":pal_c,
+                                                                    "ach":info_lst[1]}
+        
+        print(nme_c)
     #print(lst_nme_run)
 """
                         print(info, nme_run)
@@ -208,8 +205,6 @@ def evaluate(lst_to_run:list, info_mods:dict) -> tuple:
                         file.close()
 """
 
-                        
-                        
                     
 evaluate(sim_var, super_deco())
 
