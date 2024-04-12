@@ -1,3 +1,12 @@
+#Variable for simulation
+
+#if u want enter new mods, use the next example and put your answer inside the "sim_var":
+# [name´s name, position to execute (the numbers must be diferents), True/False]
+sim_var = [["add_history_mod",2,True], 
+           ["new_chr_mod",    1,True], 
+           ["translate_mod",  4,True], 
+           ["new_aspect_mod", 3,True]] 
+
 #for checks
 from os import listdir, path, getcwd, chdir
     
@@ -8,11 +17,11 @@ root = getcwd()
 lst_nmod = open(root+f"/chapters_include.txt", "rt")
 lst_chapter = lst_nmod.read().split(";")
 
+#change to "mods" folder
 chdir(root+"/game/mods")
 lst_mods = list(filter(path.isdir, listdir()))
-
-
 lst_nmod.close()
+
 del lst_chapter[-1]
 
 #banned characters
@@ -39,6 +48,12 @@ def deco_info(info:list, nme:str) -> list:
         info_mod.append("s")
         info_mod.append("s")
 
+        #Name of the archive to mod
+        if info_mod[0] == "chapter_1.rpy":
+            archive_mod = info_mod[0]
+        else:
+            archive_mod = info_mod[0][1:]
+        
         #line to jump
         ln_to_jump = list(info_mod[1].replace("-", ",").replace("]","").replace("[", "").replace("\\ n".replace(" ", ""), "").replace("\\ ".replace(" ", ""),"").split(","))
 
@@ -66,8 +81,7 @@ def deco_info(info:list, nme:str) -> list:
             all_flow = True
         else:
             all_flow = False   
-
-        _tmp.append([nme, info_mod[0], ln_to_jump, lst_jump, all_flow])
+        _tmp.append([nme, archive_mod, ln_to_jump, lst_jump, all_flow])
 
     return _tmp
 
@@ -76,7 +90,7 @@ def super_deco() -> dict:
     Super decodificator in base of "deco_info()", but with "dicts"
     """
     base = {}
-    c=-1
+    c=0
     for name in lst_mods:
         c+=1
         chdir(f"{name}")
@@ -88,8 +102,6 @@ def super_deco() -> dict:
         chdir("..")
 
     return base
-
-sim_var = [["add_history_mod",2,True], ["new_chr_mod", 1, True], ["translate_mod",4,True], ["new_aspect_mod",3,True]] 
 
 def _lst_coincidense(lst_from:list, lst_to:list) -> list:
     """
@@ -111,12 +123,9 @@ def _lst_coincidense(lst_from:list, lst_to:list) -> list:
                 break
     return rst
 
-
 def evaluate(lst_to_run:list, info_mods:dict) -> tuple:
     """
-    Return a tuple with coincidence of .info archives, and the tag.
-    could be: ([ID: line, ID:Line],[ID: line, ID:line])
-    the order of the tuple is determinate by "lst_to_run"
+    Return a tuple with coincidence of .info archives, and the order list to execute the mods.
     """
     lst_nme_run = [0]
 
@@ -133,53 +142,43 @@ def evaluate(lst_to_run:list, info_mods:dict) -> tuple:
                         if len(lst_nme_run) == 1:
                             for i in range(nme_run[1]):
                                 lst_nme_run.append(0)
-                        elif nme_run[1] > len(lst_nme_run):
-                            for i in range(len(lst_nme_run)-nme_run[1]):
+                        elif nme_run[1] >= len(lst_nme_run):
+                            for i in range(len(lst_nme_run)*2-nme_run[1]):
                                 lst_nme_run.append(0)
-                                
-                        print(lst_nme_run, nme_run[1], len(lst_nme_run))
                         lst_nme_run[nme_run[1]] = nme_run[0]
 
+    print("List the mods to run: ", lst_nme_run)
     nme_c = {}  #name coincidence
     #Search the coinciden btw mods.
+    c = -1
     for id in info_mods:
         id:str
-        c_mod_to = -1
+        c_mod_to = 0
 
-        #Search the position of the mod´s name
-        c_name = -1
-        for i in range(len(lst_nme_run)):
-            c_name+=1
-            if lst_nme_run[i] == info_mods[id][0]:
-                break
-
-        #Not pass the limit
-        if int(id)+1 == len(info_mods):
-            break
-
-        info_from = info_mods[str(int(id)+1)]
+        info_from = info_mods[id]
         while not c_mod_to == len(info_mods):
-
             c_mod_to+=1
+
             #Skip the postion of the mod
-            if c_mod_to == c_name:
+            if c_mod_to == len(lst_nme_run):
                 continue
 
             for info_to in info_mods[f"{c_mod_to}"]:
                 #the next staments evaluates all possibles coincidence btw .info archives.
                 for info_lst in info_from:
+                    
+                    #Skip the name and chapter equals to the current info_to (or current mod evaluator)
                     if info_lst[1] == info_to[1] and info_lst[0] != info_to[0]:
-                        #THE HELL
-                        if info_lst[4] == False and info_to[4] == False:
+                        equals = False
+                        #evaluate the "total control"
+                        if (info_lst[4] == False) and (info_to[4] == False):
                             pal_c = 0
-                        elif info_lst[4]:
+                        elif info_lst[4] == True and info_to[4] == False:
                             pal_c = [1,0]
-                        elif info_to[4]:
+                        elif not info_lst[4] == True and info_to[4] == False:
                             pal_c = [0,1]
                         else:
-                            #start to erase the label before of.
-                            ...
-
+                            equals = True
 
                         #Search coinciden btw position 
                         num_c = _lst_coincidense(info_lst[2], info_to[2]) #position of num coincidence
@@ -187,37 +186,63 @@ def evaluate(lst_to_run:list, info_mods:dict) -> tuple:
                         lab_c = _lst_coincidense(info_lst[3], info_to[3]) #position of label coincidence
 
                         if (num_c == lab_c == pal_c): #¿has difference?
-                            nme_c[f"{info_lst[0]}-{info_to[0]}"] = {"con":False,
-                                                                    "ach":info_lst[1]}
+                            continue
                         else:
-                            nme_c[f"{info_lst[0]}-{info_to[0]}"] = {"num":num_c,
-                                                                    "lab":lab_c,
-                                                                    "pal":pal_c,
-                                                                    "ach":info_lst[1]}
-        
-        print(nme_c)
-    #print(lst_nme_run)
-"""
-                        print(info, nme_run)
+                            #Keep out the redundant info
+                            if not nme_c.__contains__(f"{info_to[0]}-{info_lst[0]}"):
+                                #Erase in "lst_nme_run" the mods
+                                if equals:
+                                    for i in range(len(lst_to_run)):
+                                        pos_1 = i
+                                        if lst_to_run[i] == info_to[0]:
+                                            break
+                                    
+                                    for i in range(len(lst_to_run)):
+                                        pos_2 = i
+                                        if lst_nme_run[i] == info_from[0]:
+                                            break
 
-                        file = open(root+f"game/mods/{info[1]}/base.info", "rt")
-                        ln_info = deco_info(file.read().split(";"), info[0])[2]
-                        file.close()
-"""
+                                    if pos_1 > pos_2:
+                                        lst_nme_run[pos_2] = 0
+                                        pal_c = 1
+                                    else:
+                                        lst_nme_run[pos_1] = 0
+                                        pal_c = 1
 
-                    
+                                c+=1
+                                #Mod info
+                                nme_c[f"{info_lst[0]}-{info_to[0]}"] = {"ach":info_lst[1],
+                                                                        "num":num_c,
+                                                                        "lab":lab_c,
+                                                                        "pal":pal_c,
+                                                                        "id":f"{c}"}
+    #Erase the 0 (no executable mods) from name´s list to run
+    n = []
+    for pos in range(len(lst_nme_run)):
+        if lst_nme_run[pos] == 0:
+            n.append(pos)
+
+    print("Before clean the list of name to run: ", lst_nme_run)
+    n.sort(reverse=True)
+    for i in n:
+        del lst_nme_run[i]
+
+    for id in nme_c:
+        print("Coincidence: ", id, "info: ", nme_c[id])
+    
+    print("After clean the list of name to run: ", lst_nme_run)
+
+#START THE CODE HERE   
 evaluate(sim_var, super_deco())
+
+#END HERE
+input("Press enter to end\n>...")
+
 
 def execute_lb(chr_lst_run:list):
     for name in chr_lst_run:
         #renpy.call_in_new(name)
         print(f"Execute: {name}")
-
-def single_mod():
-    ...
-
-def many_mod():
-    ...
 
 
     #CHECK MODS FOLDER
