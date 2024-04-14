@@ -31,12 +31,23 @@ table:dict = {
     93: "", #ANSI
     92: "", #ANSI
 }
+def execute_lb(chr_lst_run:list):
+    for name in chr_lst_run:
+        #renpy.call_in_new(name)
+        print(f"Execute: {name}")
 
+##########################
+#        PART 1          #
+##########################
+#Prepare the info to copy...
 def deco_info(info:list, nme:str) -> list:
     """
     Base for decodificade .info archives for RITF game
     """
+    #DON´T TRY SIMPLY THIS, ´CAUSE THE RESULT COULD BE A TERRIBLE BUG, REALLY A BIG BUG
     _tmp = []
+    #REALLY, DON´T TRY IT
+
     for data in info:
         data:str
         info_mod = list(data.split(",")) #separate the data of mod´s info
@@ -147,8 +158,9 @@ def evaluate(lst_to_run:list, info_mods:dict) -> tuple:
                                 lst_nme_run.append(0)
                         lst_nme_run[nme_run[1]] = nme_run[0]
 
-    print("List the mods to run: ", lst_nme_run)
+                        
     nme_c = {}  #name coincidence
+    nme_a = []  #chapters to mod
     #Search the coinciden btw mods.
     c = -1
     for id in info_mods:
@@ -180,6 +192,7 @@ def evaluate(lst_to_run:list, info_mods:dict) -> tuple:
                         else:
                             equals = True
 
+
                         #Search coinciden btw position 
                         num_c = _lst_coincidense(info_lst[2], info_to[2]) #position of num coincidence
                         #Search coindicense btw labels (future changes)
@@ -190,14 +203,19 @@ def evaluate(lst_to_run:list, info_mods:dict) -> tuple:
                         else:
                             #Keep out the redundant info
                             if not nme_c.__contains__(f"{info_to[0]}-{info_lst[0]}"):
+                                #Include the chapter to modify
+                                if not info_lst[1] in nme_a:
+                                    nme_a.append(info_lst[1])
+                                    nme_a.sort()
+
                                 #Erase in "lst_nme_run" the mods
                                 if equals:
-                                    for i in range(len(lst_to_run)):
+                                    for i in range(len(lst_nme_run)):
                                         pos_1 = i
-                                        if lst_to_run[i] == info_to[0]:
+                                        if lst_nme_run[i] == info_to[0]:
                                             break
                                     
-                                    for i in range(len(lst_to_run)):
+                                    for i in range(len(lst_nme_run)):
                                         pos_2 = i
                                         if lst_nme_run[i] == info_from[0]:
                                             break
@@ -216,61 +234,116 @@ def evaluate(lst_to_run:list, info_mods:dict) -> tuple:
                                                                         "lab":lab_c,
                                                                         "pal":pal_c,
                                                                         "id":f"{c}"}
+    
     #Erase the 0 (no executable mods) from name´s list to run
     n = []
     for pos in range(len(lst_nme_run)):
         if lst_nme_run[pos] == 0:
             n.append(pos)
 
-    print("Before clean the list of name to run: ", lst_nme_run)
     n.sort(reverse=True)
     for i in n:
         del lst_nme_run[i]
 
-    for id in nme_c:
-        print("Coincidence: ", id, "info: ", nme_c[id])
-    
-    print("After clean the list of name to run: ", lst_nme_run)
+    return lst_nme_run, nme_c, nme_a
+
+def ftp_deco_info(var_to_exe:list):
+    """
+    Execute all operations of reading, return a list of changes to-do,
+    list of priority btw mods, and archives to change (not apply filter)
+    """
+
+    all_info = super_deco()
+
+    filter_info = evaluate(var_to_exe, all_info)
+
+    name_to_insert = []
+    line_to_insert = []
+
+    print("List to run")
+    print(filter_info[0])
+
+    print("Super Info (Without filter)")
+    for i in all_info:
+        print(i, all_info[i])
+
+    print("Info with filter")
+    for i in filter_info[1]:
+        print(i, filter_info[1][i])
+    print("Start code")
+
+    c=-1
+    while not len(filter_info[1]) == 0:
+        c+=1
+        for name in filter_info[1]:
+            #Make a list of name´s position
+            nme_lst = name.split("-")
+            pos = []
+            for i in range(2):
+                for pos_nme in range(len(filter_info[0])):
+                    if nme_lst[i] == filter_info[0][pos_nme]:
+                        pos.append(pos_nme)
+
+            for id in all_info:
+                for info in all_info[id]:
+                    #This stament is for replace the postion of the mods (ln_to_jump)
+                    if pos[0] < pos[1]:
+                        pos_nme = 0
+                        pos_plus = 1
+                    else:
+                        pos_nme = 1
+                        pos_plus = -1
+
+                    if info[0] == nme_lst[pos_nme]: 
+                        if info[1] == filter_info[1][name]["ach"]:
+                            #Replace the info with everywhere you want
+
+                            #This is for ln_jump
+                            if not filter_info[1][name]["num"] == 0:
+                                for replace in filter_info[1][name]["num"]:
+                                    info[2][replace[pos_nme]] = str(int(info[2][replace[0]])+pos_plus) 
+                                
+                            if not filter_info[1][name]["lab"] == 0:
+                                for replace in filter_info[1][name]["lab"]:
+                                    info[3][replace[pos_nme]] = info[3][replace[pos_nme]]+"_"+filter_info[1][name]["id"]
+                            
+                            print(info[0], info[3], info[2])
+                            break
+        
+        filter_info = evaluate(var_to_exe, all_info)
+
+        if c == 10:
+            print("error")
+            break
+
+
+
 
 #START THE CODE HERE   
-evaluate(sim_var, super_deco())
+ftp_deco_info(sim_var)
 
 #END HERE
 input("Press enter to end\n>...")
 
 
-def execute_lb(chr_lst_run:list):
-    for name in chr_lst_run:
-        #renpy.call_in_new(name)
-        print(f"Execute: {name}")
 
 
-    #CHECK MODS FOLDER
-def check_mods():
-    
+##########################
+#        PART 2          #
+##########################
+#preparatives before copy the game archive
 
-    #change directory to "mods"
-    chdir(root+"/game/mods")
-    #get all directory´s names
-    lst_mods = list(filter(path.isdir, listdir()))
-        
-    if not len(lst_mods) == 0:
+def copy_file(file_t_c, info_mod):
+    ftc = open(root+f"/game/{file_t_c}", "rt")
+    ftc_info = ftc.readline()
 
-        #identify all mods in the folder
-        for name in lst_mods:
-            chdir(f"{name}")
-            file = open(f"{getcwd()}/base.info", "rt") #open the mod´s info
-            info = file.read().split(";") # separete the statements
 
-            del info[-1]
+
+
+
 
 
 """
-                ##########################
-                #        PART 2          #
-                ##########################
-                #preparatives before copy the game archive
-
                 #Before copy game archive
                 ftc = open(root+f"/game/{info_mod[0]}","rt") #file to copy
                 ftc_info = ftc.readlines()
@@ -388,3 +461,22 @@ if "renpy.exe" in list(filter(path.isfile, listdir())):
 else:
     #check_mods()
     ...
+
+"""
+#CHECK MODS FOLDER
+def check_mods():
+    #change directory to "mods"
+    chdir(root+"/game/mods")
+    #get all directory´s names
+    lst_mods = list(filter(path.isdir, listdir()))
+        
+    if not len(lst_mods) == 0:
+
+        #identify all mods in the folder
+        for name in lst_mods:
+            chdir(f"{name}")
+            file = open(f"{getcwd()}/base.info", "rt") #open the mod´s info
+            info = file.read().split(";") # separete the statements
+
+            del info[-1]
+"""
