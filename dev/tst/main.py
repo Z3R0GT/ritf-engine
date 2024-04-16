@@ -13,6 +13,9 @@
 #puede solucionarlo en la parte 1, linea 216-230, variable: "lab_c"
 
 
+.,
+
+
 #Variable for simulation
 
 #if u want enter new mods, use the next example and put your answer inside the "sim_var":
@@ -82,7 +85,7 @@ def deco_info(info:list, nme:str) -> list:
         
         #line to jump
         ln_to_jump = list(info_mod[1].replace("-", ",").replace("]","").replace("[", "").replace("\\ n".replace(" ", ""), "").replace("\\ ".replace(" ", ""),"").split(","))
-
+        print(ln_to_jump)
         #list names
         _lst_nme = list(info_mod[2].translate(table)) 
         #final name
@@ -181,6 +184,7 @@ def evaluate(lst_to_run:list, info_mods:dict) -> tuple:
     nme_a = []  #chapters to mod
     #Search the coinciden btw mods.
     c = -1
+    
     for id in info_mods:
         id:str
         c_mod_to = 0
@@ -319,6 +323,9 @@ def ftp_deco_info(var_to_exe:list):
             print(i, filter_info[1][i])
         print(">>>>>Start code<<<<<<")
         c+=1
+        #END
+
+        
         for name in filter_info[1]:
             #Make a list of name´s position
             nme_lst = name.split("-")
@@ -346,7 +353,7 @@ def ftp_deco_info(var_to_exe:list):
                             if not filter_info[1][name]["num"] == 0:
                                 for replace in filter_info[1][name]["num"]:
                                     print(nme_lst[pos_nme], info[2], replace, len(info[2]), (pos_nme, pos_plus))
-                                    if info[2][replace[1]] == all_info[]
+                                    #if info[2][replace[1]] == all_info[]
                                     info[2][replace[pos_nme]] = str(int(info[2][replace[pos_nme]])+pos_plus) 
                                 
                             #This is the lb_to_jump
