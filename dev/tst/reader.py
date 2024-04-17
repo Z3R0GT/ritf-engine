@@ -139,20 +139,15 @@ def evaluate(lst_nme_run:list, info_mods:dict) -> tuple:
     c=-1
     lst_to_run = _zero(lst_to_run)
 
-    #what I shouldn't have done
-    for nme_from in lst_to_run:
-        c_mod_to = 0        
-        while not c_mod_to == len(info_mods[nme_from]):
-            c_mod_to+=1
-            print(nme_from, lst_to_run[c_mod_to])
-            if c_mod_to == len(lst_to_run):
+    for nme_from in info_mods:
+        
+        for nme_to in info_mods:
+            if nme_from == nme_to:
                 continue
 
-            nme_to = lst_to_run[c_mod_to]
-            for info_to in info_mods[f"{nme_to}"]:
+            for info_to in info_mods[nme_to]:
                 for info_from in info_mods[nme_from]:
-                    
-                    if info_to[0] == info_from[0] and nme_to != nme_from:  
+                    if info_to[0] == info_from[0]:
                         equals = False
                         if (info_from[3] == False) and (info_to[3] == False):
                             pal_c = 0
@@ -164,7 +159,6 @@ def evaluate(lst_nme_run:list, info_mods:dict) -> tuple:
                             equals = True
 
                         num_c = _coind(info_from[1], info_to[1])
-
                         lab_c = _coind(info_from[2], info_to[2])
 
                         if (num_c == lab_c == pal_c):
@@ -207,13 +201,13 @@ def evaluate(lst_nme_run:list, info_mods:dict) -> tuple:
                                     nme_c[nme_to_put]["lab"] = lab_c
                                 
                                 nme_c[nme_to_put]["id"] = str(c)
-                                   
+                 
     if len(lst_nme_run[0]) == 3:
         lst_to_run = _zero(lst_to_run)
 
     return lst_to_run, nme_c, nme_a
 
-def ftp_deco_info(var_to_exe:list):
+def ftp_deco_info(var_to_exe:list)-> dict:
     
     info_final = ...
 
@@ -224,6 +218,7 @@ def ftp_deco_info(var_to_exe:list):
         filter_info = evaluate(var_to_exe, all_info)
         m+=1
         print(f"\nDuring: {m}")
+        print(f">>>>>Start {m} code<<<<<<")
         print("\nList to run:")
         print(filter_info[0])
 
@@ -234,10 +229,7 @@ def ftp_deco_info(var_to_exe:list):
         print("\nCoincidence is info:")
         for i in filter_info[1]:
             print(i, filter_info[1][i])
-        print(">>>>>Start code<<<<<<")
         er+=1
-        #END
-
         for nme in filter_info[1]:
             nme_lst = nme.split("-")
             pos = []
@@ -246,16 +238,17 @@ def ftp_deco_info(var_to_exe:list):
                     if nme_lst[i] == filter_info[0][pos_nme]:
                         pos.append(pos_nme)
 
+            from random import randint
             if pos[0] > pos[1]:
                 info_from = all_info[nme_lst[1]]
                 info_to = all_info[nme_lst[0]]
                 pos_num = 1
-                plus_num = -1
+                plus_num = randint(-2, -1)
             else:
                 info_from = all_info[nme_lst[0]]
                 info_to = all_info[nme_lst[1]]
                 pos_num = 0
-                plus_num = 1
+                plus_num = randint(1, 2)
 
             #Filter of chapters
             for dta_from in info_from:
@@ -265,13 +258,19 @@ def ftp_deco_info(var_to_exe:list):
                             
                             if not filter_info[1][nme]["num"] == 0:
                                 for replace in filter_info[1][nme]["num"]:
-                                    re = int(dta_from[1][replace[pos_num]])+plus_num
-                                    dta_from[1][replace[pos_num]] = str(re)
+                                    re = int(dta_to[1][replace[pos_num]])+plus_num
+                                    dta_to[1][replace[pos_num]] = str(re)
+        print(f">>>>>end {m} code<<<<<<")
+
         filter_info = evaluate(var_to_exe, all_info)
         if len(filter_info[1]) == 0:
             print(">>>>>End code<<<<<<")
             return all_info
 
-        if er == 25:
+        if er == 1000:
             print("error")
             break
+
+a = ftp_deco_info(sim_var)
+for i in a:
+    print(i, a[i])
