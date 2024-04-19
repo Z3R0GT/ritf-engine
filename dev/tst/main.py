@@ -1,3 +1,5 @@
+#WARNING: THIS CODE IS UNSTABLE, PLEASE, DON´T USE
+
 #translate this to english if u want (by the moment this´s only for me)
 #LISTA DE POSIBLES BUG:
 
@@ -12,8 +14,6 @@
 #llegar a causar un error, ya que existen 2 etiquetas con el mismo nombre
 #puede solucionarlo en la parte 1, linea 216-230, variable: "lab_c"
 
-
-.,
 
 
 #Variable for simulation
@@ -544,3 +544,5 @@ def check_mods():
 
             del info[-1]
 """
+a
+

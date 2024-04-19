@@ -59,58 +59,7 @@ def _zero(lst):
 
     return lst
 
-def deco_info(info:list)->list:
-    table:dict = {
-    "-": ",",
-    91: "", #ANSI
-    93: "", #ANSI
-    "\\": "", #ANSI
-    }
-    _tmp = []
-    for data in info:
-        data:str
-        info_mod = list(data.split(","))
-        if info_mod[0] == "" or info_mod[0] == " ":
-            break
-
-        info_mod.append("s")
-        info_mod.append("s")
-        info_mod.append("s")
-
-        if info_mod[0] == "chapter_1.rpy":
-            archive_mod = info_mod[0]
-        else:
-            archive_mod = info_mod[0]
-
-        ln_to_jump = _trans(list(info_mod[1].translate(table)))
-
-        ls_to_jump = _trans(list(info_mod[2].translate(table)))
-        
-        all_flow = str(info_mod[3].translate(table))
-        if all_flow == "y":
-            all_flow = True
-        else:
-            all_flow = False
-
-        _tmp.append([archive_mod, ln_to_jump, ls_to_jump, all_flow])
-    return _tmp
-
-def super_deco() -> dict:
-
-    chdir(root+"/game/mods")
-    lst_mods = list(filter(path.isdir, listdir()))
-
-    base = {}
-    for name in lst_mods:
-        chdir(f"{name}")
-        info = open(f"{getcwd()}/base.info", "rt").read().split(";")
-
-        base[name] = deco_info(info)
-        chdir("..")
-
-    return base
-
-def evaluate(lst_nme_run:list, info_mods:dict) -> tuple:
+def _evaluate(lst_nme_run:list, info_mods:dict) -> tuple:
     lst_to_run = [0]
 
     #keep out replies
@@ -161,15 +110,17 @@ def evaluate(lst_nme_run:list, info_mods:dict) -> tuple:
                         num_c = _coind(info_from[1], info_to[1])
                         lab_c = _coind(info_from[2], info_to[2])
 
+                        if not info_from[0] in nme_a:
+                            nme_a.append(info_from[0])
+                            nme_a.sort()
+
                         if (num_c == lab_c == pal_c):
                             continue
                         else:
                             nme_to_put = f"{nme_to}-{nme_from}"
+                            #This code is only for add new keys (keep out
+                            #the "KeyError")
                             if not nme_c.__contains__(nme_to_put):
-                                if not info_from[0] in nme_a:
-                                    nme_a.append(info_from[0])
-                                    nme_a.sort()
-
                                 if equals:
                                     for pos in range(len(lst_to_run)):
                                         pos_1 = pos
@@ -190,33 +141,99 @@ def evaluate(lst_nme_run:list, info_mods:dict) -> tuple:
                                 c+=1
                                 nme_c[f"{nme_from}-{nme_to}"] = {"ach":info_from[0],
                                                                         "num":num_c,
-                                                                        "lab":lab_c,
+                                                                        "lab":0, #lab_c
                                                                         "pal":pal_c, 
                                                                         "id":str(c)}
                             else:
+                                
                                 if not nme_c[nme_to_put]["num"] == num_c:
                                     nme_c[nme_to_put]["num"] = num_c
 
                                 if not nme_c[nme_to_put]["lab"] == lab_c:
-                                    nme_c[nme_to_put]["lab"] = lab_c
+                                    nme_c[nme_to_put]["lab"] = 0#lab_c
+
+                                #HERE IS THE PROBLEM :c
+                                #and nothing work ´cause this code :ccc
+                                if num_c == 0:
+                                    _mod = f"{info_from[0][:8]}{int(info_from[0][8:9])-1}.rpy"
+                                else:
+                                    _mod = info_from[0]
                                 
+                                #nme_c[nme_to_put]["ach"] = _mod
                                 nme_c[nme_to_put]["id"] = str(c)
-                 
+  
     if len(lst_nme_run[0]) == 3:
         lst_to_run = _zero(lst_to_run)
 
     return lst_to_run, nme_c, nme_a
 
-def ftp_deco_info(var_to_exe:list)-> dict:
-    
-    info_final = ...
+def deco_info(info:list)->list:
+    table:dict = {
+    "-": ",",
+    91: "", #ANSI
+    93: "", #ANSI
+    "\\": "", #ANSI
+    }
+    _tmp = []
+    for data in info:
+        data:str
+        info_mod = list(data.split(","))
+        if info_mod[0] == "" or info_mod[0] == " ":
+            break
 
+        info_mod.append("s")
+        info_mod.append("s")
+        info_mod.append("s")
+
+        if info_mod[0] == "chapter_1.rpy":
+            archive_mod = info_mod[0]
+        else:
+            archive_mod = info_mod[0][1:]
+
+        ln_to_jump = _trans(list(info_mod[1].translate(table)))
+
+        ls_to_jump = _trans(list(info_mod[2].translate(table)))
+        
+        all_flow = str(info_mod[3].translate(table))
+        if all_flow == "y":
+            all_flow = True
+        else:
+            all_flow = False
+
+        _tmp.append([archive_mod, ln_to_jump, ls_to_jump, all_flow])
+    return _tmp
+
+def super_deco() -> dict:
+
+    chdir(root+"/game/mods")
+    lst_mods = list(filter(path.isdir, listdir()))
+
+    base = {}
+    for name in lst_mods:
+        chdir(f"{name}")
+        info = open(f"{getcwd()}/base.info", "rt").read().split(";")
+
+        base[name] = deco_info(info)
+        chdir("..")
+
+    return base
+
+
+def chk_info_eval(lst_nme_run:list, info_mods:dict)->list:
+    ...
+
+def ftp_deco_info(var_to_exe:list)-> dict:
     m = -1
     er=-1
     all_info = super_deco()
     while True:
-        filter_info = evaluate(var_to_exe, all_info)
         m+=1
+        filter_info = chk_info_eval(var_to_exe, all_info)
+
+        if len(filter_info[1]) == 0 or filter_info == True:
+            print(">>>>>End code<<<<<<")
+            return all_info
+        
         print(f"\nDuring: {m}")
         print(f">>>>>Start {m} code<<<<<<")
         print("\nList to run:")
@@ -229,6 +246,7 @@ def ftp_deco_info(var_to_exe:list)-> dict:
         print("\nCoincidence is info:")
         for i in filter_info[1]:
             print(i, filter_info[1][i])
+
         er+=1
         for nme in filter_info[1]:
             nme_lst = nme.split("-")
@@ -260,14 +278,18 @@ def ftp_deco_info(var_to_exe:list)-> dict:
                                 for replace in filter_info[1][nme]["num"]:
                                     re = int(dta_to[1][replace[pos_num]])+plus_num
                                     dta_to[1][replace[pos_num]] = str(re)
+
+                            #need update in the future
+                            if not filter_info[1][nme]["lab"] == 0:
+                                filter_info[1][nme]["lab"] = 0
+                                #replace the below code, by whatever you want do
+                                #with "lab"
+                                #for replace in filter_info[1][nme]["lab"]:
+                                    
+
         print(f">>>>>end {m} code<<<<<<")
 
-        filter_info = evaluate(var_to_exe, all_info)
-        if len(filter_info[1]) == 0:
-            print(">>>>>End code<<<<<<")
-            return all_info
-
-        if er == 1000:
+        if er == 100:
             print("error")
             break
 
