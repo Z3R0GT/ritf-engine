@@ -12,11 +12,12 @@ root = getcwd()
 lst_chapter = open(root+f"/chapters_include.txt", "rt").read().split(";")
 del lst_chapter[-1]
 
+c__id = [-1]
+
 ##########################
 #        PART 1          #
 ##########################
 #Prepare the info to copy...
-
 def _trans(lst):
     _lst = []
     _tmp = ""
@@ -85,7 +86,7 @@ def _evaluate(lst_nme_run:list, info_mods:dict) -> tuple:
 
     nme_c = {}
     nme_a = []
-    c=-1
+
     lst_to_run = _zero(lst_to_run)
 
     for nme_from in info_mods:
@@ -118,8 +119,6 @@ def _evaluate(lst_nme_run:list, info_mods:dict) -> tuple:
                             continue
                         else:
                             nme_to_put = f"{nme_to}-{nme_from}"
-                            #This code is only for add new keys (keep out
-                            #the "KeyError")
                             if not nme_c.__contains__(nme_to_put):
                                 if equals:
                                     for pos in range(len(lst_to_run)):
@@ -137,31 +136,43 @@ def _evaluate(lst_nme_run:list, info_mods:dict) -> tuple:
                                     else:
                                         lst_to_run[pos_1] = 0
                                     pal_c = 1
-                                
-                                c+=1
+
+                                c__id[0]+=1
                                 nme_c[f"{nme_from}-{nme_to}"] = {"ach":info_from[0],
                                                                         "num":num_c,
                                                                         "lab":0, #lab_c
                                                                         "pal":pal_c, 
-                                                                        "id":str(c)}
+                                                                        "id":c__id[0]}
                             else:
-                                
-                                if not nme_c[nme_to_put]["num"] == num_c:
-                                    nme_c[nme_to_put]["num"] = num_c
+                                if c__id[0] == 0 or c__id[0] == 1 or c__id[0] == 2:
+                                    if not nme_c[nme_to_put]["num"] == num_c:
+                                        nme_c[nme_to_put]["num"] = num_c
 
-                                if not nme_c[nme_to_put]["lab"] == lab_c:
-                                    nme_c[nme_to_put]["lab"] = 0#lab_c
+                                    if not nme_c[nme_to_put]["lab"] == lab_c:
+                                        nme_c[nme_to_put]["lab"] = 0
 
-                                #HERE IS THE PROBLEM :c
-                                #and nothing work ´cause this code :ccc
-                                if num_c == 0:
-                                    _mod = f"{info_from[0][:8]}{int(info_from[0][8:9])-1}.rpy"
-                                else:
-                                    _mod = info_from[0]
-                                
-                                #nme_c[nme_to_put]["ach"] = _mod
-                                nme_c[nme_to_put]["id"] = str(c)
-  
+                                    c__id[0]+=1
+                                    nme_c[nme_to_put]["id"] = c__id[0]
+                                elif not (nme_c[nme_to_put]["id"] %2) == 0:
+                                    nme_to_out = f"{nme_from}-{nme_to}"
+                                    dta = [False, False]
+
+
+                                    if not nme_c[nme_to_put]["num"] == num_c:
+                                        _num_c = num_c
+                                        dta[0] = True
+                                            
+
+                                    if not nme_c[nme_to_put]["lab"] == lab_c:
+                                        _num_c = 0#lab_c
+                                        dta[1] = True
+                                        
+                                    if dta[0] == True or dta[1] == True:
+                                        nme_c[nme_to_out] = {"ach":info_from[0],
+                                                            "num":_num_c,
+                                                            "lab":_num_c,
+                                                            "id":c__id[0]+1}
+
     if len(lst_nme_run[0]) == 3:
         lst_to_run = _zero(lst_to_run)
 
@@ -178,7 +189,7 @@ def deco_info(info:list)->list:
     for data in info:
         data:str
         info_mod = list(data.split(","))
-        if info_mod[0] == "" or info_mod[0] == " ":
+        if info_mod[0] == "" or info_mod[0] == " " or info_mod[0] == "\\n":
             break
 
         info_mod.append("s")
@@ -201,6 +212,7 @@ def deco_info(info:list)->list:
             all_flow = False
 
         _tmp.append([archive_mod, ln_to_jump, ls_to_jump, all_flow])
+
     return _tmp
 
 def super_deco() -> dict:
@@ -218,22 +230,21 @@ def super_deco() -> dict:
 
     return base
 
+def ftp_deco_auto(var_to_exe:list, all_info)->dict: 
+    m=-1    
+    ch_mod = _evaluate(var_to_exe, all_info)[2]
 
-def chk_info_eval(lst_nme_run:list, info_mods:dict)->list:
-    ...
+    if len(ch_mod) == 1:
+        c=-1
+    else:
+        c=0
 
-def ftp_deco_info(var_to_exe:list)-> dict:
-    m = -1
-    er=-1
-    all_info = super_deco()
-    while True:
+    while not len(ch_mod) == c:
+        filter_info = _evaluate(var_to_exe, all_info)
         m+=1
-        filter_info = chk_info_eval(var_to_exe, all_info)
 
-        if len(filter_info[1]) == 0 or filter_info == True:
-            print(">>>>>End code<<<<<<")
-            return all_info
-        
+        print(filter_info)
+
         print(f"\nDuring: {m}")
         print(f">>>>>Start {m} code<<<<<<")
         print("\nList to run:")
@@ -247,7 +258,7 @@ def ftp_deco_info(var_to_exe:list)-> dict:
         for i in filter_info[1]:
             print(i, filter_info[1][i])
 
-        er+=1
+        print(f">>>>>start {m} code<<<<<<")
         for nme in filter_info[1]:
             nme_lst = nme.split("-")
             pos = []
@@ -256,43 +267,51 @@ def ftp_deco_info(var_to_exe:list)-> dict:
                     if nme_lst[i] == filter_info[0][pos_nme]:
                         pos.append(pos_nme)
 
-            from random import randint
-            if pos[0] > pos[1]:
-                info_from = all_info[nme_lst[1]]
-                info_to = all_info[nme_lst[0]]
-                pos_num = 1
-                plus_num = randint(-2, -1)
-            else:
-                info_from = all_info[nme_lst[0]]
-                info_to = all_info[nme_lst[1]]
-                pos_num = 0
-                plus_num = randint(1, 2)
+            if ch_mod[c] == filter_info[1][nme]["ach"]:
+                from random import randint
+                if pos[0] > pos[1]:
+                    #info_from = all_info[nme_lst[1]]
+                    info_to = all_info[nme_lst[0]]
+                    pos_num = 1
+                    plus_num = randint(-2, -1)
+                else:
+                    #info_from = all_info[nme_lst[0]]
+                    info_to = all_info[nme_lst[1]]
+                    pos_num = 0
+                    plus_num = randint(1, 2)
+                        
 
-            #Filter of chapters
-            for dta_from in info_from:
-                if dta_from[0] == filter_info[1][nme]["ach"]:
-                    for dta_to in info_to:
-                        if dta_to[0] == filter_info[1][nme]["ach"]:
-                            
-                            if not filter_info[1][nme]["num"] == 0:
-                                for replace in filter_info[1][nme]["num"]:
-                                    re = int(dta_to[1][replace[pos_num]])+plus_num
-                                    dta_to[1][replace[pos_num]] = str(re)
+                for dta_to in info_to:
+                    if dta_to[0] == ch_mod[c]:
 
-                            #need update in the future
-                            if not filter_info[1][nme]["lab"] == 0:
-                                filter_info[1][nme]["lab"] = 0
-                                #replace the below code, by whatever you want do
-                                #with "lab"
-                                #for replace in filter_info[1][nme]["lab"]:
-                                    
+                        if not filter_info[1][nme]["num"] == 0:
+                            for replace in filter_info[1][nme]["num"]:
+                                
+                                re = int(dta_to[1][replace[pos_num]])+plus_num
+                                dta_to[1][replace[pos_num]] = str(re)                
+        c+=1
+        
+    print(">>>>>End code<<<<<<")
+    return all_info  
 
-        print(f">>>>>end {m} code<<<<<<")
+def chck(var_to_exe):
+    all_info = super_deco()
 
-        if er == 100:
+    er=-1
+    while True:
+        info_to_eval = _evaluate(var_to_exe, all_info)
+        if not len(info_to_eval[1]) == 0:
+            all_info = ftp_deco_auto(var_to_exe, all_info)
+        else:
+            break
+
+        er+=1
+        if er == 10:
             print("error")
             break
 
-a = ftp_deco_info(sim_var)
-for i in a:
-    print(i, a[i])
+a = True
+b = False
+
+if a and not b:
+    print("u")
