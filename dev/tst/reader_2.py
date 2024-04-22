@@ -1,8 +1,7 @@
 from os import listdir, path, getcwd, chdir
 
-root = getcwd() #-----------------------<
-
-lst_chapter = open(root+f"/chapters_include.txt", "rt").read().split(";") #-----------------------<
+root = getcwd()                #-----------------------<
+lst_chapter = open(root+f"/chapters_include.txt", "rt").read().split(";")
 del lst_chapter[-1]
 
 sim_var = [["add_history_mod",2,True],
@@ -14,7 +13,7 @@ sim_var = [["add_history_mod",2,True],
 ##########################
 #        PART 1          #
 ##########################
-#Prepare the info to copy...
+#Prepare the info to copy...+
 def _trans(lst)->list:
     _lst = []
     _tmp = ""
@@ -81,14 +80,12 @@ def super_deco() -> dict:
 
     return base
 
-all_info = super_deco() #-----------------------<
-#END PART 1
+all_info = super_deco()         #-----------------------<
 
 ##########################
 #        PART 2          #
 ##########################
 #search coincidence btw chapters
-#PART 2.1
 def _zero(lst)->list:
     num_erase = []
     for pos in range(len(lst)):
@@ -101,14 +98,20 @@ def _zero(lst)->list:
 
     return lst
 
-def _lst_maker(lst_nme_run)->list[str]:
+def _lst_maker(lst_nme_run:list[list[str, int, bool]])->list[str]:
+    global all_info, lst_cha_mod
     lst_to_run = [0]
+    lst_to_del = []
 
     for nme_run in lst_nme_run:
         nme_run:list
 
         for id in all_info:
             for info in all_info[id]:
+                if not info[0] in lst_cha_mod:
+                    lst_cha_mod.append(info[0])
+
+
                 if nme_run[0] == id:
                     if nme_run[2]:
                         legt = len(lst_to_run)
@@ -119,20 +122,20 @@ def _lst_maker(lst_nme_run)->list[str]:
                             for pos in range(legt*2-nme_run[1]):
                                 lst_to_run.append(0)
                         lst_to_run[nme_run[1]] = nme_run[0]
-    return _zero(lst_to_run)
+    lst_to_run = _zero(lst_to_run)
 
-lst_mk = _lst_maker(sim_var)
-lst_temp = []
+    for id in all_info:
+        if not id in lst_to_run:
+            lst_to_del.append(id)
 
-for nms in all_info:
-    if not nms in lst_mk:
-        lst_temp.append(nms)
+    for nms_del in lst_to_del:
+        all_info.__delitem__(nms_del)
 
-for nme_del in lst_temp:
-    all_info.__delitem__(nme_del)
+    return lst_to_run
 
-#END PART 2.1
-#PART 2.2
+lst_cha_mod = []                 #-----------------------<
+lst_to_run = _lst_maker(sim_var) #-----------------------<
+
 
 class coincidece:
     def __init__(self,
@@ -154,7 +157,6 @@ class coincidece:
 
         self.chapter = chapter
         self.prior = prior
-        
 
     def get_meta(self) -> dict:
         return {"id":self.id,
@@ -164,200 +166,153 @@ class coincidece:
                 "ln_lab":self.ln_lab,
                 "chapter":self.chapter}
 
-def _coin_num(lst_from, lst_to, invert=False) ->list | int:
-    rst = 0
 
+def _coin_num(lst_from:list[int | str], lst_to:list[int | str], invert:bool=False) ->list | int:
+    rst = 0
     for num_from in range(len(lst_from)):
         for num_to in range(len(lst_to)):
             if lst_from[num_from] == lst_to[num_to]:
                 if rst == 0:
                     rst = []
-
                 if invert:
                     rst.append((num_to, num_from))
                 else:
                     rst.append((num_from, num_to))
-    
-    #print(lst_from, lst_to, rst, "tamaños", len(lst_from), len(lst_to))
     return rst
 
-
-def _who_not_best(nme_from:str, nme_to:str, equals:bool=False) -> tuple[bool, str | int]:
-    """
-    Retorna el nombre con menor jerarquia dentro de la lista
-    de mods
-    """
-    global lst_mk
-    for pos in range(len(lst_mk)):
-        pos_1 = pos
-        if lst_mk[pos] == nme_from:
-            break
-                                    
-    for pos in range(len(lst_mk)):
-        pos_2 = pos
-        if lst_mk[pos] == nme_to:
-            break
-
-    if pos_1 < pos_2:
-        if equals:
-            lst_mk[pos_2] = 0     
-            nme =  lst_mk[pos_1]
+def _who_not_best(nme_to_eval:list[str], equal:bool=False, pal_c:list[int, int] | int = 0 ) -> tuple[bool, str, int]:
+    global lst_to_run
+    pos_lst:list = []
+    for num in range(2):
+        for pos in range(len(lst_to_run)):
+            if lst_to_run[pos] == nme_to_eval[num]:
+                pos_lst.append(pos)
+                
+    chk = pos_lst[0]<pos_lst[1]
+    if equal:
+        if chk:
+            lst_to_run[pos_lst[1]] = 0
+            nme = lst_to_run[pos_lst[0]]
         else:
-            return False, lst_mk[pos_2], lst_mk[pos_2]
+            lst_to_run[pos_lst[0]] = 0
+            nme = lst_to_run[pos_lst[1]]
+        pal_c = 1
+        lst_to_run = _zero(lst_to_run)
+        return True, nme, pal_c
     else:
-        if equals:
-            lst_mk[pos_1] = 0
-            nme =  lst_mk[pos_2]
+        if chk:
+            return False, lst_to_run[pos_lst[1]], pal_c
         else:
-            return False, lst_mk[pos_1], lst_mk[pos_1]
-        
-    pal_c = 1
-    lst_mk = _zero(lst_mk)
-
-    return True, pal_c, nme
-
-lst_cha :list=[]#-----------------------<
+            return False, lst_to_run[pos_lst[0]], pal_c
 
 def _coincidence_info(id_coin:int=0)->list[coincidece]:
-    
-    global lst_cha
+    global lst_cha_mod, all_info
     lst_info = []
 
     if len(all_info) == 1:
-        print("you can not operate with 1 info")
+        print("you can not operate with 1 mod")
         return lst_info
 
     for nme_from in all_info:
         for nme_to in all_info:
             if nme_from == nme_to:
                 continue
-
+            
             for info_to in all_info[nme_to]:
                 for info_from in all_info[nme_from]:
 
                     if info_to[0] == info_from[0]:
                         equals = False
-                        if (info_from[3] == False) and (info_to[3] == False):
+                        if not info_from[3] and not info_to[3]:
                             pal_c = 0
-                        elif info_from[3] == True and info_to[3] == False:
+                        elif not info_from[3] and info_to[3]:
                             pal_c = [1,0]
-                        elif not info_from[3] == True and info_to[3] == False:
-                            pal_c = [0, 1]
+                        elif info_from and not info_to[3]:
+                            pal_c = [0,1]
                         else:
                             equals = True
-                            
+
                         num_c = _coin_num(info_from[1], info_to[1], True)
-                        lab_c = 0 #_coind(info_from[2], info_to[2])
-
-                        if not info_from[0] in lst_cha:
-                            lst_cha.append(info_from[0])
-                            lst_cha.sort()
-
+                        lab_c = 0 #_coin_num(info_from[2], info_to[2], True)
                         if not (num_c == lab_c == pal_c):
-                            info = _who_not_best(nme_from, nme_to, equals)
+                            is_same, nme, pal_c = _who_not_best([nme_from, nme_to], equals, pal_c)
                             
-                            if info[0]:
-                                #replace in the future
+                            if is_same:
+                                print("work in progress")
                                 continue
-                                #nme_replace = info[2]
-                                #pal_c = info[1]
 
-                            if info[1] == nme_from:
-                                lab_c = 0 #_coind(info_from[2], info_to[2]) 
+                            if nme == nme_from:
                                 num_c = _coin_num(info_to[1], info_from[1])
-                                nme_put = info[1]+"-"+nme_to
+                                lab_c = 0 #_coin_num(info_to[2], info_from[2], True)
+                                nme_put = nme+"-"+nme_to
                             else:
-                                nme_put = info[1]+"-"+nme_from
+                                nme_put = nme+"-"+nme_from
 
                             chk = False
+                            #Trigger alert!
                             for mod in lst_info:
                                 mod:coincidece
                                 if mod.chapter == info_to[0]:
                                     if mod.nme == nme_put:    
                                         chk = True
                                         break
-                            
                             if chk:
                                 continue
 
                             id_coin+=1
-                            lst_info.append(coincidece(id_coin, nme_put, info_to[0], num_c, lab_c, pal_c, info[2]))
+                            
+                            lst_info.append(coincidece(id_coin, nme_put, info_to[0], num_c, lab_c, pal_c, nme))
                         else:
                             continue
-
     if len(lst_info) == 1 and len(all_info) >= 3:
         for ln in range(len(lst_info[0].ln_jump)):
-            invert = (lst_info[0].ln_jump[ln][1], lst_info[0].ln_jump[ln][0])
-            lst_info[0].ln_jump[ln] = invert
+            lst_info[0].ln_jump[ln] = (lst_info[0].ln_jump[ln][1], lst_info[0].ln_jump[ln][0])
 
     return lst_info
 
+def _del_coincidence():
+    global all_info, lst_cha_mod
 
-#END PART 2.2
-#START PART 2.3
+    id_c = 0
 
-#for nme in coin:
- #   print(nme.get_meta())
-
-er = 0
-
-def app_dif():
-    global all_info, er, lst_cha
-    er+=1
-    test = er
-    coin = _coincidence_info()#-----------------------<
-
-    if len(coin) == 0:
+    if len(_coincidence_info()) == 0:
         print("coincidence insuficent")
         return 0
 
-    from random import randint
-    
-    for cha_mod in lst_cha:
-        for nme_info in all_info:
+    while not len(_coincidence_info()) == 0:
+        coin = _coincidence_info(id_c)
+        from random import randint
+        
+        for cha_mod in lst_cha_mod:
+            for nme_info in all_info:
 
-            for nme_mod in coin:
-                nme_mod:coincidece
-                
-                if nme_info == nme_mod.prior and nme_mod.chapter == cha_mod:
+                for nme_mod in coin:
+                    nme_mod:coincidece
+                    
+                    if nme_info == nme_mod.prior and nme_mod.chapter == cha_mod:
 
-                    for info_to_mod in all_info[nme_info]:    
-                        if nme_mod.chapter == info_to_mod[0]:
-                            
+                        for info_to_mod in all_info[nme_info]:    
+                            if nme_mod.chapter == info_to_mod[0]:
+                                
 
-                            if not nme_mod.ln_jump == 0:
-                                for replace in nme_mod.ln_jump:
-                                    try:
-                                        re = int(info_to_mod[1][replace[0]])+randint(-2, 2)
-                                        info_to_mod[1][replace[0]] = str(re)
-                                        while not re >= 0:
-                                            re+=1
-                                    except IndexError:
-                                        re = int(info_to_mod[1][replace[1]])+randint(-2, 2)
-                                        while not re >= 0:
-                                            re+=1
-                                        info_to_mod[1][replace[1]] = str(re)  
-                                    
-                                                              
+                                if not nme_mod.ln_jump == 0:
+                                    for replace in nme_mod.ln_jump:
+                                        try:
+                                            re = int(info_to_mod[1][replace[0]])+randint(-2, 2)
+                                            info_to_mod[1][replace[0]] = str(re)
+                                            while not re >= 0:
+                                                re+=1
+                                        except IndexError:
+                                            re = int(info_to_mod[1][replace[1]])+randint(-2, 2)
+                                            while not re >= 0:
+                                                re+=1
+                                            info_to_mod[1][replace[1]] = str(re) 
 
-    print("coincidence info:")
-    for i in coin:
-        print(i.get_meta())
-    print("-----------------")
+        id_c+=1
 
-    if len(_coincidence_info()) == 0:
-        print("end")
-        return 0
-    else:
-        app_dif()
-        print("test", test, "passed")
+    return 0
 
-"""
-for i in range(5):
-    print(i)
-    app_dif()
-"""
+_del_coincidence()
 
-a = _coincidence_info()
-for n in a:
-    print(n.get_meta())
+for i in all_info:
+    print(i, all_info[i])
