@@ -13,7 +13,7 @@ sim_var = [["add_history_mod",2,True],
 ##########################
 #        PART 1          #
 ##########################
-#Prepare the info to copy...+
+#Prepare the info to copy...
 def _trans(lst)->list:
     _lst = []
     _tmp = ""
@@ -136,7 +136,6 @@ def _lst_maker(lst_nme_run:list[list[str, int, bool]])->list[str]:
 lst_cha_mod = []                 #-----------------------<
 lst_to_run = _lst_maker(sim_var) #-----------------------<
 
-
 class coincidece:
     def __init__(self,
                  ID:int,
@@ -165,7 +164,6 @@ class coincidece:
                 "ln_jump":self.ln_jump,
                 "ln_lab":self.ln_lab,
                 "chapter":self.chapter}
-
 
 def _coin_num(lst_from:list[int | str], lst_to:list[int | str], invert:bool=False) ->list | int:
     rst = 0
@@ -312,7 +310,131 @@ def _del_coincidence():
 
     return 0
 
-_del_coincidence()
+if _del_coincidence() == 0:
+    pass
+else:
+    print("ERROR")
 
-for i in all_info:
-    print(i, all_info[i])
+
+##########################
+#        PART 3          #
+##########################
+#Prepare the info to insert...
+
+def order_channel() -> tuple[dict, list]:
+    global all_info, lst_cha_mod, lst_to_run, lst_chapter
+
+    info_re = {}
+    nme_mod = []
+
+    for chapter in lst_cha_mod:
+        for nme in lst_to_run:
+            for info in all_info[nme]:
+                if info[0] == chapter:
+                    ftc_info = open(root+f"/game/{info[0]}", "rt").readlines()
+
+                    for chk in info[1]:
+                        if int(chk) >= len(ftc_info):
+                            for i in range(int(chk)+2):
+                                ftc_info.append(" "*4)
+
+                    for num in range(len(info[1])):
+                        _tmp = ""
+                        for _chr in ftc_info[int(info[1][num])]:
+                            if _chr == " ":
+                                _tmp += _chr
+
+                        if " " in _chr:
+                            _tmp += f"jump {info[2][num]}\n"
+                        else:
+                            _tmp += " "*4+f"jump {info[2][num]}"
+
+                        ftc_info[int(info[1][num])-1] = _tmp
+
+                    c=-1
+                    for tag in ftc_info:
+                        c+=1
+                        if tag.replace("label", "").replace(" ", "")[:-2] in lst_chapter:
+                            ftc_info[c] = f"{tag[:-2]}_mod:\n"
+
+                            if not tag.replace("label", "").replace(" ", "")[:-2] in nme_mod:
+                                nme_mod.append(tag.replace("label", "").replace(" ", "")[:-2])
+
+                    info_re[info[0]+"_"+nme] = ftc_info
+    return info_re, nme_mod
+
+info_to_pst = order_channel()
+print(all_info)
+##########################
+#        PART 4          #
+##########################
+#after of copy, to paste
+
+def paste(info_to:dict):
+    global lst_cha_mod
+
+    info_re = {}
+
+    for chapter in lst_cha_mod:
+        for nme in info_to:
+            if nme[:9] == chapter[:-4]:
+                for line_to in info_to[nme]:
+                    n = -1
+                    for line_from in info_to[nme]:
+                        n+=1
+                        if not line_from == line_to:
+                            continue
+                        elif info_re.__contains__(chapter):
+                            info_re[chapter][n] = line_to
+                        else:
+                            info_re[chapter] = info_to[nme]
+
+                    print(info_re[chapter])
+                            
+"""
+                    if c:
+                        info_re[chapter] = info_to[nme]
+                        c = False
+                    else:
+                        m =-1
+                        for line_from in info_re[chapter]:
+                            m+=1
+                            if not line_from == line_to:
+                                pass
+                            else:
+                                #print(line_to)
+                                info_re[chapter][m] = line_to
+                                n = True
+                                break
+                    
+                    if n:
+                        break
+    
+        c = True
+"""
+    #print(info_re)
+
+
+for i in info_to_pst[0]:
+    print(i, info_to_pst[0][i])
+print("tst")
+#paste(info_to_pst[0])
+
+##########################
+#        PART 5          #
+##########################
+#search if the current file already exits in moddifications
+
+def mod_nme_include(info:list):
+    ...
+
+def tagado(info:list, line:str, nro:int):
+
+    line_to = info[nro]
+    n=-1
+    for i in info:
+        n+=1
+
+
+
+    ...

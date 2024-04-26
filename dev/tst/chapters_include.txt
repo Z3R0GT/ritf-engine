@@ -1,1 +1,1 @@
-chapter_1_start;chapter_2_start;chapter_3_start
+chapter_1;chapter_2;chapter_3
