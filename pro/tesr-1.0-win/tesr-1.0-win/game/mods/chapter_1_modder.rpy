@@ -1,11 +1,10 @@
-
 #COPY
 define textsize = 35
 define g = Character (_("Guide"), color="#902222", what_size=textsize)
 define e = Character (_("Error"), color="#FFFFFF", what_size=textsize)
 
 #Chapter normal (if you see a jump, so is a moddificade chapter)
-label chapter_1_start_mod:
+label chapter_1_start:
     $ renpy.pause(2)
 
     "{i}Welcome to the world of dragons, and thank you for playing my game, Rose's in The Flames.{/i}"
@@ -30,7 +29,7 @@ label chapter_1_start_mod:
 
     g "Now, before we dive into the story, what is your gender?"
 
-    jump other_can
+    #here must be the jump
 
 
 
@@ -39,3 +38,60 @@ label chapter_1_start_mod:
             $ Gender = "Male"
         "Female":
             $ Gender = "Female"
+
+
+
+    jump other_
+
+
+    jump miau
+
+    jump other_ca
+
+    jump othera_
+
+
+
+
+
+
+
+    jump kdj
+
+
+
+
+
+
+
+
+
+    jump lal
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    

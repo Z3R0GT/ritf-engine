@@ -48,6 +48,5 @@ python:
 #COPY
 label start:
     #Only need this function
-    $ list_to_start()
     #Here end the game
     return
