@@ -1,16 +1,16 @@
-Mon Apr 22 09:13:10 2024
+Mon Apr 29 12:13:53 2024
 Windows-10-10.0.19041
 Ren'Py 8.1.3.23091805
  
 
 Bootstrap to the start of init.init. took 0.05s
 Early init. took 0.00s
-Loader init. took 0.05s
-Loading error handling. took 0.11s
-Loading script. took 1.72s
-Loading save slot metadata. took 0.08s
+Loader init. took 0.06s
+Loading error handling. took 0.13s
+Loading script. took 1.59s
+Loading save slot metadata. took 0.09s
 Loading persistent. took 0.00s
- - Init at renpy/common/00console.rpy:125 took 0.27567 s.
+ - Init at renpy/common/00console.rpy:125 took 0.27444 s.
 Set script version to: (8, 1, 3)
 Running init code. took 0.55s
 Loading analysis data. took 0.02s
@@ -24,19 +24,19 @@ Initial gc. took 0.02s
 DPI scale factor: 1.250000
 nvdrs: Loaded, about to disable thread optimizations.
 nvdrs: Disabled thread optimizations.
-Creating interface object. took 0.46s
+Creating interface object. took 0.43s
 Cleaning stores took 0.00s
-Init translation took 0.05s
+Init translation took 0.03s
 Build styles took 0.00s
 Load screen analysis took 0.04s
 Analyze screens took 0.00s
 Save screen analysis took 0.00s
-Prepare screens took 0.08s
+Prepare screens took 0.07s
 Save pyanalysis. took 0.00s
 Save bytecode. took 0.00s
 Running _start took 0.00s
 Performance test:
-Interface start. took 0.14s
+Interface start. took 0.15s
 
 Initializing gl2 renderer:
 primary display bounds: (0, 0, 1920, 1080)
@@ -46,5 +46,5 @@ Vendor: "b'Intel'"
 Renderer: b'Intel(R) UHD Graphics'
 Version: b'4.6.0 - Build 27.20.100.9664'
 Display Info: None
-Screen sizes: virtual=(1920, 1080) physical=(1719, 967) drawable=(1719, 967)
+Screen sizes: virtual=(1920, 1080) physical=(1718, 966) drawable=(1718, 966)
 Maximum texture size: 4096x4096
