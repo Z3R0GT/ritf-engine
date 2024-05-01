@@ -5,3 +5,12 @@ label other_can:
 
     return
 
+label lal:
+    "lollolololololololo"
+
+
+label uwu:
+    "indeed, owo"
+
+label meow:
+    "miau!!!!"

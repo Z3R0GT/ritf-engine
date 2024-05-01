@@ -1,26 +1,26 @@
 ﻿I'm sorry, but an uncaught exception occurred.
 
 While running game code:
-  File "game/reader.rpy", line 1, in script
-    init python:
-  File "game/reader.rpy", line 471, in <module>
-    lst_chapter = open(root+f"/chapters_include.txt", "rt").read().split(";")
-FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\jerem\\OneDrive\\Escritorio\\rift_engine\\ritf-engine\\pro\\tesr-1.0-win\\tesr-1.0-win/chapters_include.txt'
+  File "game/main.rpy", line 16, in script call
+    $ list_to_start()
+  File "game/mods/chapter_1_modder.rpy", line 48, in script
+    
+ScriptError: could not find label 'othera_'.
 
 -- Full Traceback ------------------------------------------------------------
 
 Full traceback:
-  File "game/reader.rpy", line 1, in script
-    init python:
-  File "C:\Users\jerem\OneDrive\Escritorio\rift_engine\ritf-engine\pro\tesr-1.0-win\tesr-1.0-win\renpy\ast.py", line 1138, in execute
-    renpy.python.py_exec_bytecode(self.code.bytecode, self.hide, store=self.store)
-  File "C:\Users\jerem\OneDrive\Escritorio\rift_engine\ritf-engine\pro\tesr-1.0-win\tesr-1.0-win\renpy\python.py", line 1122, in py_exec_bytecode
-    exec(bytecode, globals, locals)
-  File "game/reader.rpy", line 471, in <module>
-    lst_chapter = open(root+f"/chapters_include.txt", "rt").read().split(";")
-FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\jerem\\OneDrive\\Escritorio\\rift_engine\\ritf-engine\\pro\\tesr-1.0-win\\tesr-1.0-win/chapters_include.txt'
+  File "game/main.rpy", line 16, in script call
+    $ list_to_start()
+  File "game/mods/chapter_1_modder.rpy", line 48, in script
+    
+  File "C:\Users\jerem\OneDrive\Escritorio\rift_engine\ritf-engine\pro\tesr-1.0-win\tesr-1.0-win\renpy\ast.py", line 1992, in execute
+    rv = renpy.game.script.lookup(target)
+  File "C:\Users\jerem\OneDrive\Escritorio\rift_engine\ritf-engine\pro\tesr-1.0-win\tesr-1.0-win\renpy\script.py", line 1013, in lookup
+    raise ScriptError("could not find label '%s'." % str(original))
+ScriptError: could not find label 'othera_'.
 
 Windows-10-10.0.19041 AMD64
 Ren'Py 8.1.3.23091805
 tesr 1.0
-Tue Apr 30 17:02:41 2024
+Tue Apr 30 19:20:00 2024

@@ -1,8 +1,4 @@
 #COPY
-label chapter_3_start:
-    "sate" "nothing"
-
-
-
-
-    return
+label chapter_3:
+    "Chapter 3"
+    

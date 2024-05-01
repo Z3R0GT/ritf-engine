@@ -1,11 +1,12 @@
 #COPY
-label chapter_3_start:
-    "sate" "nothing"
+label chapter_3_mod:
+    "Chapter 3"
 
 
 
 
-    return
+
+
 
 
 
@@ -27,10 +28,6 @@ label chapter_3_start:
     jump meow
 
     jump ywy
-
-
-
-
 
 
 

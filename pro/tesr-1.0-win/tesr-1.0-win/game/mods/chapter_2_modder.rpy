@@ -1,8 +1,9 @@
 #COPY
-label chapter_2_start:
-    "I" "yes, there we go"
+label chapter_2_mod:
+    "Chapter 2"
 
-    "I" "this test is funcionaly Bv"
+
+
 
 
 
@@ -29,6 +30,7 @@ label chapter_2_start:
 
 
     jump uwu
+
     jump owo
 
 
@@ -37,5 +39,3 @@ label chapter_2_start:
 
 
 
-
-    

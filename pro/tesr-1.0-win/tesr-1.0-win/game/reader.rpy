@@ -1,3 +1,4 @@
+#1.0 --- 04/30/2024 || 30/04/2024 By: Z3R0_GT
 init python:
     ##########################
     #        PART 1          #
@@ -389,7 +390,7 @@ init python:
                         else:
                             len_lst = len(info_to[nme])
                             while len(info_re[nme_cha]) < len_lst:
-                                info_re[nme_cha].append("\n"+" "*4)
+                                info_re[nme_cha].append("\n")
 
                             for ln in range(len_lst):
                                 if info_to[nme][ln].replace(" ", "")[:4] == "jump":
@@ -399,36 +400,6 @@ init python:
                                 if len(info_re[nme_cha][ln]) == 4:
                                     info_re[nme_cha][ln] = "\n"
 
-
-        return info_re
-
-    def paste(info_to:dict) -> dict:
-        global lst_cha_mod
-        info_re = {}
-
-        for chapter in lst_cha_mod:
-            for nme in info_to:
-                jump_chr = []
-                if nme[:9] == chapter[:-4]:
-                    if not info_re.__contains__(chapter[:-4]):
-                        info_re[chapter[:-4]] = info_to[nme]
-                    else:
-                        i_lst = len(info_re[chapter[:-4]])
-
-                        while not len(info_re[chapter[:-4]]) <= len(info_to[nme]):
-                            info_to[nme].append(" "*4)
-
-                        for ln in range(i_lst):
-
-                            nm_from = info_re[chapter[:-4]][ln].replace(" ", "")
-                            nm_to = info_to[nme][ln].replace(" ", "")
-                            if nm_from[:4] == "jump":
-                                if not info_re[chapter[:-4]][ln] in jump_chr:
-                                    jump_chr.append(nm_from)
-
-                            elif nm_to[:4] == "jump":
-                                if not nm_to == nm_from:
-                                    info_re[chapter[:-4]] = _insert(info_re[chapter[:-4]], [[ln ,info_to[nme][ln]]])
 
         return info_re
 
@@ -464,7 +435,9 @@ init python:
             end+= cha+";"
         arch.write(end)
 
-    #START
+    ##########################
+    #        PART END        #
+    ##########################
     from os import listdir, path, getcwd, chdir
 
     root = getcwd()                #-----------------------<
