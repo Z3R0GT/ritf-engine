@@ -163,5 +163,3 @@ cython_debug/
 .vs/*
 /pro/ritf
 /pro/tesr-1.0-dists
-
-dev/*
