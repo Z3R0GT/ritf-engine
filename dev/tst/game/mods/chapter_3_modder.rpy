@@ -3,37 +3,6 @@ label chapter_3_mod:
     "-w-"
 
     "meow"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    jump meow
-
-    jump ywy
-
-
-
-
-
-
-
-
-
+                                                                                                 jump meow
+        jump ywy
+                                        
