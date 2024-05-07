@@ -388,7 +388,45 @@ def order_channel() -> tuple[dict, list]:
                     ftc_.close()
     return info_re, nme_mod
 
-info_to_pst = order_channel()
+def order_channel():
+    global all_info, lst_cha_mod, lst_to_run, lst_chapter
+
+    for chapter in lst_cha_mod:
+        ftc_info = open(root+f"/game/{chapter}", "rt").readlines()
+        for nme in lst_to_run:
+            for info in all_info[nme]:
+                
+                if info[0] == chapter:
+                    
+                    for chk in info[1]:
+                        if int(chk) >= len(ftc_info):
+                            for i in range(int(chk)+2):
+                                ftc_info.append(" "*4)
+
+                    #LIST-JUMP SECTION
+                    j_list = []
+                    for num in range(len(info[1])):
+                        _tmp = ""
+                        for _chr in ftc_info[int(info[1][num])]:
+                            if _chr == " ":
+                                _tmp += _chr
+
+                        if " " in _chr:
+                            _tmp += f"jump {info[2][num]}\n"
+                        else:
+                            _tmp += " "*4+f"jump {info[2][num]}\n"
+
+                        j_list.append([int(info[1][num]), _tmp])
+
+                    ftc_info = _insert(ftc_info, j_list)
+
+
+
+order_channel()
+
+
+#info_to_pst = order_channel()
+
 ##########################
 #        PART 4          #
 ##########################
@@ -419,7 +457,7 @@ def paste_up(info_to:dict) -> dict:
 
     return info_re
 
-info_fin = paste_up(info_to_pst[0])#-----------------------<
+#info_fin = paste_up(info_to_pst[0])#-----------------------<
 
 def paste_final_archive():
     global info_fin
@@ -438,8 +476,11 @@ def paste_final_archive():
 
         arch.close()
 
-for i in range(5):
-    paste_final_archive()
+#for i in range(5):
+#    paste_final_archive()
+
+
+
 
 ##########################
 #        PART 5          #
@@ -456,4 +497,4 @@ def mod_nme_include():
         end+= cha+";"
     arch.write(end)
 
-mod_nme_include()
+#mod_nme_include()
