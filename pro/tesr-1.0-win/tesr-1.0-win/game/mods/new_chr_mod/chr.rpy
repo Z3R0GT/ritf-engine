@@ -1,5 +1,9 @@
-label other_ca:
+label chr_god:
     "CHR IS GOD"
 
-label ywy:
+    return
+
+label rick_troll:
     "NEVER GONNA GIVE U UP, NEVER GONNA.... xd"
+
+    return

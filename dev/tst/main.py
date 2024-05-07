@@ -1,15 +1,3 @@
-from os import listdir, path, getcwd, chdir
-
-root = getcwd()                #-----------------------<
-lst_chapter = open(root+f"/chapters_include.txt", "rt").read().split(";")
-del lst_chapter[-1]
-
-sim_var = [["add_history_mod",2,True],
-           ["new_chr_mod", 1, True],
-           ["new_aspect_mod", 3, True],
-           ["translate_mod", 4, True]
-           ] 
-
 ##########################
 #        PART 1          #
 ##########################
@@ -80,8 +68,6 @@ def super_deco() -> dict:
 
     return base
 
-all_info = super_deco()         #-----------------------<
-
 ##########################
 #        PART 2          #
 ##########################
@@ -132,9 +118,6 @@ def _lst_maker(lst_nme_run:list[list[str, int, bool]])->list[str]:
         all_info.__delitem__(nms_del)
 
     return lst_to_run
-
-lst_cha_mod = []                 #-----------------------<
-lst_to_run = _lst_maker(sim_var) #-----------------------<
 
 class coincidece:
     def __init__(self,
@@ -312,8 +295,6 @@ def _del_coincidence():
 
     return 0
 
-_del_coincidence()
-
 ##########################
 #        PART 3          #
 ##########################
@@ -376,9 +357,9 @@ def order_channel() -> tuple[dict, list]:
                                     m+=n
                                 _tmp = m
                                 
-                            _tmp += f"jump {info[2][num]}\n"
+                            _tmp += f"call {info[2][num]}\n"
                         else:
-                            _tmp += " "*4+f"jump {info[2][num]}\n"
+                            _tmp += " "*4+f"call {info[2][num]}\n"
 
                         j_list.append([int(info[1][num]), _tmp])
 
@@ -395,14 +376,10 @@ def order_channel() -> tuple[dict, list]:
         info_re[chapter] = ftc_info
     return info_re, nme_mod
 
-info_to_pst = order_channel()
-
 ##########################
 #        PART 4          #
 ##########################
 #after of copy, to past
-
-info_fin = info_to_pst[0]#-----------------------<
 
 def paste_final_archive():
     global info_fin, lst_cha_mod
@@ -422,7 +399,6 @@ def paste_final_archive():
             if line == "#NOT\n":
                 chk = False
 
-paste_final_archive()
 ##########################
 #        PART 5          #
 ##########################
@@ -437,5 +413,45 @@ def mod_nme_include():
     for cha in info_to_pst[1]:
         end+= cha+";"
     arch.write(end)
+
+##########################
+#        PART END        #
+##########################
+
+from os import listdir, path, getcwd, chdir, remove
+
+root = getcwd()                #-----------------------<
+lst_chapter = open(root+f"/chapters_include.txt", "rt").read().split(";")
+del lst_chapter[-1]
+
+for i in range(len(lst_chapter)):
+    try:
+        remove(root+f"/game/mods/chapter_{i+1}_modder.rpy")
+    except FileNotFoundError:
+        pass
+
+    try:
+        remove(root+f"/game/mods/chapter_{i+1}_modder.rpyc")
+    except FileNotFoundError:
+        pass
+
+sim_var = [["add_history_mod",2,True],
+           ["new_chr_mod", 1, True],
+           ["new_aspect_mod", 3, True],
+           ["translate_mod", 4, True]
+           ] 
+
+all_info = super_deco()         #-----------------------<
+
+lst_cha_mod = []                 #-----------------------<
+lst_to_run = _lst_maker(sim_var) #-----------------------<
+
+_del_coincidence()
+
+info_to_pst = order_channel()
+
+info_fin = info_to_pst[0]#-----------------------<
+
+paste_final_archive()
 
 mod_nme_include()

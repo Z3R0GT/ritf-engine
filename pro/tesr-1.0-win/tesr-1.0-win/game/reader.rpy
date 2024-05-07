@@ -1,4 +1,4 @@
-#1.0 --- 04/30/2024 || 30/04/2024 By: Z3R0_GT
+#1.1 --- 04/30/2024 || 30/04/2024 By: Z3R0_GT
 init python:
     ##########################
     #        PART 1          #
@@ -74,7 +74,6 @@ init python:
     #        PART 2          #
     ##########################
     #search coincidence btw chapters
-
     def _zero(lst)->list:
         num_erase = []
         for pos in range(len(lst)):
@@ -220,7 +219,6 @@ init python:
                             lab_c = 0 #_coin_num(info_from[2], info_to[2], True)
                             if not (num_c == lab_c == pal_c):
                                 is_same, nme, pal_c = _who_not_best([nme_from, nme_to], equals, pal_c)
-                                
                                 if is_same:
                                     print("work in progress")
                                     continue
@@ -248,6 +246,7 @@ init python:
                                 lst_info.append(coincidece(id_coin, nme_put, info_to[0], num_c, lab_c, pal_c, nme))
                             else:
                                 continue
+
         if len(lst_info) == 1 and len(all_info) >= 3:
             for ln in range(len(lst_info[0].ln_jump)):
                 lst_info[0].ln_jump[ln] = (lst_info[0].ln_jump[ln][1], lst_info[0].ln_jump[ln][0])
@@ -327,23 +326,22 @@ init python:
     def order_channel() -> tuple[dict, list]:
         global all_info, lst_cha_mod, lst_to_run, lst_chapter
 
-        info_re = {}
         nme_mod = []
+        info_re = {}
 
         for chapter in lst_cha_mod:
+            ftc_info = open(root+f"/game/{chapter}", "rt").readlines()
             for nme in lst_to_run:
                 for info in all_info[nme]:
+                    
                     if info[0] == chapter:
-
-                        ftc_ = open(root+f"/game/{info[0]}", "rt")
-                        ftc_info = ftc_.readlines()
-
+                        
                         for chk in info[1]:
                             if int(chk) >= len(ftc_info):
                                 for i in range(int(chk)+2):
                                     ftc_info.append(" "*4)
 
-                        #CREATE NEW JUMP LINES
+                        #LIST-JUMP SECTION
                         j_list = []
                         for num in range(len(info[1])):
                             _tmp = ""
@@ -351,74 +349,58 @@ init python:
                                 if _chr == " ":
                                     _tmp += _chr
 
-                            if " " in _chr:
-                                _tmp += f"jump {info[2][num]}\n"
+                            if " " in _tmp:
+                                if not (len(_tmp)%4) == 0:
+                                    _tmp = list(_tmp)
+                                    del _tmp[-1]
+
+                                    m = ""
+                                    for n in _tmp:
+                                        m+=n
+                                    _tmp = m
+                                    
+                                _tmp += f"call {info[2][num]}\n"
                             else:
-                                _tmp += " "*4+f"jump {info[2][num]}\n"
+                                _tmp += " "*4+f"call {info[2][num]}\n"
 
                             j_list.append([int(info[1][num]), _tmp])
 
                         ftc_info = _insert(ftc_info, j_list)
-
-                        c=-1
-                        for tag in ftc_info:
-                            c+=1
-                            if tag.replace("label", "").replace(" ", "")[:-2] in lst_chapter:
-                                ftc_info[c] = f"{tag[:-2]}_mod:\n"
-                                if not tag.replace("label", "").replace(" ", "")[:-2]+"_mod" in nme_mod:
-                                    nme_mod.append(tag.replace("label", "").replace(" ", "")[:-2]+"_mod")
-
-                        info_re[info[0]+"_"+nme] = ftc_info
-                        ftc_.close()
+            c=-1
+            for tag in ftc_info:
+                c+=1
+                if tag.replace("label", "").replace(" ", "")[:-2] in lst_chapter:
+                    ftc_info[c] = f"{tag[:-2]}_mod:\n"
+                    if not tag.replace("label", "").replace(" ", "")[:-2]+"_mod" in nme_mod:
+                        nme_mod.append(tag.replace("label", "").replace(" ", "")[:-2]+"_mod")
+                    break
+                
+            info_re[chapter] = ftc_info
         return info_re, nme_mod
 
     ##########################
     #        PART 4          #
     ##########################
-    #after of copy, to paste
-
-    def paste_up(info_to:dict) -> dict:
-        global lst_cha_mod
-        info_re = {}
-
-        for chapter in lst_cha_mod:
-            for nme in info_to:
-                    nme_cha = chapter[:-4]
-                    if nme_cha == nme[:9]:
-                        if not info_re.__contains__(nme_cha):
-                            info_re[nme_cha] = info_to[nme]
-                        else:
-                            len_lst = len(info_to[nme])
-                            while len(info_re[nme_cha]) < len_lst:
-                                info_re[nme_cha].append("\n")
-
-                            for ln in range(len_lst):
-                                if info_to[nme][ln].replace(" ", "")[:4] == "jump":
-                                    info_re[nme_cha][ln] = info_to[nme][ln]
-
-                            for ln in range(len(info_re[nme_cha])):
-                                if len(info_re[nme_cha][ln]) == 4:
-                                    info_re[nme_cha][ln] = "\n"
-
-
-        return info_re
+    #after of copy, to past
 
     def paste_final_archive():
-        global info_fin
+        global info_fin, lst_cha_mod
 
-        for nme in info_fin:
+        for chapter in lst_cha_mod:
+            nme = chapter.replace(".rpy", "")
             arch = open(root+f"/game/mods/{nme}_modder.rpy", "w")
 
             chk = False
-            for line in info_fin[nme]:
+            for line in info_fin[chapter]:
                 if line == "#COPY\n" or chk == True:
+                    if line[-1] == " ":
+                        line+="\n"
+                        
                     arch.write(line)
                     chk = True
 
                 if line == "#NOT\n":
                     chk = False
-
-            arch.close()
 
     ##########################
     #        PART 5          #
@@ -438,11 +420,24 @@ init python:
     ##########################
     #        PART END        #
     ##########################
-    from os import listdir, path, getcwd, chdir
+
+    from os import listdir, path, getcwd, chdir, remove
+
 
     root = getcwd()                #-----------------------<
     lst_chapter = open(root+f"/chapters_include.txt", "rt").read().split(";")
     del lst_chapter[-1]
+
+    for i in range(len(lst_chapter)):
+        try:
+            remove(root+f"/game/mods/chapter_{i+1}_modder.rpy")
+        except FileNotFoundError:
+            pass
+
+        try:
+            remove(root+f"/game/mods/chapter_{i+1}_modder.rpyc")
+        except FileNotFoundError:
+            pass
 
     sim_var = [["add_history_mod",2,True],
             ["new_chr_mod", 1, True],
@@ -459,9 +454,8 @@ init python:
 
     info_to_pst = order_channel()
 
-    info_fin = paste_up(info_to_pst[0])#-----------------------<
+    info_fin = info_to_pst[0]#-----------------------<
 
-    for i in range(5):
-        paste_final_archive()
+    paste_final_archive()
 
     mod_nme_include()

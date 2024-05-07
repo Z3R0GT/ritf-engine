@@ -7,11 +7,10 @@ init python:
 
         for name in lst_mod:
             #run the chapters
-            #renpy.call_in_new_context(name)
-            renpy.call(name, from_current=True)
-
+            renpy.call_in_new_context(name)
 
 label start:
     #Only need this function
     $ list_to_start()
     #Here end the game
+    return 0

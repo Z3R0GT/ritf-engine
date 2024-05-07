@@ -1,16 +1,23 @@
 #label of test
-label other_can:
+label no_choice:
     "you " "i dont want choice my gender, get out of here!"
 
-
     return
+
 
 label lal:
     "lollolololololololo"
 
+    return
 
-label uwu:
+
+label ineed:
     "indeed, owo"
+
+    return
+
 
 label meow:
     "miau!!!!"
+
+    return

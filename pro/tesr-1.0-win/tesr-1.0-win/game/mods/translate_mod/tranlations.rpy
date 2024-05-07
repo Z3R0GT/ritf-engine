@@ -1,6 +1,9 @@
-label other_:
+label jouse_scene:
 
     "Josue" "Nothing to see here"
+    return
 
-label kdj:
+label spanish:
     "SOY ESPAÑOL ALA VERGA!!"
+
+    return

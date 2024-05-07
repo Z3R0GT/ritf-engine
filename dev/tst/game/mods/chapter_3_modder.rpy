@@ -24,10 +24,10 @@ label chapter_3_mod:
     
     
     
-    jump meow
     
     
-    jump ywy
+    call ywy
+    call meow
     
     
     

@@ -27,9 +27,9 @@ label chapter_2_mod:
     
     
     
+    call owo
     
-    jump uwu
-    jump owo
+    call uwu
     
     
     

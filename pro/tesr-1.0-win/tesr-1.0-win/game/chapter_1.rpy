@@ -6,6 +6,6 @@ define e = Character (_("Error"), color="#FFFFFF", what_size=textsize)
 #Chapter normal (if you see a jump, so is a moddificade chapter)
 label chapter_1:
     $ renpy.pause(2)
-
+    
     "Chapter 1"
     

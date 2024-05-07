@@ -2,9 +2,9 @@
 errors listed below, and try again.
 
 
-File "game/mods/chapter_1_modder.rpy", line 70: Line is indented, but the preceding jump statement statement does not expect a block. Please check this line's indentation. You may have forgotten a colon (:).
-    jump lal
-    ^
+File "game/reader.rpy", line 390: f-string: unmatched '('
+            arch = open(root+f"/game/mods/{chapter.replace(".rpy", "")}_modder.rpy", "w")
+                                                             ^
 
 Ren'Py Version: Ren'Py 8.1.3.23091805
-Tue Apr 30 19:03:37 2024
+Tue May  7 15:36:43 2024

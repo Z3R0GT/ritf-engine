@@ -4,12 +4,8 @@ label chapter_1_mod:
 
     "nothing"
 
-    jump othera_
-    
-    
-    
-    jump other_
-    
+    call othera_
+    call other_
     
     
     
@@ -28,13 +24,17 @@ label chapter_1_mod:
     
     
     
-    jump lal
-    jump kdj
     
     
-    jump other_ca
     
-    jump miau
+    call kdj
+    call miau
+    
+    
+    
+    call lal
+    call other_ca
+    
     
     
     
