@@ -234,7 +234,6 @@ def _coincidence_info(id_coin:int=0)->list[coincidece]:
                         lab_c = 0 #_coin_num(info_from[2], info_to[2], True)
                         if not (num_c == lab_c == pal_c):
                             is_same, nme, pal_c = _who_not_best([nme_from, nme_to], equals, pal_c)
-                            
                             if is_same:
                                 print("work in progress")
                                 continue
@@ -262,6 +261,7 @@ def _coincidence_info(id_coin:int=0)->list[coincidece]:
                             lst_info.append(coincidece(id_coin, nme_put, info_to[0], num_c, lab_c, pal_c, nme))
                         else:
                             continue
+
     if len(lst_info) == 1 and len(all_info) >= 3:
         for ln in range(len(lst_info[0].ln_jump)):
             lst_info[0].ln_jump[ln] = (lst_info[0].ln_jump[ln][1], lst_info[0].ln_jump[ln][0])
@@ -366,7 +366,16 @@ def order_channel() -> tuple[dict, list]:
                             if _chr == " ":
                                 _tmp += _chr
 
-                        if " " in _chr:
+                        if " " in _tmp:
+                            if not (len(_tmp)%4) == 0:
+                                _tmp = list(_tmp)
+                                del _tmp[-1]
+
+                                m = ""
+                                for n in _tmp:
+                                    m+=n
+                                _tmp = m
+                                
                             _tmp += f"jump {info[2][num]}\n"
                         else:
                             _tmp += " "*4+f"jump {info[2][num]}\n"
@@ -404,6 +413,9 @@ def paste_final_archive():
         chk = False
         for line in info_fin[chapter]:
             if line == "#COPY\n" or chk == True:
+                if line[-1] == " ":
+                    line+="\n"
+                    
                 arch.write(line)
                 chk = True
 
@@ -411,14 +423,6 @@ def paste_final_archive():
                 chk = False
 
 paste_final_archive()
-print("end")
-
-#for i in range(5):
-#    paste_final_archive()
-
-
-
-
 ##########################
 #        PART 5          #
 ##########################
@@ -434,4 +438,4 @@ def mod_nme_include():
         end+= cha+";"
     arch.write(end)
 
-#mod_nme_include()
+mod_nme_include()

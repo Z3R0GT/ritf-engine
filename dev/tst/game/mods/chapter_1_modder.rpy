@@ -4,10 +4,43 @@ label chapter_1_mod:
 
     "nothing"
 
-                 jump other_
-        jump othera_
-                                                                            jump miau
-                 jump kdj
-        jump lal
+    jump othera_
+    
+    
+    
+    jump other_
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    jump lal
+    jump kdj
+    
+    
     jump other_ca
-                                        
+    
+    jump miau
+    
+    
+    
+    
+    
+    
+    
+    
+    

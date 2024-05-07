@@ -3,6 +3,40 @@ label chapter_2_mod:
     "owo"
 
     "dumb"
-                                                                                                jump owo
-            jump uwu
-                                        
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    jump uwu
+    jump owo
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
