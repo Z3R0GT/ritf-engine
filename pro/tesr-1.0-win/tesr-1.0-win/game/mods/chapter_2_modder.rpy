@@ -27,11 +27,11 @@ label chapter_2_mod:
     
     
     
-    call owo
     
     
     call ineed
     
+    call owo
     
     
     

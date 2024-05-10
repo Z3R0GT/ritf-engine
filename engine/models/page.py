@@ -4,7 +4,7 @@ from .internal.tool.debug import _chk_window, print_debug
 from .obj.gen_obj import gen_obj, N_ABS, N_NUM, CUR
 from .obj.gen_wns import gen_wns, gen_ui
 
-class Page(gen_obj, gen_wns, gen_ui):
+class _Page(gen_obj, gen_wns, gen_ui):
     
     def __init__(self, 
                  X, 
@@ -40,7 +40,10 @@ class Page(gen_obj, gen_wns, gen_ui):
             time.sleep(3)
             self.start_cast()
         
-    
+class Page():
+
+    def __init__(self) -> None:
+        pass
     
         
 

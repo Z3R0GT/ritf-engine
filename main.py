@@ -1,5 +1,2 @@
-from engine import *
-
-DEV[0] = False
-
-check_paths_all()
+#from engine import *
+from dev.engine import *
