@@ -69,7 +69,8 @@ class gen_btn:
         self._in = []
 
         for text in msg:
-            self._in.append(input(f"{text}\n>  "))
+            if not text == "":
+                self._in.append(input(f"{text}\n>  "))
 
         self.action(self._in)
 

@@ -61,7 +61,7 @@ class gen_wns:
         self.square.append(line_num)
         self._create_pre_view()
 
-    def _edit_line(self, coords:list[tuple[int, int]], CHR:str=""):
+    def _edit_line(self, coords:list[tuple[int, int]], CHR:str="") -> tuple[bool, int]:
         self._erase_pre_view()
         self: gen_obj | gen_wns
 
@@ -81,20 +81,30 @@ class gen_wns:
         self._create_pre_view()
 
 
-    def _create_square(self, coord:list[int, int], invert:bool=False):
+    def _create_square(self, coord:list[int, int], single:Literal["last", "start"]="none") -> None | str:
         self:gen_obj | gen_wns
 
         for x in range(coord[1]):
-            if x == 0 or x == (coord[1]-1):
+            if x == 0 or x == (coord[1]-1) or single == "last":
                 temp_line = f"{self.character}" * coord[0]
+                if single == "last":
+                    break
             else:
                 temp_line = f"{self.character}"+ " " * (coord[0] - 2) + f"{self.character}"
-        
+                if single == "start":
+                    break
+                
             if DEV[0]:
                 self.square.append(temp_line + f"     line {self.abs}: {x}")
             else:
                 self.square.append(temp_line)
+
         self._create_pre_view()
+
+        if single == "last":
+            return temp_line
+        elif single == "start":
+            return temp_line
 
     def _erase_square(self):
         self.square = []
@@ -105,13 +115,13 @@ class gen_ui:
     def create_text(self,
                     text:str,
                     sector:Literal["CENTER", "UPPER", "LOWER", "CUSTOM"],
-                    line:tuple[int, int],
+                    line:tuple[int, int]=...,
                     chk=True):
         
         def __recursive(ver:list[bool, int]):
             temp = []
             new = ""
-            for chr_per in range(len(text)-ver[1], len(text)):
+            for chr_per in range(len(text)-ver[1]-2, len(text)):
                 temp.append(text[chr_per])
 
             for chr_all in range(len(temp)):
@@ -141,5 +151,9 @@ class gen_ui:
         elif sector == "LOWER":
             if chk:
                 line = (1, self.vec[1]-2)
+            ver = self._edit_line([(line)], text)
+            if ver[0]:
+                self.square[-2] = self._create_square(self.vec, "start")
+                __recursive(ver)
             
         self._create_pre_view()

@@ -1,2 +1,4 @@
-from .models.obj.gen_obj import *
-from .models.obj.gen_wns import *
+from .models.page import *
+from .models.button import *
+
+from .models.internal.tool.const import DEV
