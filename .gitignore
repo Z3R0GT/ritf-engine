@@ -164,3 +164,4 @@ cython_debug/
 /pro/ritf
 /pro/tesr-1.0-dists
 *.rar
+/output
