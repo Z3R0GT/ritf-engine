@@ -7,12 +7,12 @@ logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
 
 def _chk_window(x=..., y=..., _specific=False):
         if not _specific:  
-            if DEFAULT[1][2] or DEFAULT[1][1]: # IS IN MENU  
-                x_cols = CUR[0][0].vec[0]+5
-                y_lins = CUR[0][0].vec[1]+6
-            else: #IS PLAYING MAP
-                x_cols = CUR[1][DEFAULT[1][4]].transform[0]+5
-                y_lins = CUR[1][DEFAULT[1][4]].transform[1]+6
+           # if DEFAULT[1][2] or DEFAULT[1][1]: # IS IN MENU  
+            x_cols = CUR[0][0].vec[0]+5
+            y_lins = CUR[0][0].vec[1]+6
+           # else: #IS PLAYING MAP
+           #     x_cols = CUR[1][DEFAULT[1][4]].transform[0]+5
+           #     y_lins = CUR[1][DEFAULT[1][4]].transform[1]+6
         else:
             x_cols = x+30
             y_lins = y+20
@@ -26,7 +26,7 @@ def erase_screen():
 def print_debug(*msg):
     logging.debug(msg)
 
-def _insert(old_, new_, from_=..., to_=..., specific_=...) -> str:
+def _insert(old_:str|list, new_:str|list, from_:int=..., to_:int=..., specific_:int=...) -> str:
     temp = []
     new = ""
     cont = 0
@@ -51,9 +51,6 @@ def _insert(old_, new_, from_=..., to_=..., specific_=...) -> str:
          new += temp[i]
 
     return new
-
-
-#LO DEJO POR XD
 
 import ctypes
 

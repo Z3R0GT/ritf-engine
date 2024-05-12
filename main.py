@@ -1,5 +1,5 @@
 #from engine import *
-from dev.engine import *
+from engine import *
 
 DEV[0] = False
 
