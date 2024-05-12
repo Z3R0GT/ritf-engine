@@ -2,8 +2,10 @@ from typing_extensions import Literal
 
 from .internal.tool.debug import erase_screen, _chk_window
 
-from .obj.gen_obj import gen_obj, gen_btn, CUR, DEFAULT, N_NUM, N_ABS
+from .obj.gen_obj import gen_obj, gen_btn, CUR, N_NUM, N_ABS
 from .obj.gen_wns import gen_wns
+
+from webbrowser import open
 
 def __main_return__(ID:int=0):
     erase_screen()
@@ -11,16 +13,16 @@ def __main_return__(ID:int=0):
 
     CUR[0][ID].start_cast()
 
-def __save__():
+def __save__(nm):
     ...
 
-def __load__():
+def __load__(nm):
     ...
 
-def __continue__():
+def __continue__(nm):
     ...
 
-def __queque__():
+def __queque__(nm):
     import sys
     sys.exit()
 
@@ -35,6 +37,7 @@ class Button(gen_obj, gen_wns, gen_btn):
                                  "LOAD",
                                  "SAVE",
                                  "BACK",
+                                 "LINK",
                                  "CUSTOM"]=...) -> None:
         N_NUM[1] += 1
         super().__init__(X=X, 
@@ -45,6 +48,7 @@ class Button(gen_obj, gen_wns, gen_btn):
                          NMO=NMO)
 
         self.select = DEFAULT
+        self.in_id:int = 0
 
         match self.select:
             case "SAVE":
@@ -63,6 +67,11 @@ class Button(gen_obj, gen_wns, gen_btn):
                 if TEXT == "":
                     self.character = "Regresar"
                 self.action = __main_return__
+            case "LINK":
+                if TEXT == "":
+                    self.character = "Abrir URL"
+                self.action = self.__link__
+                self.url = ACTION
             case "CUSTOM":
                 self.action = ACTION    
             case _:
@@ -72,3 +81,7 @@ class Button(gen_obj, gen_wns, gen_btn):
 
     def caster(self, msg:tuple[str]=("")):
         self.cast = msg
+
+    def __link__(self, nm):
+        open(self.url)
+        __main_return__()

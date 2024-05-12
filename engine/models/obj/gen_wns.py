@@ -94,10 +94,11 @@ class gen_wns:
                 if single == "start":
                     break
                 
-            if DEV[0]:
-                self.square.append(temp_line + f"     line {self.abs}: {x}")
-            else:
-                self.square.append(temp_line)
+            if single == "none":
+                if DEV[0]:
+                    self.square.append(temp_line + f"     line {self.abs}: {x}")
+                else:
+                    self.square.append(temp_line)
 
         self._create_pre_view()
 

@@ -41,10 +41,10 @@ class gen_obj:
             "chr":  self.character,
         }
 
-    def _set_meta(self, nme, **kwr):
+    def _set_meta(self, nme, kwr):
         self.meta[nme] = kwr
 
-    def _edit_meta(self, *, nme:str|int, tpy:str|int, **kwr):
+    def _edit_meta(self, nme:str|int, tpy:str|int=..., kwr=...):
         if type(tpy) != type(...):
             if type(kwr) == type([]):
                 self.meta[nme][tpy].append(kwr)

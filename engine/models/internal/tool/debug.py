@@ -1,7 +1,7 @@
 import logging, sys
 from os import system
 
-from .const import CUR, DEFAULT
+from .const import CUR
 
 logging.basicConfig(stream=sys.stderr, level=logging.DEBUG)
 
