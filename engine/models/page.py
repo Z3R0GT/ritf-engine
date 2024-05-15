@@ -1,4 +1,5 @@
 from time import sleep
+from typing_extensions import Literal
 from .internal.tool.debug import _chk_window, print_debug, _insert
 
 from .obj.gen_obj import gen_obj, N_ABS, N_NUM, CUR, DEV
@@ -33,22 +34,25 @@ class Page(gen_obj, gen_wns, gen_ui):
         if DEV[0]:
             self._create_line_num()
 
-    def add_btn(self, btn:Button):
-        btn.in_id = len(self.btns)
-        self.btns.append(btn)
+    def add_btn(self, btn:Button, complete:bool=True):
+        if complete:
+            btn.in_id = len(self.btns)
+            self.btns.append(btn)
 
         self.create_text(f"{btn.in_id+1}) "+btn.character, "CUSTOM", tuple(btn.vec))
 
-    def del_btn(self, ID:int):
-        self.create_text(" "*len(str(self.btns[ID-1].in_id))+len(self.btns[ID-1].character)+2, "CUSTOM", tuple(self.btns[ID-1].vec))
+    def del_btn(self, ID:int, complete:bool=True)->None:
+        if complete:
+            self.btns[ID-1] = f"del_obj_{self.btns[ID-1].name}"
 
-        self.btns[ID-1] = f"del_obj_{self.btns[ID-1].name}"
+        self.create_text(" "*(self.btns[ID-1].in_id+len(self.btns[ID-1].character)+3), "CUSTOM", tuple(self.btns[ID-1].vec))
         
     def add_panel(self, 
                   X:int, 
                   Y:int, 
                   SZ_X:int,
                   SZ_Y:int,
+                  bug:Literal[0,1],
                   CHR:str="#"):
         
         if X >= self.vec[0] or Y <= self.vec[1] or X <= 0 or Y <= 0:
@@ -56,11 +60,11 @@ class Page(gen_obj, gen_wns, gen_ui):
                 self.panel.append({"vec":[X, Y],"transform":[SZ_X, SZ_Y],"chr":CHR})
                 self._edit_meta(nme="panel", kwr=self.panel)
 
-                for y in range(SZ_Y):
-                    if y == 0 or y == Y:
-                        line = self._create_square([SZ_X, SZ_Y], "last")
-                    else:
+                for y in range(SZ_Y+1):
+                    if not(y == 0 or y == SZ_Y-bug):
                         line = self._create_square([SZ_X, SZ_Y], "start")
+                    else:
+                        line = self._create_square([SZ_X, SZ_Y], "last")
 
                     self.square[Y+y] = _insert(self.square[Y+y], line, X, len(line)+X)
             else:
@@ -83,7 +87,7 @@ class Page(gen_obj, gen_wns, gen_ui):
         try:
             _in = int(input("Enter button's number\n>   "))-1
             self.btns[_in]._input_(self.btns[_in].cast)
-        except ValueError:
+        except (ValueError, IndexError):
             print_debug("U MUST ENTER SOME BUTTON'S NUMBER, TRY AGAIN")
             sleep(3)
             self.start_cast()

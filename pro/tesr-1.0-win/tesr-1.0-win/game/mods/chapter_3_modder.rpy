@@ -25,8 +25,8 @@ label chapter_3_mod:
     
     
     
-    call meow
     
+    call meow
     
     call rick_troll
     

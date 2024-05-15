@@ -42,13 +42,8 @@ def start_test():
         
 
 def _path():
-    import tkinter as tk
     from tkinter import filedialog
-
-    root = tk.Tk()
-    root.withdraw()
-
-    return filedialog.askdirectory()        
+    return filedialog.askdirectory()    
 
 def _paths() -> str:
     file = open(f"{getcwd()}/path.json", "w")

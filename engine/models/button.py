@@ -7,22 +7,25 @@ from .obj.gen_wns import gen_wns
 
 from webbrowser import open
 
-def __main_return__(ID:int=0):
+def __main_return__(*nm):
     erase_screen()
     _chk_window()
 
-    CUR[0][ID].start_cast()
+    if len(nm)==1:
+        CUR[0][nm[0]].start_cast()
+    else:
+        CUR[0][nm[1]].start_cast()
 
-def __save__(nm):
+def __save__(*nm):
     ...
 
-def __load__(nm):
+def __load__(*nm):
     ...
 
-def __continue__(nm):
+def __continue__(*nm):
     ...
 
-def __queque__(nm):
+def __queque__(*nm):
     import sys
     sys.exit()
 
@@ -78,10 +81,12 @@ class Button(gen_obj, gen_wns, gen_btn):
                 self.action = ACTION
         
         self.cast = ("")
+        self.var = 0
 
-    def caster(self, msg:tuple[str]=("")):
+    def caster(self, msg:tuple[str]=(""), *var):
         self.cast = msg
+        self.var = var
 
-    def __link__(self, nm):
+    def __link__(self, *nm):
         open(self.url)
         __main_return__()

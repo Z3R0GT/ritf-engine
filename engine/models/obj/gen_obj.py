@@ -68,11 +68,15 @@ class gen_btn:
     def _input_(self, msg:tuple[str]):
         self._in = []
 
-        for text in msg:
-            if not text == "":
-                self._in.append(input(f"{text}\n>  "))
+        if not len(msg) == 0:
+            if not msg[0] == "":
+                if not type(msg) == type(""):
+                    for text in msg:
+                        self._in.append(input(f"{text}\n>  "))
+                else:
+                    self._in.append(input(f"{msg}\n>  "))
 
-        self.action(self._in)
+        self.action(self._in, self.var)
 
     def execute(self, arg):
         self.action(arg)
