@@ -75,7 +75,7 @@ class gen_btn:
                         self._in.append(input(f"{text}\n>  "))
                 else:
                     self._in.append(input(f"{msg}\n>  "))
-
+                    
         self.action(self._in, self.var)
 
     def execute(self, arg):

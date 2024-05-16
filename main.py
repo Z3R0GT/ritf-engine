@@ -1,9 +1,9 @@
 from engine import *
+from engine.models.internal.tool.debug import _chk_window, print_debug
 from engine.models.redirection import *
 from time import sleep
 
-
-ver : str = "a1.1.4.0"
+ver : str = "a1.1.4.1"
 ver_main : str = "1.0"
 
 size = [100, 15]
@@ -80,7 +80,7 @@ def _procces_lst_info(*nm):
         ver_ = "meta not found"
         lnk = web
 
-    menu.btns[4].var = (info, lst_pro, _in_)
+    menu.btns[4].var = (info, lst_pro, _in_-1)
 
     menu.create_text(nme, "CUSTOM", (62, 12))
     menu.create_text(f"Autor: {aut}", "CUSTOM", (62, 13))
@@ -169,85 +169,91 @@ def proyect_new(*nm):
     menu.start_cast()
 
 def proyect_list(*nm):
-    menu = Page(X=size[0], Y=size[1]+4, CHR="#")
-
-    menu.create_text("Proyect list menu", "CUSTOM", (3, 3))
-    menu.create_text(f"version {ver}", "CUSTOM", (menu.vec[0]-len(ver)-12, 1))
-
-    menu.add_panel(0, 4, 27, 12, 0)
-    menu.add_panel(60, 3, 32, 6, 0)
-
     info = check_proyects()
     lst_pro = [i for i in info]
+    if not len(lst_pro) == 0:
+        menu = Page(X=size[0], Y=size[1]+4, CHR="#")
 
-    menu.add_panel(60, 11, 32, 5, 0)
-    if len(lst_pro[0]) >= 32:
-        nme = f"Mod's name: {lst_pro[0][:24]}..."
-    else:
-        nme = f"Mod's name: {lst_pro[0]}"
+        menu.create_text("Proyect list menu", "CUSTOM", (3, 3))
+        menu.create_text(f"version {ver}", "CUSTOM", (menu.vec[0]-len(ver)-12, 1))
 
-    ref = info[lst_pro[0]]
-    if not ref == "Error!":
-        inf = []
-        for _in in range(2):
-            if len(ref[_in]) >= 25:
-                inf.append(ref[_in][:20]+"...")
-            else:
-                inf.append(ref[_in])
+        menu.add_panel(0, 4, 27, 12, 0)
+        menu.add_panel(60, 3, 32, 6, 0)
 
-        aut = inf[0]
-        ver_ = inf[1]
-        lnk = ref[2]
-    else:
-        aut = "meta not found"
-        ver_ = "meta not found"
-        lnk = web
 
-    menu.create_text(nme, "CUSTOM", (62, 12))
-    menu.create_text(f"Autor: {aut}", "CUSTOM", (62, 13))
-    menu.create_text(f"Version: {ver_}", "CUSTOM", (62, 14))
-    
-    #NEED FIX
-    c=-1
-    for nme in range(10):
-        c+=1
-        if c == len(lst_pro)+1:
-            break
-
-        if len(lst_pro[nme]) < menu.meta["panel"][1]["transform"][0]-2:
-            menu.create_text(lst_pro[nme], "CUSTOM", (1,nme+5)) 
+        menu.add_panel(60, 11, 32, 5, 0)
+        if len(lst_pro[0]) >= 32:
+            nme = f"Mod's name: {lst_pro[0][:24]}..."
         else:
-            menu.create_text(lst_pro[nme][:20]+"...", "CUSTOM", (1,nme+5))
+            nme = f"Mod's name: {lst_pro[0]}"
 
-    btn1 = Button(X=1, Y=17, TEXT="Return", ACTION=_procces_lst_refresh, DEFAULT="CUSTOM") 
+        ref = info[lst_pro[0]]
+        if not ref == "Error!":
+            inf = []
+            for _in in range(2):
+                if len(ref[_in]) >= 25:
+                    inf.append(ref[_in][:20]+"...")
+                else:
+                    inf.append(ref[_in])
 
-    btn2 = Button(X=15, Y=17, TEXT="Next", ACTION=_procces_lst_refresh, DEFAULT="CUSTOM")
-    
-    nro_pg = 0
+            aut = inf[0]
+            ver_ = inf[1]
+            lnk = ref[2]
+        else:
+            aut = "meta not found"
+            ver_ = "meta not found"
+            lnk = web
 
-    btn1.caster((""), lst_pro, len(lst_pro), menu, nro_pg)
-    menu.add_btn(btn1)
-    menu.del_btn(1, False)
+        menu.create_text(nme, "CUSTOM", (62, 12))
+        menu.create_text(f"Autor: {aut}", "CUSTOM", (62, 13))
+        menu.create_text(f"Version: {ver_}", "CUSTOM", (62, 14))
+        
+        #NEED FIX
+        c=-1
+        for nme in range(10):
+            c+=1
+            if c == len(lst_pro):
+                break
 
-    if len(lst_pro) >= 10:
-        btn2.caster((""), lst_pro, len(lst_pro)-10, menu, nro_pg)
-        menu.add_btn(btn2)
+            if len(lst_pro[nme]) < menu.meta["panel"][1]["transform"][0]-2:
+                menu.create_text(lst_pro[nme], "CUSTOM", (1,nme+5)) 
+            else:
+                menu.create_text(lst_pro[nme][:20]+"...", "CUSTOM", (1,nme+5))
 
-    btn = Button(X=62, Y=15, TEXT="Autor site/download", ACTION=lnk, DEFAULT="LINK")
-    menu.add_btn(btn)
+        btn1 = Button(X=1, Y=17, TEXT="Return", ACTION=_procces_lst_refresh, DEFAULT="CUSTOM") 
 
-    btn = Button(X=31, Y=17, TEXT="Archive to load",ACTION=_procces_lst_info, DEFAULT="CUSTOM")
-    btn.caster(("Enter proyect's number"), menu, nro_pg, info)
-    menu.add_btn(btn)
+        btn2 = Button(X=15, Y=17, TEXT="Next", ACTION=_procces_lst_refresh, DEFAULT="CUSTOM")
+        
+        nro_pg = 0
 
-    btn = Button(X=70, Y=17, TEXT="Load", ACTION=proyect_lst_pro, DEFAULT="CUSTOM")
-    btn.caster((""), info, lst_pro, 0)
-    menu.add_btn(btn)
+        btn1.caster((""), lst_pro, len(lst_pro), menu, nro_pg)
+        menu.add_btn(btn1)
+        menu.del_btn(1, False)
 
-    btn = Button(X=84, Y=17, TEXT="Back", DEFAULT="BACK")
-    menu.add_btn(btn)
+        if len(lst_pro) >= 10:
+            btn2.caster((""), lst_pro, len(lst_pro)-10, menu, nro_pg)
+            menu.add_btn(btn2)
 
-    menu.start_cast()
+        btn = Button(X=62, Y=15, TEXT="Autor site/download", ACTION=lnk, DEFAULT="LINK")
+        menu.add_btn(btn)
+
+        btn = Button(X=31, Y=17, TEXT="Archive to load",ACTION=_procces_lst_info, DEFAULT="CUSTOM")
+        btn.caster(("Enter proyect's number"), menu, nro_pg, info)
+        menu.add_btn(btn)
+
+        btn = Button(X=70, Y=17, TEXT="Load", ACTION=proyect_lst_pro, DEFAULT="CUSTOM")
+        btn.caster((""), info, lst_pro, 0)
+        menu.add_btn(btn)
+
+        btn = Button(X=84, Y=17, TEXT="Back", DEFAULT="BACK")
+        menu.add_btn(btn)
+
+        menu.start_cast()
+    else:
+        _chk_window()
+        print_debug(F"{ver}; DON'T PROYECT FOUND YET; {ver}")
+        sleep(5)
+        CUR[0][0].start_cast()
 
 page = Page(X=size[0], Y=size[1], CHR="#")
 page.create_text("Roses In The Flame's mod engine", "CUSTOM", (3, 3))
@@ -275,4 +281,4 @@ page.add_panel(64, 7, 16, 7, 0)
 btn = Button(X=65, Y=8, TEXT="Open URL", ACTION=web,DEFAULT="LINK")
 page.add_btn(btn)
 
-page.start_cast()
+#page.start_cast()

@@ -11,7 +11,7 @@ class Page(gen_obj, gen_wns, gen_ui):
     def __init__(self, *, 
                  X: int, 
                  Y: int, 
-                 CHR: str,
+                 CHR: str = "#",
                  NMO: str = "") -> None:
         N_NUM[0]+=1
 
@@ -53,32 +53,56 @@ class Page(gen_obj, gen_wns, gen_ui):
                   SZ_X:int,
                   SZ_Y:int,
                   bug:Literal[0,1],
-                  CHR:str="#"):
+                  CHR:str="#",
+                  exits:bool = False):
         
         if X >= self.vec[0] or Y <= self.vec[1] or X <= 0 or Y <= 0:
             if SZ_X >= self.vec[0] or SZ_Y <= self.vec[1]:
-                self.panel.append({"vec":[X, Y],"transform":[SZ_X, SZ_Y],"chr":CHR})
+                
+                if not exits:
+                    self.panel.append({"vec":[X, Y],"transform":[SZ_X, SZ_Y],"chr":CHR, "bug":bug})
+                
                 self._edit_meta(nme="panel", kwr=self.panel)
 
                 for y in range(SZ_Y+1):
                     if not(y == 0 or y == SZ_Y-bug):
-                        line = self._create_square([SZ_X, SZ_Y], "start")
+                        line = self._create_square([SZ_X, SZ_Y], "start", CHR)
                     else:
-                        line = self._create_square([SZ_X, SZ_Y], "last")
 
+                        line = self._create_square([SZ_X, SZ_Y], "last", CHR)
+                        
                     self.square[Y+y] = _insert(self.square[Y+y], line, X, len(line)+X)
+                    self._create_pre_view()
             else:
                 print("Coordenadas insuficientes")
         else:
             print("Coordenadas incorrectas")
 
+    def del_panel(self, ID:int, undo:bool=False):
+        panel = self.panel[ID]
+        if not undo:
+            self.add_panel(panel["vec"][0], 
+                        panel["vec"][1], 
+                        panel["transform"][0], 
+                        panel["transform"][1],
+                        panel["bug"],
+                        " ")
+        else:
+            for info in range(len(self.panel)):
+                if info != ID and \
+                    self.panel[info]["chr"] == " " and \
+                    self.panel[info]["vec"] == self.panel[ID]["vec"] and \
+                    self.panel[info]["transform"] == self.panel[ID]["transform"]:
 
+                    del self.panel[info]
+                    self.add_panel(panel["vec"][0], 
+                                panel["vec"][1], 
+                                panel["transform"][0], 
+                                panel["transform"][1],
+                                panel["bug"],
+                                panel["chr"],
+                                undo)
 
-    def del_panel(self, ID:int):
-        
-        
-        self._edit_meta(nme="panel", kwr=self.panel)
-        ...
 
     def start_cast(self):
         _chk_window()
@@ -87,7 +111,8 @@ class Page(gen_obj, gen_wns, gen_ui):
         try:
             _in = int(input("Enter button's number\n>   "))-1
             self.btns[_in]._input_(self.btns[_in].cast)
-        except (ValueError, IndexError):
+        except ValueError:# IndexError) as e:
+#            print_debug("error type", e)
             print_debug("U MUST ENTER SOME BUTTON'S NUMBER, TRY AGAIN")
             sleep(3)
             self.start_cast()

@@ -2,7 +2,9 @@ from os import chdir, path, listdir, mkdir, getcwd
 from time import sleep
 
 from .internal.tool.debug import _chk_window, print_debug
+
 from .button import Button
+from .page import Page
 
 root = getcwd()
 web ="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
@@ -28,8 +30,8 @@ def check_proyects() -> dict:
 
 def proyect_new_pro(*mn):
     nme:str; vers:str; cre:str; ch:list; ctn:str
-    
-    nme, vers, cre, ch, ctn = mn[1]
+    print(mn)
+    nme, vers, cre, ch, ctn = mn[1][0]
 
     if nme == "":
         from random import randint
@@ -46,6 +48,11 @@ def proyect_new_pro(*mn):
         chdir(root+f"/proyects/{nme}")
 
         open(getcwd()+"/base.info", "w").close()
+        dr = open(getcwd()+"/base.info", "a")
+        for inf in ch:
+            dr.write(f"chapter_{inf}.rpy,")
+        dr.close()
+        open(getcwd()+"/main.rpy", "w").close()
 
         meta = open(getcwd()+"/meta.info", "w")
         meta.write(f"{cre};{vers};{ctn}")
@@ -55,14 +62,22 @@ def proyect_new_pro(*mn):
 
 
 def proyect_lst_pro(*nm):
-    nme = nm[1][1][nm[1][2]]
+    num = nm[1][2]
+    nme = nm[1][1][num]
     info = nm[1][0][nme]
 
     _procces([nme, info[1], info[0], True, info[2]])
 
 def _procces(info):
-    _chk_window()
+    global size
+    nme:str;ver:str;aut:str;ch:list|bool;ctn:str
+
+    nme, ver, aut, ch, ctn = info
+    menu = Page(X=size[0], Y=size[1], CHR="#")
+
+    chdir(getcwd()+f"/{nme}")
     print(info)
+    print(getcwd())
     print_debug("COMING SOON...")
     sleep(5)
 

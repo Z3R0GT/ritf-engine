@@ -81,11 +81,17 @@ class gen_wns:
         self._create_pre_view()
 
 
-    def _create_square(self, coord:list[int, int], single:Literal["last", "start"]="none") -> None | str:
+    def _create_square(self, coord:list[int, int], single:Literal["last", "start"]="none", chr:str="") -> None | str:
         self:gen_obj | gen_wns
 
-        for x in range(coord[1]):
-            if x == 0 or x == (coord[1]-1) or single == "last":
+        tmp = self.character
+        if not chr == "":
+            self.character = chr
+        else:
+            del tmp
+
+        for y in range(coord[1]):
+            if y == 0 or y == (coord[1]-1) or single == "last":
                 temp_line = f"{self.character}" * coord[0]
                 if single == "last":
                     break
@@ -96,11 +102,14 @@ class gen_wns:
                 
             if single == "none":
                 if DEV[0]:
-                    self.square.append(temp_line + f"     line {self.abs}: {x}")
+                    self.square.append(temp_line + f"     line {self.abs}: {y}")
                 else:
                     self.square.append(temp_line)
 
         self._create_pre_view()
+
+        if not chr == "":
+            self.character = tmp
 
         if single == "last":
             return temp_line

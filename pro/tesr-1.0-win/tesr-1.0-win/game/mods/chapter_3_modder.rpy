@@ -26,10 +26,10 @@ label chapter_3_mod:
     
     
     
-    call meow
     
     call rick_troll
     
+    call meow
     
     
     

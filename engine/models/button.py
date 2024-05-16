@@ -6,12 +6,14 @@ from .obj.gen_obj import gen_obj, gen_btn, CUR, N_NUM, N_ABS
 from .obj.gen_wns import gen_wns
 
 from webbrowser import open
-
+from time import sleep
 def __main_return__(*nm):
     erase_screen()
     _chk_window()
 
-    if len(nm)==1:
+    if len(nm)== 0:
+        CUR[0][0].start_cast()
+    elif len(nm) == 1:
         CUR[0][nm[0]].start_cast()
     else:
         CUR[0][nm[1]].start_cast()
@@ -24,6 +26,10 @@ def __load__(*nm):
 
 def __continue__(*nm):
     ...
+
+def __link__(*nm):
+    open(nm[1])
+    __main_return__()
 
 def __queque__(*nm):
     import sys
@@ -53,6 +59,9 @@ class Button(gen_obj, gen_wns, gen_btn):
         self.select = DEFAULT
         self.in_id:int = 0
 
+        self.cast = ("")
+        self.var = 0
+
         match self.select:
             case "SAVE":
                 if TEXT == "":
@@ -73,20 +82,14 @@ class Button(gen_obj, gen_wns, gen_btn):
             case "LINK":
                 if TEXT == "":
                     self.character = "Abrir URL"
-                self.action = self.__link__
-                self.url = ACTION
+                self.action = __link__
+
+                self.var = ACTION
             case "CUSTOM":
                 self.action = ACTION    
             case _:
                 self.action = ACTION
-        
-        self.cast = ("")
-        self.var = 0
 
     def caster(self, msg:tuple[str]=(""), *var):
         self.cast = msg
         self.var = var
-
-    def __link__(self, *nm):
-        open(self.url)
-        __main_return__()
