@@ -1,13 +1,19 @@
 from os import chdir, path, listdir, mkdir, getcwd
 from time import sleep
 
-from .internal.tool.debug import _chk_window, print_debug
+"""
+from internal.tool.debug import _chk_window, print_debug
 
-from .button import Button
-from .page import Page
+from button import Button
+from page import Page
+"""
+from engine import *
+from engine.models.internal.tool.debug import _chk_window, print_debug
 
 root = getcwd()
 web ="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+
+size = [100, 15]
 
 def check_proyects() -> dict:
     global root
@@ -69,17 +75,27 @@ def proyect_lst_pro(*nm):
     _procces([nme, info[1], info[0], True, info[2]])
 
 def _procces(info):
-    global size
+    #DEV[0] = False
     nme:str;ver:str;aut:str;ch:list|bool;ctn:str
-
     nme, ver, aut, ch, ctn = info
+
+    chdir(root+f"/proyects/{nme}")
+    if ch == True:
+        _nm = open("base.info", "rt").read().split(",")
+        ch = []
+        for nm in _nm: 
+            if nm[:7] == "chapter":
+                ch.append(nm[8:].replace(".rpy", ""))
+        del _nm, nm
+    else:
+        ch = info[3]
+
     menu = Page(X=size[0], Y=size[1], CHR="#")
 
-    chdir(getcwd()+f"/{nme}")
-    print(info)
-    print(getcwd())
-    print_debug("COMING SOON...")
-    sleep(5)
+    lst_dir = list(filter(path.isdir, listdir()))
+    lst_arc = list(filter(path.isfile, listdir()))
 
-    btn = Button(X=1, Y=2, DEFAULT="BACK")
-    btn.execute(0)
+    menu.get_pre_view()
+
+_procces(["mc", "1.0", "me", True, "uwu.com"])
+

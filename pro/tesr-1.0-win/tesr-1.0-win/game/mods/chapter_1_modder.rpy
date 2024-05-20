@@ -49,9 +49,9 @@ label chapter_1_mod:
     call jouse_scene
     
     call chr_god
-    
     call no_choice
     call miau
+    
     
     
     

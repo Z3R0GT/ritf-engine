@@ -1,6 +1,6 @@
 from engine import *
 from engine.models.internal.tool.debug import _chk_window, print_debug
-from engine.models.redirection import *
+from redirection import *
 from time import sleep
 
 ver : str = "a1.1.4.1"
@@ -281,4 +281,4 @@ page.add_panel(64, 7, 16, 7, 0)
 btn = Button(X=65, Y=8, TEXT="Open URL", ACTION=web,DEFAULT="LINK")
 page.add_btn(btn)
 
-#page.start_cast()
+page.start_cast()
