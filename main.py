@@ -3,7 +3,7 @@ from engine.models.internal.tool.debug import _chk_window, print_debug
 from redirection import *
 from time import sleep
 
-ver : str = "a1.1.4.1"
+ver : str = "a1.1.4.4"
 ver_main : str = "1.0"
 
 size = [100, 15]
