@@ -1,5 +1,6 @@
 from os import chdir, path, listdir, mkdir, getcwd
 from time import sleep
+from tkinter import Menu
 
 from engine import *
 from engine.config.gen_arch import *
@@ -10,6 +11,7 @@ web ="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
 size = [100, 15]
 
+#procces functions
 def check_proyects() -> dict:
     global root
     
@@ -72,15 +74,50 @@ def proyect_lst_pro(*nm):
     _procces([nme, info[1], info[0], True, info[2]])
 
 
+#final functions
 
-_pre = ["Sy", "Ma", "Vn", "Mt", "Ar", "Er", "Op", "Ts"]
+def _save_all(lib:dict, 
+              nme_arch:str): #or compile
+    root = getcwd()
+
+    a = open(root+f"/{nme_arch}.rpy", "w")
+    a.write("")
+    a.close()
+
+    with open(root+f"/{nme_arch}.rpy", "a") as f:
+        for nme in lib["root"]:
+            
+            for ch in lib["root"][nme]["character"]:
+                for line in ch:
+                    f.write(line)
+            
+            for dia in lib["root"][nme]["dialog"]:
+                for line in dia:
+                    f.write(line)
+
+        f.close()
+
+_pre_acro = ["Sy", "Ma", "Vn", "Mt", "Ar", "Er", "Op", "Ts"]
+_pre_all  = ["Snowy", "Magma", "Vivian", "Margaret", "Asher", "Ember", "Opal", "Thomas"]
 _lb_all = []
 
+ver : str = "a1.1.4.4"
+
 #MENU
+#BUG -1: TEMPORALMENTE SE AGREGARA LA LINEA DE MANERA LITERAL
+#SOLUCIÓN -1: Calificar cada escena/cosa que ocurre en el juego con
+#base a que tan fuerte (se requiere una base de datos para hacerlo más facil)
+
+
+
+
+
+
 def _procces(info):
+    global ver
     #DEV[0] = False
-    nme:str;ver:str;aut:str;ch:list|bool;ctn:str
-    nme, ver, aut, ch, ctn = info
+    nme:str;ver_:str;aut:str;ch:list|bool;ctn:str
+    nme, ver_, aut, ch, ctn = info
 
     chdir(root+f"/proyects/{nme}")
     if ch == True:
@@ -92,14 +129,88 @@ def _procces(info):
         del _nm, nm
     else:
         ch = info[3]
-    menu = Page(X=size[0], Y=size[1], CHR="#")
+    menu = Page(X=size[0]+40, Y=size[1]+20, CHR="#")
+    
+    menu.create_text(f"version {ver}", "CUSTOM", (menu.vec[0]-len(ver)-12, 1))
 
     lst_dir = list(filter(path.isdir, listdir()))
     lst_arc = list(filter(path.isfile, listdir()))
 
-    print(f"U ACTUALLY ARE EDITING THE MOD: {nme} (wait few seconds)")
-    sleep(5)
+    menu.create_text("Current archive (<)", "CUSTOM", (4,1)) #CONVERTIR A BOTON
+    menu.create_text("Info mod/archive", "CUSTOM", (30,1)) #CONVERTIR A BOTON
+    
+    menu.create_text("Line to insert (temp)", "CUSTOM",(58,1))
+    menu.create_text("len char/ima (<)", "CUSTOM",(60,6))
 
+    menu.create_text("Character created", "CUSTOM", (83,1))
+
+
+    #arch
+    menu.add_panel(1,  2, 22, 12, 0)
+    #inf_mod
+    menu.add_panel(28, 2, 28, 12, 0)
+    #char
+    menu.add_panel(83, 2, 22,12, 0)
+    
+    ##stats
+    #line
+    menu.add_panel(62, 2, 10, 3, 0)
+    #ln_ch
+    menu.add_panel(62,7, 10, 3, 0)
+    #ln_ima
+    menu.add_panel(62,11,10, 3, 0)
+
+    #lst_cur_lab
+    menu.add_panel(2,16,70,16,0)
+    #lst_cur_var_info
+    menu.add_panel(80,16,58,15,0)
+
+
+    #JUST FOR REFERENCE
+    menu.create_text("LLISTS", "CUSTOM", (4,3))
+    menu.create_text("ARCHIVE", "CUSTOM", (4,4))
+    
+    
+    menu.create_text("NAME MOD", "CUSTOM", (31,3))
+    menu.create_text("VERSION MOD", "CUSTOM", (31, 4))
+    menu.create_text("LABEL WORKING ON ARCHIVE", (31,5))
+
+
+    menu.create_text("NUM", "CUSTOM", (65,3))
+    menu.create_text("NUM", "CUSTOM", (65,8))
+    menu.create_text("NUM", "CUSTOM", (65,12))
+
+    menu.create_text("CHAR", "CUSTOM", (84,3))
+
+    menu.create_text("ID   NAME  PJs-IN   addons-dialog", "CUSTOM", (3, 17))
+
+    menu.create_text("BTN", "CUSTOM", (3,15))
+    menu.create_text("BTN", "CUSTOM",(9,15))
+
+    menu.create_text("BTN", "CUSTOM", (30,15))
+    menu.create_text("BTN", "CUSTOM", (38, 15))
+
+    menu.create_text("BTN", "CUSTOM", (85,15))
+    menu.create_text("BTN", "CUSTOM", (90,15))
+
+    menu.create_text("BTN", "CUSTOM", (4, 33))
+    menu.create_text("BTN", "CUSTOM", (20,33))
+    menu.create_text("BTN_SAVE", "CUSTOM", (127,33))
+
+    menu.create_text("CUR_INFO", "CUSTOM", (82,17))
+
+    menu.create_text("CREATED BY:Z3R0_GT V1.0 INFERNO", "CUSTOM", (106, 3))
+    menu.create_text("A special thanks to Cringle,", "CUSTOM", (106, 5))
+    menu.create_text("ScottTheFox, ArchangelCGA and", "CUSTOM", (106, 6))
+    menu.create_text("ScoStudio for this ", "CUSTOM", (106, 7))
+    menu.create_text("opportunity and help me a lot", "CUSTOM", (106, 8))
+
+
+    menu.get_pre_view()
+
+    #sleep(10)
+
+"""
     #TEST
     start_()
 
@@ -139,10 +250,10 @@ def _procces(info):
                 case 2:
                     if input("Do you want to use pre-define characters? (y/n): ") in ["y", "Y", "yes"]:
                         c = -1
-                        for nme in _pre:
+                        for nme in _pre_all:
                             c+=1
                             print("NAME: ", nme, "ID: ", c)
-                        lab.say(_pre[int(input("What's the ID (number)?: >"))], 
+                        lab.say(_pre_acro[int(input("What's the ID (number)?: >"))], 
                                         True, 
                                         input("What do u want that this character say?: \n>"))
                     elif input("is your character still exits? (y/n): >") in ["y", "Y", "yes"]:    
@@ -184,11 +295,14 @@ def _procces(info):
                     a["root"][data.nme] = data.meta
                 
                 dump(a, f, indent=1)
-                print(a)
 
             print("TYSM for use this test, all end here (wait few seconds)")
             sleep(5)
             break
+    
+    _save_all(a, "test")
+    #btn = Button(X=1, Y=2, DEFAULT="BACK")
+   # btn.execute(0)
+"""
 
-    btn = Button(X=1, Y=2, DEFAULT="BACK")
-    btn.execute(0)
+_procces(["mc", "1.0", "me", True, web])
