@@ -6,20 +6,20 @@ from engine import *
 from engine.config.gen_arch import *
 from engine.models.internal.tool.debug import _chk_window, print_debug
 
-root = getcwd()
+root_global = getcwd()
 web ="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
 size = [100, 15]
 
 #procces functions
 def check_proyects() -> dict:
-    global root
+    global root_global
     
     try:
-        chdir(root+"/proyects")
+        chdir(root_global+"/proyects")
     except:
-        mkdir(root+"/proyects")
-        chdir(root+"/proyects")
+        mkdir(root_global+"/proyects")
+        chdir(root_global+"/proyects")
 
     info={}
     for nme in list(filter(path.isdir, listdir())):
@@ -33,7 +33,6 @@ def check_proyects() -> dict:
 
 def proyect_new_pro(*mn):
     nme:str; vers:str; cre:str; ch:list; ctn:str
-    print(mn)
     nme, vers, cre, ch, ctn = mn[1][0]
 
     if nme == "":
@@ -47,8 +46,8 @@ def proyect_new_pro(*mn):
         ctn = web
 
     if not check_proyects().__contains__(nme):
-        mkdir(root+f"/proyects/{nme}")
-        chdir(root+f"/proyects/{nme}")
+        mkdir(root_global+f"/proyects/{nme}")
+        chdir(root_global+f"/proyects/{nme}")
 
         open(getcwd()+"/base.info", "w").close()
         dr = open(getcwd()+"/base.info", "a")
@@ -76,9 +75,9 @@ def proyect_lst_pro(*nm):
 
 #final functions
 
-def _save_all(lib:dict, 
-              nme_arch:str): #or compile
-    root = getcwd()
+def _save_all(*n): #or compile
+    root:str;lib:dict;nme_arch:str
+    root, lib, nme_arch = n
 
     a = open(root+f"/{nme_arch}.rpy", "w")
     a.write("")
@@ -97,6 +96,79 @@ def _save_all(lib:dict,
 
         f.close()
 
+def __archive_list(nm):
+    menu:Page;info:dict;is_fow:bool
+    menu, info, is_fow, rn = nm[1]
+    
+    if is_fow:
+        rn += 10
+        num = rn-9
+    elif rn <= 10:
+        rn = 10
+        num = 9
+    else:
+        rn -= 10
+        num = rn-9
+
+    #eraser
+    for nme in range(10):
+        menu.create_text(" "*(menu.meta["panel"][1]["transform"][0]-2), "CUSTOM", (2, nme+3))
+    
+    chk = False
+    #add dir case
+    for in_ in range(rn):
+        nme = in_ + info["len"][0] - info["nro"][1]
+        if nme >= info["len"][0] or info["len"][0] == 0:
+            info["len"][0] = 0
+            chk = True
+            break
+
+        if not info["lst"][0][nme] == ".config":
+            if len(info["lst"][0][nme]) < menu.meta["panel"][1]["transform"][0]-2:
+                menu.create_text(info["lst"][0][nme], "CUSTOM", (4, in_+3))
+            else:
+                menu.create_text(info["lst"][0][nme][:19]+"...", "CUSTOM", (4, in_+3))
+        else:
+            info["not"]["dir"].append(in_)
+
+        if in_ == num:
+            if in_ - info["len"][0] <= 0:
+                info["len"][0] -= in_ + len(info["not"]["dir"])
+                info["nro"][1] += 1
+                menu.add_btn(menu.btns[0], False)
+            else:
+                info["len"][0] = 0
+                menu.del_btn(1, False)
+
+    #add arch case
+    if chk:
+        pre = in_
+        for in_ in range(rn):
+            nme = in_ + info["len"][1] - info["nro"][2] + pre
+            if nme >= info["len"][1] or info["len"][1] == 0:
+                info["len"][1] = 0
+                break
+
+            if not (info["lst"][1][nme] == "base.info" or info["lst"][1][nme] == "meta.info"):
+                if len(info["lst"][1][nme]) < menu.meta["panel"][1]["transform"][0]-2:
+                    menu.create_text(info["lst"][1][nme], "CUSTOM", (3, in_+3+pre))
+                else:
+                    menu.create_text(info["lst"][1][nme][:19]+"...", "CUSTOM", (3, in_+3+pre))
+            else:
+                info["not"]["arc"].append(in_)
+
+            if in_ == num:
+                if in_ - info["len"][1] <= 0:
+                    info["len"][1] -= in_ + len(info["not"]["arc"])
+                    info["nro"][2] += 1
+                    menu.add_btn(menu.btns[0], False)
+                else:
+                    info["len"][1] = 0
+                    menu.del_btn(1, False)
+
+    menu.btns[0].get_meta()
+
+
 _pre_acro = ["Sy", "Ma", "Vn", "Mt", "Ar", "Er", "Op", "Ts"]
 _pre_all  = ["Snowy", "Magma", "Vivian", "Margaret", "Asher", "Ember", "Opal", "Thomas"]
 _lb_all = []
@@ -108,18 +180,39 @@ ver : str = "a1.1.4.4"
 #SOLUCIÓN -1: Calificar cada escena/cosa que ocurre en el juego con
 #base a que tan fuerte (se requiere una base de datos para hacerlo más facil)
 
+def _refresh_arch(*nm):
+    __archive_list(nm)
+
+    menu:Page;info:dict;is_fow:bool
+    menu, info, is_fow = nm[1]
+
+    menu.get_pre_view()
 
 
 
+def _refresh_char(*n):
+    
+    print(n)
 
+def _refresh_info(*n):
+    
+    print(n)
+
+def _refresh_cur(*n):
+    
+    print(n)
+
+def _refresh_nu_s(*n):
+    
+    print(n)
 
 def _procces(info):
-    global ver
-    #DEV[0] = False
+    DEV[0] = False
+
     nme:str;ver_:str;aut:str;ch:list|bool;ctn:str
     nme, ver_, aut, ch, ctn = info
 
-    chdir(root+f"/proyects/{nme}")
+    chdir(root_global+f"/proyects/{nme}")
     if ch == True:
         _nm = open("base.info", "rt").read().split(",")
         ch = []
@@ -132,9 +225,21 @@ def _procces(info):
     menu = Page(X=size[0]+40, Y=size[1]+20, CHR="#")
     
     menu.create_text(f"version {ver}", "CUSTOM", (menu.vec[0]-len(ver)-12, 1))
+    
+    root_local = getcwd()
 
     lst_dir = list(filter(path.isdir, listdir()))
     lst_arc = list(filter(path.isfile, listdir()))
+
+    lst_final = []
+
+    for lst in lst_dir:
+        if not lst in [".config"]: #ADD EXCEPT DIRs
+            lst_final.append(lst)
+
+    for lst in lst_arc:
+        if not lst in ["base.info", "meta.info"]: #ADD EXCEPT FOR ARCHIVES
+            lst_final.append(lst)
 
     menu.create_text("Current archive (<)", "CUSTOM", (4,1)) #CONVERTIR A BOTON
     menu.create_text("Info mod/archive", "CUSTOM", (30,1)) #CONVERTIR A BOTON
@@ -170,11 +275,9 @@ def _procces(info):
     menu.create_text("LLISTS", "CUSTOM", (4,3))
     menu.create_text("ARCHIVE", "CUSTOM", (4,4))
     
-    
     menu.create_text("NAME MOD", "CUSTOM", (31,3))
     menu.create_text("VERSION MOD", "CUSTOM", (31, 4))
     menu.create_text("LABEL WORKING ON ARCHIVE", (31,5))
-
 
     menu.create_text("NUM", "CUSTOM", (65,3))
     menu.create_text("NUM", "CUSTOM", (65,8))
@@ -184,30 +287,78 @@ def _procces(info):
 
     menu.create_text("ID   NAME  PJs-IN   addons-dialog", "CUSTOM", (3, 17))
 
-    menu.create_text("BTN", "CUSTOM", (3,15))
-    menu.create_text("BTN", "CUSTOM",(9,15))
-
-    menu.create_text("BTN", "CUSTOM", (30,15))
-    menu.create_text("BTN", "CUSTOM", (38, 15))
-
-    menu.create_text("BTN", "CUSTOM", (85,15))
-    menu.create_text("BTN", "CUSTOM", (90,15))
-
-    menu.create_text("BTN", "CUSTOM", (4, 33))
-    menu.create_text("BTN", "CUSTOM", (20,33))
-    menu.create_text("BTN_SAVE", "CUSTOM", (127,33))
-
     menu.create_text("CUR_INFO", "CUSTOM", (82,17))
 
-    menu.create_text("CREATED BY:Z3R0_GT V1.0 INFERNO", "CUSTOM", (106, 3))
-    menu.create_text("A special thanks to Cringle,", "CUSTOM", (106, 5))
-    menu.create_text("ScottTheFox, ArchangelCGA and", "CUSTOM", (106, 6))
-    menu.create_text("ScoStudio for this ", "CUSTOM", (106, 7))
-    menu.create_text("opportunity and help me a lot", "CUSTOM", (106, 8))
+    nro_pgn_cur_arch = 0
+    info_arch = {"len":[len(lst_dir), len(lst_arc), len(lst_dir)+ len(lst_arc)],
+                 "lst":[lst_dir, lst_arc],
+                 "nro":[nro_pgn_cur_arch, len(lst_dir), len(lst_arc)],
+                 "not":{"dir":[],
+                        "arc":[]}}
+    
+    #NEXT-1
+    btn_arch1 = Button(X=1, Y=15, TEXT="Next",ACTION=_refresh_arch, DEFAULT="CUSTOM")
+    btn_arch1.caster((""), menu, info_arch, True, 10)
+    menu.add_btn(btn_arch1)
+    menu.del_btn(1, False)
+
+    __archive_list([(""),[menu, info_arch, False, 1]])
+
+    btn_arch2 = Button(X=11, Y=15, TEXT="Back", ACTION=_refresh_arch, DEFAULT="CUSTOM")
+    btn_arch2.caster((""), menu, info_arch, False, 1)
+    menu.add_btn(btn_arch2)
+    menu.del_btn(2, False)
+    
 
 
-    menu.get_pre_view()
 
+    #NEXT-2
+    btn_func1 = Button(X=30, Y=15, TEXT="sel dir", ACTION=_refresh_info, DEFAULT="CUSTOM")
+    
+    menu.add_btn(btn_func1)
+
+
+    btn_func2 = Button(X=42, Y=15, TEXT="back dir", ACTION=_refresh_info, DEFAULT="CUSTOM")
+    menu.add_btn(btn_func2)
+
+
+
+
+
+    #NEXT-3
+    btn = Button(X=83, Y=15, TEXT="Next", ACTION=_refresh_char, DEFAULT="CUSTOM")
+    menu.add_btn(btn)
+    btn = Button(X=93, Y=15, TEXT="Back", ACTION=_refresh_char, DEFAULT="CUSTOM")
+    menu.add_btn(btn)
+
+
+
+
+    #NEXT--4
+    btn = Button(X=4, Y=33, TEXT="Next", ACTION=_refresh_nu_s, DEFAULT="CUSTOM")
+    menu.add_btn(btn)
+    btn = Button(X=20, Y=33, TEXT="Back", ACTION=_refresh_nu_s, DEFAULT="CUSTOM")
+    menu.add_btn(btn)
+
+
+
+
+    btn = Button(X=127, Y=33, TEXT="Export", ACTION=_save_all, DEFAULT="CUSTOM")
+    menu.add_btn(btn)
+
+
+
+
+    #SECTION'S THANKS
+    #menu.create_text("CREATED BY:Z3R0_GT V1.0 INFERNO", "CUSTOM", (106, 3))
+    #menu.create_text("A special thanks to Cringle,", "CUSTOM", (106, 5))
+    #menu.create_text("ScottTheFox, ArchangelCGA and", "CUSTOM", (106, 6))
+    #menu.create_text("ScoStudio for this ", "CUSTOM", (106, 7))
+    #menu.create_text("opportunity and help me a lot", "CUSTOM", (106, 8))
+
+
+    
+    menu.start_cast()
     #sleep(10)
 
 """
