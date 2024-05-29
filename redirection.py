@@ -1,6 +1,5 @@
 from os import chdir, path, listdir, mkdir, getcwd
 from time import sleep
-from tkinter import Menu
 
 from engine import *
 from engine.config.gen_arch import *
@@ -74,7 +73,6 @@ def proyect_lst_pro(*nm):
 
 
 #final functions
-
 def _save_all(*n): #or compile
     root:str;lib:dict;nme_arch:str
     root, lib, nme_arch = n
@@ -96,78 +94,74 @@ def _save_all(*n): #or compile
 
         f.close()
 
-def __archive_list(nm):
-    menu:Page;info:dict;is_fow:bool
-    menu, info, is_fow, rn = nm[1]
-    
+
+def __archive_list(*nm):
+    menu:Page;info:dict;is_fow:bool;is_new:bool
+    menu, info, is_fow, rn, is_new = nm[1]
+ 
+    print(menu.btns[0].var)
+    print()
+    if not is_new:
+        print(menu.btns[1].var)
+        print()
+    print(nm)
+    input()
+
     if is_fow:
-        rn += 10
-        num = rn-9
-    elif rn <= 10:
-        rn = 10
-        num = 9
+        ran = range(rn-10, rn)
     else:
-        rn -= 10
-        num = rn-9
+        ran = range(rn,rn+10)
 
     #eraser
     for nme in range(10):
         menu.create_text(" "*(menu.meta["panel"][1]["transform"][0]-2), "CUSTOM", (2, nme+3))
-    
-    chk = False
-    #add dir case
-    for in_ in range(rn):
-        nme = in_ + info["len"][0] - info["nro"][1]
-        if nme >= info["len"][0] or info["len"][0] == 0:
-            info["len"][0] = 0
-            chk = True
+    #adder text
+    for in_ in ran:
+        if in_ >= info["lst"][1]:
             break
 
-        if not info["lst"][0][nme] == ".config":
-            if len(info["lst"][0][nme]) < menu.meta["panel"][1]["transform"][0]-2:
-                menu.create_text(info["lst"][0][nme], "CUSTOM", (4, in_+3))
-            else:
-                menu.create_text(info["lst"][0][nme][:19]+"...", "CUSTOM", (4, in_+3))
+        if len(info["lst"][0][in_]) < menu.meta["panel"][1]["transform"][0]-1:
+            menu.create_text(f"{in_%10+1} "+info["lst"][0][in_], "CUSTOM", (4, (in_%10)+3))
         else:
-            info["not"]["dir"].append(in_)
+            menu.create_text(f"{in_%10+1} "+info["lst"][0][in_][:19]+"...", "CUSTOM", (4, (in_%10)+3))
 
-        if in_ == num:
-            if in_ - info["len"][0] <= 0:
-                info["len"][0] -= in_ + len(info["not"]["dir"])
-                info["nro"][1] += 1
+    if is_new:
+        menu.btns[0].caster((""), menu, info, True, menu.btns[0].var[3]+10, False)
+        menu.add_btn(menu.btns[0], False)
+        return
+    else:
+        if is_fow:
+            input("a")
+            #if menu.btns[0].var[3] <= rn+10: 
+
+
+            if not menu.btns[0].var[3] >= rn+10:
+                input("add_fow")
+                menu.btns[0].caster((""), menu, info, True, menu.btns[0].var[3]+10, False)
                 menu.add_btn(menu.btns[0], False)
+            
+                menu.btns[1].caster((""), menu, info, False, menu.btns[1].var[3]-10, False)
+            
             else:
-                info["len"][0] = 0
+                input("add_back")
                 menu.del_btn(1, False)
+                menu.btns[1].caster((""), menu, info, False, menu.btns[1].var[3]-10, False)
+                menu.add_btn(menu.btns[1], False)
 
-    #add arch case
-    if chk:
-        pre = in_
-        for in_ in range(rn):
-            nme = in_ + info["len"][1] - info["nro"][2] + pre
-            if nme >= info["len"][1] or info["len"][1] == 0:
-                info["len"][1] = 0
-                break
-
-            if not (info["lst"][1][nme] == "base.info" or info["lst"][1][nme] == "meta.info"):
-                if len(info["lst"][1][nme]) < menu.meta["panel"][1]["transform"][0]-2:
-                    menu.create_text(info["lst"][1][nme], "CUSTOM", (3, in_+3+pre))
-                else:
-                    menu.create_text(info["lst"][1][nme][:19]+"...", "CUSTOM", (3, in_+3+pre))
+        else:
+            input("b")
+            if not menu.btns[1].var[3] <= rn-10:
+                input("add_back")
+                menu.btns[0].caster((""), menu, info, False, menu.btns[0].var[3]-10, False)
+                menu.add_btn(menu.btns[1], False)
             else:
-                info["not"]["arc"].append(in_)
+                input("add_fow")
+                menu.del_btn(2, False)
 
-            if in_ == num:
-                if in_ - info["len"][1] <= 0:
-                    info["len"][1] -= in_ + len(info["not"]["arc"])
-                    info["nro"][2] += 1
-                    menu.add_btn(menu.btns[0], False)
-                else:
-                    info["len"][1] = 0
-                    menu.del_btn(1, False)
+            menu.btns[1].caster((""), menu, info, True, menu.btns[1].var[3]+10, False)
+            menu.add_btn(menu.btns[0], False)
 
-    menu.btns[0].get_meta()
-
+        menu.start_cast()
 
 _pre_acro = ["Sy", "Ma", "Vn", "Mt", "Ar", "Er", "Op", "Ts"]
 _pre_all  = ["Snowy", "Magma", "Vivian", "Margaret", "Asher", "Ember", "Opal", "Thomas"]
@@ -179,16 +173,6 @@ ver : str = "a1.1.4.4"
 #BUG -1: TEMPORALMENTE SE AGREGARA LA LINEA DE MANERA LITERAL
 #SOLUCIÓN -1: Calificar cada escena/cosa que ocurre en el juego con
 #base a que tan fuerte (se requiere una base de datos para hacerlo más facil)
-
-def _refresh_arch(*nm):
-    __archive_list(nm)
-
-    menu:Page;info:dict;is_fow:bool
-    menu, info, is_fow = nm[1]
-
-    menu.get_pre_view()
-
-
 
 def _refresh_char(*n):
     
@@ -227,17 +211,13 @@ def _procces(info):
     menu.create_text(f"version {ver}", "CUSTOM", (menu.vec[0]-len(ver)-12, 1))
     
     root_local = getcwd()
-
-    lst_dir = list(filter(path.isdir, listdir()))
-    lst_arc = list(filter(path.isfile, listdir()))
-
     lst_final = []
 
-    for lst in lst_dir:
+    for lst in list(filter(path.isdir, listdir())):
         if not lst in [".config"]: #ADD EXCEPT DIRs
             lst_final.append(lst)
 
-    for lst in lst_arc:
+    for lst in list(filter(path.isfile, listdir())):
         if not lst in ["base.info", "meta.info"]: #ADD EXCEPT FOR ARCHIVES
             lst_final.append(lst)
 
@@ -289,29 +269,20 @@ def _procces(info):
 
     menu.create_text("CUR_INFO", "CUSTOM", (82,17))
 
-    nro_pgn_cur_arch = 0
-    info_arch = {"len":[len(lst_dir), len(lst_arc), len(lst_dir)+ len(lst_arc)],
-                 "lst":[lst_dir, lst_arc],
-                 "nro":[nro_pgn_cur_arch, len(lst_dir), len(lst_arc)],
-                 "not":{"dir":[],
-                        "arc":[]}}
+    info_arch = {"lst":[lst_final, len(lst_final)]}
     
     #NEXT-1
-    btn_arch1 = Button(X=1, Y=15, TEXT="Next",ACTION=_refresh_arch, DEFAULT="CUSTOM")
-    btn_arch1.caster((""), menu, info_arch, True, 10)
+    btn_arch1 = Button(X=1, Y=15, TEXT="Next",ACTION=__archive_list, DEFAULT="CUSTOM")
+    btn_arch1.caster((""), menu, info_arch, True, 10, False)
     menu.add_btn(btn_arch1)
     menu.del_btn(1, False)
 
-    __archive_list([(""),[menu, info_arch, False, 1]])
-
-    btn_arch2 = Button(X=11, Y=15, TEXT="Back", ACTION=_refresh_arch, DEFAULT="CUSTOM")
-    btn_arch2.caster((""), menu, info_arch, False, 1)
+    __archive_list((""),[menu, info_arch, False, 0, True])
+    btn_arch2 = Button(X=11, Y=15, TEXT="Back", ACTION=__archive_list, DEFAULT="CUSTOM")
+    btn_arch2.caster((""), menu, info_arch, False, 10, False)
     menu.add_btn(btn_arch2)
     menu.del_btn(2, False)
     
-
-
-
     #NEXT-2
     btn_func1 = Button(X=30, Y=15, TEXT="sel dir", ACTION=_refresh_info, DEFAULT="CUSTOM")
     
