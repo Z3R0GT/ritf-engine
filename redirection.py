@@ -94,74 +94,91 @@ def _save_all(*n): #or compile
 
         f.close()
 
+def _get_lst()-> tuple[list, str]:
+    root_local = getcwd()
+    lst_final = []
 
+    for lst in list(filter(path.isdir, listdir())):
+        if not lst in [".config"]: #ADD EXCEPT DIRs
+            lst_final.append(lst)
+
+    for lst in list(filter(path.isfile, listdir())):
+        if not lst in ["base.info", "meta.info"]: #ADD EXCEPT FOR ARCHIVES
+            lst_final.append(lst)
+
+    return lst_final, root_local
+
+#NEED RE WORk
 def __archive_list(*nm):
     menu:Page;info:dict;is_fow:bool;is_new:bool
     menu, info, is_fow, rn, is_new = nm[1]
  
-    print(menu.btns[0].var)
-    print()
-    if not is_new:
-        print(menu.btns[1].var)
-        print()
-    print(nm)
-    input()
+ #   print(menu.btns[0].var)
+  #  print()
+  #  if not is_new:
+  #      print(menu.btns[1].var)
+  #      print()
+  #  print(nm)
+  #  input()
 
     if is_fow:
         ran = range(rn-10, rn)
     else:
         ran = range(rn,rn+10)
 
-    #eraser
-    for nme in range(10):
-        menu.create_text(" "*(menu.meta["panel"][1]["transform"][0]-2), "CUSTOM", (2, nme+3))
-    #adder text
-    for in_ in ran:
-        if in_ >= info["lst"][1]:
-            break
+    tig = False
+    if not is_new and (rn-10 <= 0 or ran[-1] >= info["lst"][1]+10):
+        tig = True
 
-        if len(info["lst"][0][in_]) < menu.meta["panel"][1]["transform"][0]-1:
-            menu.create_text(f"{in_%10+1} "+info["lst"][0][in_], "CUSTOM", (4, (in_%10)+3))
-        else:
-            menu.create_text(f"{in_%10+1} "+info["lst"][0][in_][:19]+"...", "CUSTOM", (4, (in_%10)+3))
+    if not tig:
+        #eraser
+        for nme in range(10):
+            menu.create_text(" "*(menu.meta["panel"][1]["transform"][0]-2), "CUSTOM", (2, nme+3))
+        #adder text
+        for in_ in ran:
+            if in_ >= info["lst"][1]:
+                ch = True
+                break
 
-    if is_new:
-        menu.btns[0].caster((""), menu, info, True, menu.btns[0].var[3]+10, False)
-        menu.add_btn(menu.btns[0], False)
-        return
-    else:
-        if is_fow:
-            input("a")
-            #if menu.btns[0].var[3] <= rn+10: 
-
-
-            if not menu.btns[0].var[3] >= rn+10:
-                input("add_fow")
-                menu.btns[0].caster((""), menu, info, True, menu.btns[0].var[3]+10, False)
-                menu.add_btn(menu.btns[0], False)
-            
-                menu.btns[1].caster((""), menu, info, False, menu.btns[1].var[3]-10, False)
-            
+            if len(info["lst"][0][in_]) < menu.meta["panel"][1]["transform"][0]-1:
+                menu.create_text(f"{in_%10+1} "+info["lst"][0][in_], "CUSTOM", (4, (in_%10)+3))
             else:
-                input("add_back")
-                menu.del_btn(1, False)
-                menu.btns[1].caster((""), menu, info, False, menu.btns[1].var[3]-10, False)
-                menu.add_btn(menu.btns[1], False)
+                menu.create_text(f"{in_%10+1} "+info["lst"][0][in_][:19]+"...", "CUSTOM", (4, (in_%10)+3))
 
-        else:
-            input("b")
-            if not menu.btns[1].var[3] <= rn-10:
-                input("add_back")
-                menu.btns[0].caster((""), menu, info, False, menu.btns[0].var[3]-10, False)
-                menu.add_btn(menu.btns[1], False)
-            else:
-                input("add_fow")
-                menu.del_btn(2, False)
+            ch = False
 
-            menu.btns[1].caster((""), menu, info, True, menu.btns[1].var[3]+10, False)
+        if is_new:
+            menu.btns[0].caster((""), menu, info, True, menu.btns[0].var[3]+10, False)
             menu.add_btn(menu.btns[0], False)
+            return
+        else:
+            if is_fow:
+             #   input("a")
+                if not menu.btns[0].var[3] >= rn+10:
+              #      input("add_fow")
+                    menu.btns[1].caster((""), menu, info, False, menu.btns[1].var[3]-10, False)
+                    menu.add_btn(menu.btns[0], False)
+                    
+                    menu.btns[0].caster((""), menu, info, True, menu.btns[0].var[3]+10, False)
+                    menu.add_btn(menu.btns[1], False)
 
-        menu.start_cast()
+                if ch:
+             #       input("add_back")
+                    menu.del_btn(1, False)
+            else:
+            #    input("b")
+                if not menu.btns[1].var[3] <= rn-10:
+           #         input("add_fow")
+                    menu.del_btn(2, False)
+                else:
+             #       input("add_back")
+                    menu.btns[0].caster((""), menu, info, False, menu.btns[0].var[3]-10, False)
+                    menu.add_btn(menu.btns[1], False)
+
+                    menu.btns[1].caster((""), menu, info, True, menu.btns[1].var[3]+10, False)
+                    menu.add_btn(menu.btns[0], False)
+
+    menu.start_cast()
 
 _pre_acro = ["Sy", "Ma", "Vn", "Mt", "Ar", "Er", "Op", "Ts"]
 _pre_all  = ["Snowy", "Magma", "Vivian", "Margaret", "Asher", "Ember", "Opal", "Thomas"]
@@ -206,21 +223,13 @@ def _procces(info):
         del _nm, nm
     else:
         ch = info[3]
+
+    lst_final = _get_lst()[0]
+    
     menu = Page(X=size[0]+40, Y=size[1]+20, CHR="#")
     
     menu.create_text(f"version {ver}", "CUSTOM", (menu.vec[0]-len(ver)-12, 1))
     
-    root_local = getcwd()
-    lst_final = []
-
-    for lst in list(filter(path.isdir, listdir())):
-        if not lst in [".config"]: #ADD EXCEPT DIRs
-            lst_final.append(lst)
-
-    for lst in list(filter(path.isfile, listdir())):
-        if not lst in ["base.info", "meta.info"]: #ADD EXCEPT FOR ARCHIVES
-            lst_final.append(lst)
-
     menu.create_text("Current archive (<)", "CUSTOM", (4,1)) #CONVERTIR A BOTON
     menu.create_text("Info mod/archive", "CUSTOM", (30,1)) #CONVERTIR A BOTON
     
@@ -278,6 +287,7 @@ def _procces(info):
     menu.del_btn(1, False)
 
     __archive_list((""),[menu, info_arch, False, 0, True])
+
     btn_arch2 = Button(X=11, Y=15, TEXT="Back", ACTION=__archive_list, DEFAULT="CUSTOM")
     btn_arch2.caster((""), menu, info_arch, False, 10, False)
     menu.add_btn(btn_arch2)
@@ -285,15 +295,10 @@ def _procces(info):
     
     #NEXT-2
     btn_func1 = Button(X=30, Y=15, TEXT="sel dir", ACTION=_refresh_info, DEFAULT="CUSTOM")
-    
     menu.add_btn(btn_func1)
-
 
     btn_func2 = Button(X=42, Y=15, TEXT="back dir", ACTION=_refresh_info, DEFAULT="CUSTOM")
     menu.add_btn(btn_func2)
-
-
-
 
 
     #NEXT-3
@@ -303,14 +308,13 @@ def _procces(info):
     menu.add_btn(btn)
 
 
-
-
     #NEXT--4
     btn = Button(X=4, Y=33, TEXT="Next", ACTION=_refresh_nu_s, DEFAULT="CUSTOM")
     menu.add_btn(btn)
     btn = Button(X=20, Y=33, TEXT="Back", ACTION=_refresh_nu_s, DEFAULT="CUSTOM")
     menu.add_btn(btn)
 
+    #NEXT--5
 
 
 

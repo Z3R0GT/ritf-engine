@@ -1,9 +1,10 @@
 from engine import *
 from engine.models.internal.tool.debug import _chk_window, print_debug
-from redirection import *
+#from redirection import *
+from rec import *
 from time import sleep
 
-ver : str = "a1.1.4.4"
+ver : str = "a1.1.5.0"
 ver_main : str = "1.0"
 
 size = [100, 15]
