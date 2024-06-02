@@ -4,7 +4,7 @@ from engine.models.internal.tool.debug import _chk_window, print_debug
 from rec import *
 from time import sleep
 
-ver : str = "a1.1.5.0"
+ver : str = "a1.1.5.1"
 ver_main : str = "1.0"
 
 size = [100, 15]
@@ -158,7 +158,7 @@ def proyect_new(*nm):
     menu.add_btn(btn)
     
     btn = Button(X=70, Y=17, TEXT="Create", ACTION=proyect_new_pro, DEFAULT="CUSTOM")
-    btn.caster((""),["", "", "", ["1"], ""]) 
+    btn.caster((""), "default", "1.0", "Z3R0_GT", ["1"], web) 
     menu.add_btn(btn)
 
     btn = Button(X=84, Y=17, TEXT="Back", DEFAULT="BACK")

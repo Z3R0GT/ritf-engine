@@ -32,7 +32,11 @@ def check_proyects() -> dict:
 
 def proyect_new_pro(*mn):
     nme:str; vers:str; cre:str; ch:list; ctn:str
-    nme, vers, cre, ch, ctn = mn[1][0]
+    nme = mn[1][0]
+    vers = mn[1][1]
+    cre= mn[1][2]
+    ch= mn[1][3]
+    ctn = mn[1][4]
 
     if nme == "":
         from random import randint
@@ -49,10 +53,6 @@ def proyect_new_pro(*mn):
         chdir(root_global+f"/proyects/{nme}")
 
         open(getcwd()+"/base.info", "w").close()
-        dr = open(getcwd()+"/base.info", "a")
-        for inf in ch:
-            dr.write(f"chapter_{inf}.rpy,")
-        dr.close()
         open(getcwd()+"/main.rpy", "w").close()
 
         mkdir(getcwd()+"/.config")
@@ -99,7 +99,7 @@ _yes = ["y", "Y", "yes"]
 _lb_all = []
 CUR_:int=0
 
-ver : str = "a1.1.5.0"
+ver : str = "a1.1.5.1"
 
 def _get_lst()-> tuple[list, str]:
     root_local = getcwd()
@@ -128,19 +128,14 @@ def _cast_all()->dict:
         dump(lib, f, indent=1) 
         return lib
 
-def __refresh_lb(menu:Page, pos:tuple[int, int], what:str):
+def __refresh_lb(menu:Page, pos:tuple[int, int], what:str): 
     menu.create_text(what, "CUSTOM", pos)
-
-
 
 def _lb_procc(*nm):
     info=nm[0]
     menu:Page = nm[1][0]
 
-    if not len(_lb_all)==0:
-        _lb_all.append(label_statemnt(info[0], int(info[1]), int(info[2])))
-    else:
-        _lb_all.append(label_statemnt(info[0], int(info[1])))
+    _lb_all.append(label_statemnt(info[0], int(info[1]), int(info[2]), int(info[3])))
         
     __refresh_lb(menu, (1, 4), f"Current label that working on: {_lb_all[-1].nme}")
     menu.start_cast()
@@ -217,21 +212,41 @@ def _say(*nm):
 
 def _end_proces(*nm):
     try:
-        menu:Page=nm[1][1]
         root = nm[1][0]
+        menu:Page=nm[1][1]
+        ch = nm[1][2]
         info = _cast_all()
         keys = list(info["root"].keys())[0]
 
         _save_all(root, info, keys)    
+        open(root+"/base.info", "w").close()
+        dic = open(root+"/base.info", "a")
+        in_ = []
+
+        for chap in ch:
+            ln = []
+            lab = []
+            for inf in info["root"]:    
+                if info["root"][inf]["chapter"] == int(chap):
+                    ln.append(info["root"][inf]["section"])
+                    lab.append(inf)
+
+            if len(ln) == 0 or len(lab) == 0:
+                continue
+            in_.append(f"chapter_{chap}.rpy,{ln},{str(lab).replace("'","")},[n];")
+
+        for i in in_:
+            dic.write(i)
+        dic.close()
         print_debug("INFO SAVED!")
-    except:
+        
+    except Exception as e:
+        print(e)
         print_debug("NEED CREATE SOMETHING")
     sleep(5)
     menu.start_cast()
     
 def _procces(info):
-    DEV[0] = False
-
     nme:str;ver_:str;aut:str;ch:list|bool;ctn:str
     nme, ver_, aut, ch, ctn = info
 
@@ -263,7 +278,8 @@ def _procces(info):
     btn = Button(1, 5, "Create a label", _lb_procc, DEFAULT="CUSTOM")
     btn.caster(("What's name of your label?", 
                 "TEST: enter the number of the line",
-                "What's the level of your label?"), menu)
+                "What's the level of your label? (tabulator)",
+                "What chapter this must appear?"), menu)
     menu.add_btn(btn)
 
     btn = Button(1, 8, "Add character", _chararacter, DEFAULT="CUSTOM")
@@ -277,7 +293,7 @@ def _procces(info):
     menu.add_btn(btn)
 
     btn = Button(1, 12, "export", _end_proces, DEFAULT="CUSTOM")
-    btn.caster((""), inf[1], menu)
+    btn.caster((""), inf[1], menu, ch)
     menu.add_btn(btn)
 
     btn = Button(1, 13, TEXT="Back", DEFAULT="BACK")
