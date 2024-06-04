@@ -1,5 +1,6 @@
 from engine import *
 from engine.models.internal.tool.debug import _chk_window, print_debug
+from proyect_func import *
 #from redirection import *
 from rec import *
 from time import sleep
@@ -169,7 +170,7 @@ def proyect_new(*nm):
 
     menu.start_cast()
 
-def proyect_list(*nm):
+def _proyect_list(*nm):
     info = check_proyects()
     lst_pro = [i for i in info]
     if not len(lst_pro) == 0:

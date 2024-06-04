@@ -36,7 +36,7 @@ def proyect_new_pro(*mn):
     vers = mn[1][1]
     cre= mn[1][2]
     ch= mn[1][3]
-    ctn = mn[1][4]
+    ctn = mn[1][5]
 
     if nme == "":
         from random import randint
