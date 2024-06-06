@@ -6,9 +6,6 @@ from engine.config.gen_arch import *
 from engine.models.internal.tool.debug import _chk_window, print_debug
 
 root_global = getcwd()
-web ="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-
-size = [100, 15]
 
 #procces functions
 def check_proyects() -> dict:
@@ -31,22 +28,8 @@ def check_proyects() -> dict:
     return info
 
 def proyect_new_pro(*mn):
-    nme:str; vers:str; cre:str; ch:list; ctn:str
-    nme = mn[1][0]
-    vers = mn[1][1]
-    cre= mn[1][2]
-    ch= mn[1][3]
-    ctn = mn[1][5]
-
-    if nme == "":
-        from random import randint
-        nme = "mod_"+str(randint(0,100))
-    if vers.replace(" ", "") == "":
-        vers = "1.0"
-    if cre.replace(" ", "") == "":
-        cre = "Anonymus"
-    if ctn.replace(" ", "") == "":
-        ctn = web
+    nme:str; vers:str; cre:str; ch:list; ctn:str; VER:int; SIZE:int
+    nme, vers, cre, ch, ctn, VER, SIZE = mn[1]
 
     if not check_proyects().__contains__(nme):
         mkdir(root_global+f"/proyects/{nme}")
@@ -62,13 +45,15 @@ def proyect_new_pro(*mn):
         meta.write(f"{cre};{vers};{ctn}")
         meta.close()
 
-    _procces([nme, vers, cre, ch, ctn])
+    _procces([nme, vers, cre, ch, ctn, VER, SIZE])
 
 def proyect_lst_pro(*nm):
+    print(nm)
     num = nm[1][2]
     nme = nm[1][1][num]
     info = nm[1][0][nme]
 
+    input("owo")
     _procces([nme, info[1], info[0], True, info[2]])
 
 #final functions
@@ -99,7 +84,7 @@ _yes = ["y", "Y", "yes"]
 _lb_all = []
 CUR_:int=0
 
-ver : str = "a1.1.5.1"
+VER : str = "a1.1.5.1"
 
 def _get_lst()-> tuple[list, str]:
     root_local = getcwd()
@@ -247,8 +232,8 @@ def _end_proces(*nm):
     menu.start_cast()
     
 def _procces(info):
-    nme:str;ver_:str;aut:str;ch:list|bool;ctn:str
-    nme, ver_, aut, ch, ctn = info
+    nme:str;ver_:str;aut:str;ch:list|bool;ctn:str; VER:int; SIZE:int
+    nme, ver_, aut, ch, ctn, VER, SIZE = info
 
     chdir(root_global+f"/proyects/{nme}")
     start_()
@@ -266,8 +251,8 @@ def _procces(info):
     inf = _get_lst()
     lst_final = inf[0]
 
-    menu = Page(X=size[0], Y=size[1], CHR="#")
-    menu.create_text(f"Hello, this the version: {ver}", "CUSTOM", (1, 1))
+    menu = Page(X=SIZE[0], Y=SIZE[1], CHR="#")
+    menu.create_text(f"Hello, this the version: {VER}", "CUSTOM", (1, 1))
 
     btn = Button(1, 2, "Select label", _lb_sec, DEFAULT="CUSTOM")
     btn.caster((""), menu)

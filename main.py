@@ -5,12 +5,12 @@ from engine.models.internal.tool.debug import _chk_window, print_debug
 from rec import *
 from time import sleep
 
-ver : str = "a1.1.5.1"
-ver_main : str = "1.0"
+VER : str = "a1.1.5.1"
+VER_MAIN : str = "1.0"
 
-size = [100, 15]
+SIZE = [100, 15]
 
-web ="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+WEB ="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
 DEV[0] = False
 in_ = Button(X=12, Y=12, DEFAULT="BACK")
@@ -31,7 +31,7 @@ def _procces_new(*nm):
     if ch.replace(" ", "") == "":
         ch = "1"
     if ctn.replace(" ", "") == "":
-        ctn = web
+        ctn = WEB
 
     menu.create_text(f"{nme}", "CUSTOM", (3,6))
     menu.create_text(f"{vers}", "CUSTOM", (3,8))
@@ -41,7 +41,7 @@ def _procces_new(*nm):
     menu.create_text(f"{ch}", "CUSTOM", (3,12))
 
     menu.create_text(f"{ctn}", "CUSTOM", (3, 14))
-    menu.btns[1].var = [nme, vers, cre, ch, ctn]
+    menu.btns[1].var = [nme, vers, cre, ch, ctn, VER, SIZE]
 
     menu.start_cast()
 
@@ -80,7 +80,7 @@ def _procces_lst_info(*nm):
     else:
         aut = "meta not found"
         ver_ = "meta not found"
-        lnk = web
+        lnk = WEB
 
     menu.btns[4].var = (info, lst_pro, _in_-1)
 
@@ -90,79 +90,75 @@ def _procces_lst_info(*nm):
 
     menu.start_cast()
 
-def _is_in_range(is_new:bool,
-                 space_screen:int,
-                 cur_num:int, 
-                 rgn_in:range, 
-                 cur_list:dict) -> bool:
-    return not is_new and (cur_num-space_screen <= 0 or rgn_in[-1] >= cur_list["lst"][1]+space_screen)
+def _refresh_zone(*nm):
+    menu:Page; ID:int; item_cul:int;list_to:list
+    ID_btn:list[int, int, int];NUM_LT:list[int, int]
+    is_new:bool
 
-def __archive_lst(*nm):
-    menu:Page;cur_list:dict;is_foward:bool;cur_num:int;is_new:bool
-    ln_y:int; ln_x:int;num:int;lim_x:int
+    menu, ID, item_cul,list_to, ID_btn, NUM_LT, is_new = nm[1]
 
-    menu, cur_list, is_foward, cur_num, is_new, ln_y, ln_x, num, lim_x = nm[1]
-    
-    SPACE_SCREEN  :int = 10
-    SPACE_LIMIT_X :int = lim_x
+    CUR_PANEL = menu.panel[ID]
 
-    #RANGE TO UPDATE THE LIST
-    if is_foward:
-        rgn_in = range(cur_num-SPACE_SCREEN, cur_num)
-    else:
-        rgn_in = range(cur_num, cur_num+SPACE_SCREEN)
-    
-    if not _is_in_range(is_new, SPACE_SCREEN, cur_num, rgn_in, cur_list):
+    LIMIT_TEXT:int = CUR_PANEL["transform"][0]  #X
+    LIMIT_ITEM:int = item_cul                   #Y
+    LIMIT_X_OR_Y = 1
 
-        for nme in range(SPACE_SCREEN): #ERASER SECTION
-            menu.create_text(" "*(menu.meta["panel"][1]["transform"][0]-2), "CUSTOM", (ln_x, nme+ln_y))
-    
-        
-        for in_ in rgn_in: #ADD TEXT
-            #TRIGGER WHEN THE "MAX" CASE COME
-            if in_ >= cur_list["lst"][1]:
-                ch = True 
-                break
+    #ERASER
+    for in_ in range(LIMIT_ITEM):
+        menu.create_text(" "*(LIMIT_TEXT-2), 
+                         "CUSTOM", 
+                         (CUR_PANEL["vec"][0]+LIMIT_X_OR_Y, in_+CUR_PANEL["vec"][1]+LIMIT_X_OR_Y))
 
-            if len(cur_list["lst"][0][in_]) < menu.meta["panel"][1]["transform"][0]-SPACE_LIMIT_X:
-                menu.create_text(f"{in_%SPACE_SCREEN+num+1}) "+cur_list["lst"][0][in_], "CUSTOM", (ln_x, (in_%SPACE_SCREEN)+ln_y))
-            else:
-                menu.create_text(f"{in_%SPACE_SCREEN+num+1}) "+cur_list["lst"][0][in_][:16]+"...", "CUSTOM", (ln_x, (in_%SPACE_SCREEN)+ln_y))
+    for in_ in range(NUM_LT[0], NUM_LT[1]):
+        if in_ >= len(list_to):
+            ch = True
+            break
 
-            ch = False
-
-        if not is_new:
-            if is_foward:
-                if not menu.btns[0].var[3] >= cur_num+SPACE_SCREEN:
-                    menu.btns[1].caster((""), menu, cur_list, False, menu.btns[1].var[3]-SPACE_SCREEN, False, 5, 1, 0, 5)
-                    menu.add_btn(menu.btns[0], False)
-
-                    menu.btns[0].caster((""), menu, cur_list, True, menu.btns[0].var[3]+SPACE_SCREEN, False, 5, 1, 0, 5)
-                    menu.add_btn(menu.btns[1], False)
-
-                if ch:
-                    menu.del_btn(1, False)
-            elif not menu.btns[1].var[3] <= cur_num-SPACE_SCREEN:
-                menu.del_btn(2, False)
-            else:
-                menu.btns[0].caster((""), menu, cur_list, False, menu.btns[0].var[3]-SPACE_SCREEN, False, 5, 1, 0, 5)
-                menu.add_btn(menu.btns[1], False)
-
-                menu.btns[1].caster((""), menu, cur_list, True, menu.btns[1].var[3]+SPACE_SCREEN, False, 5, 1, 0, 5)
-                menu.add_btn(menu.btns[0], False)
+        if len(list_to[in_]) < LIMIT_TEXT-6: #6 -> TEXT ADDED
+            menu.create_text(f"{in_%LIMIT_ITEM}) {list_to[in_]}", 
+                             "CUSTOM", 
+                             (CUR_PANEL["vec"][0]+LIMIT_X_OR_Y, (in_%LIMIT_ITEM)+CUR_PANEL["vec"][1]+LIMIT_X_OR_Y))
         else:
-            # THIS EXECUTE JUST ON THE START
-            menu.btns[0].caster((""), menu, cur_list, True, menu.btns[0].var[3]+SPACE_SCREEN, False, 5, 1, 0, 5)
-            menu.add_btn(menu.btns[0], False)
-            return
+            menu.create_text(f"{in_%LIMIT_ITEM}) {list_to[in_][:LIMIT_TEXT-6]}...", 
+                             "CUSTOM", 
+                             (CUR_PANEL["vec"][0]+LIMIT_X_OR_Y, (in_%LIMIT_ITEM)+CUR_PANEL["vec"][1]+LIMIT_X_OR_Y))
 
+        ch = False
+
+    if is_new:
+        return
+
+    BUTTON_FOW:Button = menu.btns[ID_btn[0]-1]
+    BUTTON_BAC:Button = menu.btns[ID_btn[1]-1]
+    BUTTON_INP:Button = menu.btns[ID_btn[2]-1]
+
+    BUTTON_INP.var = [menu, NUM_LT[0], list_to]
+    menu.add_btn(BUTTON_INP, False)
+
+    #WHEN IS IN THE MAX AND MIN CASE
+    if ch:                            #IN THE MAX
+        menu.del_btn(ID_btn[0], False)
+        menu.add_btn(BUTTON_BAC, False)
+    elif NUM_LT[1] == LIMIT_ITEM:     #IN THE MIN
+        menu.del_btn(ID_btn[1], False)
+        menu.add_btn(BUTTON_FOW, False)
+    else:
+        BUTTON_BAC.var = [menu, ID, item_cul, list_to, ID_btn, 
+                          [BUTTON_FOW.var[5][0]-LIMIT_ITEM, BUTTON_FOW.var[5][1]-LIMIT_ITEM], 
+                          False]
+        BUTTON_FOW.var = [menu, ID, item_cul, list_to, ID_btn, 
+                          [NUM_LT[0]+10, NUM_LT[1]+LIMIT_ITEM], 
+                          False]
+
+        menu.add_btn(BUTTON_FOW, False)
+        menu.add_btn(BUTTON_BAC, False)
     menu.start_cast()
 
 def proyect_new(*nm):
-    menu = Page(X=size[0], Y=size[1]+4, CHR="#")
+    menu = Page(X=SIZE[0], Y=SIZE[1]+4, CHR="#")
 
     menu.create_text("Creation mod menu", "CUSTOM", (3, 3))
-    menu.create_text(f"version {ver}", "CUSTOM", (menu.vec[0]-len(ver)-12, 1))
+    menu.create_text(f"version {VER}", "CUSTOM", (menu.vec[0]-len(VER)-12, 1))
 
     menu.create_text("Mod's name:", "CUSTOM", (3, 5))
 
@@ -182,7 +178,7 @@ def proyect_new(*nm):
     menu.add_btn(btn)
     
     btn = Button(X=70, Y=17, TEXT="Create", ACTION=proyect_new_pro, DEFAULT="CUSTOM")
-    btn.caster((""), "default", "1.0", "Z3R0_GT", ["1"], web) 
+    btn.caster((""), "default", "1.0", "Z3R0_GT", ["1"], WEB) 
     menu.add_btn(btn)
 
     btn = Button(X=84, Y=17, TEXT="Back", DEFAULT="BACK")
@@ -196,20 +192,19 @@ def proyect_new(*nm):
 def proyect_list(*nm):
     info = check_proyects()
     lst_pro = [i for i in info]
-    info_arch = {"lst":[lst_pro, len(lst_pro)]}
 
     #SECURITY CHECK
     if len(lst_pro) == 0:
         erase_screen()
-        print_debug(f"{ver} YOU DON'T PROYECTS CREATED YET {ver}")
-        print_debug(f"{ver} REDIRECTING TO CREATE A NEW... {ver}")
+        print_debug(f"{VER} YOU DON'T PROYECTS CREATED YET {VER}")
+        print_debug(f"{VER} REDIRECTING TO CREATE A NEW... {VER}")
         sleep(5)
         #proyect_new()
 
-    menu = Page(X=size[0], Y=size[1]+4, CHR="#", NMO="Proyect's page")  
+    menu = Page(X=SIZE[0], Y=SIZE[1]+4, CHR="#", NMO="Proyect's page")  
 
     menu.create_text("Proyect's page", "CUSTOM", (3,3))
-    menu.create_text(f"version {ver}", "CUSTOM", (menu.vec[0]-len(ver)-12, 1))
+    menu.create_text(f"version {VER}", "CUSTOM", (menu.vec[0]-len(VER)-12, 1))
 
     menu.add_panel(0, 4, 27, 12, 0)  #SELECT SECTION
     menu.add_panel(60, 3, 32, 6, 0)  #TUTORIAL ""
@@ -238,7 +233,7 @@ def proyect_list(*nm):
     else:
         autor = "meta not found"
         ver_mod = "meta not found"
-        lnk = web
+        lnk = WEB
     del ref
 
     menu.create_text(nme, "CUSTOM", (62, 12))
@@ -257,15 +252,20 @@ def proyect_list(*nm):
             menu.create_text(f"{nme+1}) "+lst_pro[nme][:16]+"...", "CUSTOM", (1,nme+5))
     del nme
 
-    btn = Button(1, 17, "Next", __archive_lst, DEFAULT="CUSTOM")
-    btn.caster((""), menu, info_arch, True, 10, False, 5, 1, 0, 5)
+    _refresh_zone([],[menu, 
+                1, 
+                10, 
+                lst_pro, 
+                (1, 2, 3), 
+                (0, 10),
+                True])
+
+    btn = Button(1, 17, "Next", _refresh_zone, DEFAULT="CUSTOM")
+    btn.caster((""), menu, 1, 10, lst_pro, (1, 2, 3), (10, 20), False)
     menu.add_btn(btn)
-    menu.del_btn(1, False)
 
-    __archive_lst((""), [menu, info_arch, False, 0, True, 5, 1, 0, 5])
-
-    btn = Button(15, 17, "Back", __archive_lst, DEFAULT="CUSTOM")
-    btn.caster((""), menu, info_arch, False, 10, False, 5, 1, 0, 5)
+    btn = Button(15, 17, "Back", _refresh_zone, DEFAULT="CUSTOM")
+    btn.caster((""), menu, 1, 10, lst_pro, (1, 2, 3), (0, 10), False)
     menu.add_btn(btn)
     menu.del_btn(2, False)
 
@@ -282,13 +282,13 @@ def proyect_list(*nm):
 
     btn = Button(X=84, Y=17, TEXT="Back menu", DEFAULT="BACK")
     menu.add_btn(btn)
-    del btn
+    del btn, lst_pro, info
 
     menu.start_cast()
 
-page = Page(X=size[0], Y=size[1], CHR="#")
+page = Page(X=SIZE[0], Y=SIZE[1], CHR="#")
 page.create_text("Roses In The Flame's mod engine", "CUSTOM", (3, 3))
-page.create_text(f"version {ver}", "CUSTOM", (page.vec[0]-len(ver)-12, 1))
+page.create_text(f"version {VER}", "CUSTOM", (page.vec[0]-len(VER)-12, 1))
 
 btn = Button(X=5, Y=6, TEXT="Create new proyect", ACTION=proyect_new)
 page.add_btn(btn)
@@ -299,17 +299,17 @@ page.add_btn(btn)
 btn = Button(X=5, Y=10, TEXT="Exit", DEFAULT="EXIT")
 page.add_btn(btn)
 
-btn = Button(X=1, Y=12, TEXT="Website main", ACTION=web, DEFAULT="LINK")
+btn = Button(X=1, Y=12, TEXT="Website main", ACTION=WEB, DEFAULT="LINK")
 page.add_btn(btn)
 
-btn = Button(X=1, Y=13, TEXT="Website tales", ACTION=web, DEFAULT="LINK")
+btn = Button(X=1, Y=13, TEXT="Website tales", ACTION=WEB, DEFAULT="LINK")
 page.add_btn(btn)
 
 page.add_panel(84, 7, 16, 7, 0)
 
 page.add_panel(64, 7, 16, 7, 0)
 
-btn = Button(X=65, Y=8, TEXT="Open URL", ACTION=web,DEFAULT="LINK")
+btn = Button(X=65, Y=8, TEXT="Open URL", ACTION=WEB,DEFAULT="LINK")
 page.add_btn(btn)
 
 page.start_cast()
