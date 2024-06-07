@@ -46,26 +46,19 @@ def _procces_new(*nm):
     menu.start_cast()
 
 def _procces_lst_info(*nm):
-    _in:int; menu:Page; sec:int; info:dict
-    _in, menu, sec, info = nm[0][0], nm[1][0], nm[1][1], nm[1][2]
-    _in_ = int(_in)
-
-    lst_pro = [i for i in info]
+    menu:Page; lst_nme:list; info:dict
+    menu, lst_nme, info = nm[1][0], nm[1][2], nm[1][3]
+    num:int = int(nm[0][0])+int(nm[1][1])
 
     for i in range(3):
         menu.create_text(" "*25, "CUSTOM", (62, 12+i))
 
-    if sec <= 0:
-        pass
+    if len(lst_nme[num]) >= 32:
+        nme = f"Mod's name: {lst_nme[num][:16]}..."
     else:
-        _in_ += 10*sec
+        nme = f"Mod's name: {lst_nme[num]}"
 
-    if len(lst_pro[_in_-1]) >= 32:
-        nme = f"Mod's name: {lst_pro[_in_-1][:16]}..."
-    else:
-        nme = f"Mod's name: {lst_pro[_in_-1]}"
-
-    ref = info[lst_pro[_in_-1]]
+    ref = info[lst_nme[num]]
     if not ref == "Error!":
         inf = []
         for _in in range(2):
@@ -82,7 +75,7 @@ def _procces_lst_info(*nm):
         ver_ = "meta not found"
         lnk = WEB
 
-    menu.btns[4].var = (info, lst_pro, _in_-1)
+    menu.btns[4].var = (info, lst_nme, num, VER, SIZE)
 
     menu.create_text(nme, "CUSTOM", (62, 12))
     menu.create_text(f"Autor: {aut}", "CUSTOM", (62, 13))
@@ -92,10 +85,10 @@ def _procces_lst_info(*nm):
 
 def _refresh_zone(*nm):
     menu:Page; ID:int; item_cul:int;list_to:list
-    ID_btn:list[int, int, int];NUM_LT:list[int, int]
+    ID_btn:list[int, int, int];NUM_LT:list[int, int];INFO:dict
     is_new:bool
 
-    menu, ID, item_cul,list_to, ID_btn, NUM_LT, is_new = nm[1]
+    menu, ID, item_cul,list_to, ID_btn, NUM_LT, INFO, is_new = nm[1]
 
     CUR_PANEL = menu.panel[ID]
 
@@ -132,7 +125,7 @@ def _refresh_zone(*nm):
     BUTTON_BAC:Button = menu.btns[ID_btn[1]-1]
     BUTTON_INP:Button = menu.btns[ID_btn[2]-1]
 
-    BUTTON_INP.var = [menu, NUM_LT[0], list_to]
+    BUTTON_INP.var = [menu, NUM_LT[0], list_to, INFO]
     menu.add_btn(BUTTON_INP, False)
 
     #WHEN IS IN THE MAX AND MIN CASE
@@ -178,7 +171,7 @@ def proyect_new(*nm):
     menu.add_btn(btn)
     
     btn = Button(X=70, Y=17, TEXT="Create", ACTION=proyect_new_pro, DEFAULT="CUSTOM")
-    btn.caster((""), "default", "1.0", "Z3R0_GT", ["1"], WEB) 
+    btn.caster((""), "default", "1.0", "Z3R0_GT", ["1"], WEB, VER, SIZE) 
     menu.add_btn(btn)
 
     btn = Button(X=84, Y=17, TEXT="Back", DEFAULT="BACK")
@@ -196,10 +189,10 @@ def proyect_list(*nm):
     #SECURITY CHECK
     if len(lst_pro) == 0:
         erase_screen()
-        print_debug(f"{VER} YOU DON'T PROYECTS CREATED YET {VER}")
+        print_debug(f"{VER} YOU DON'T HAVE PROYECTS CREATED YET {VER}")
         print_debug(f"{VER} REDIRECTING TO CREATE A NEW... {VER}")
         sleep(5)
-        #proyect_new()
+        proyect_new()
 
     menu = Page(X=SIZE[0], Y=SIZE[1]+4, CHR="#", NMO="Proyect's page")  
 
@@ -251,21 +244,21 @@ def proyect_list(*nm):
         else:
             menu.create_text(f"{nme+1}) "+lst_pro[nme][:16]+"...", "CUSTOM", (1,nme+5))
     del nme
-
     _refresh_zone([],[menu, 
                 1, 
                 10, 
                 lst_pro, 
-                (1, 2, 3), 
+                (1, 2, 4), 
                 (0, 10),
+                info, 
                 True])
 
     btn = Button(1, 17, "Next", _refresh_zone, DEFAULT="CUSTOM")
-    btn.caster((""), menu, 1, 10, lst_pro, (1, 2, 3), (10, 20), False)
+    btn.caster((""), menu, 1, 10, lst_pro, (1, 2, 4), (10, 20), info, False)
     menu.add_btn(btn)
 
     btn = Button(15, 17, "Back", _refresh_zone, DEFAULT="CUSTOM")
-    btn.caster((""), menu, 1, 10, lst_pro, (1, 2, 3), (0, 10), False)
+    btn.caster((""), menu, 1, 10, lst_pro, (1, 2, 4), (0, 10), info, False)
     menu.add_btn(btn)
     menu.del_btn(2, False)
 
@@ -273,11 +266,11 @@ def proyect_list(*nm):
     menu.add_btn(btn)
 
     btn = Button(X=31, Y=17, TEXT="Archive to load",ACTION=_procces_lst_info, DEFAULT="CUSTOM")
-    btn.caster(("Enter proyect's number"), menu, 0, info)
+    btn.caster(("Enter proyect's number"), menu, 0, lst_pro, info)
     menu.add_btn(btn)
 
     btn = Button(X=70, Y=17, TEXT="Load", ACTION=proyect_lst_pro, DEFAULT="CUSTOM")
-    btn.caster((""), info, lst_pro, 0)
+    btn.caster((""), info, lst_pro, 0, VER, SIZE)
     menu.add_btn(btn)
 
     btn = Button(X=84, Y=17, TEXT="Back menu", DEFAULT="BACK")

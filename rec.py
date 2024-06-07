@@ -3,9 +3,10 @@ from time import sleep
 
 from engine import *
 from engine.config.gen_arch import *
-from engine.models.internal.tool.debug import _chk_window, print_debug
+from engine.models.internal.tool.debug import erase_screen, print_debug
 
 root_global = getcwd()
+#web ="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
 #procces functions
 def check_proyects() -> dict:
@@ -48,15 +49,16 @@ def proyect_new_pro(*mn):
     _procces([nme, vers, cre, ch, ctn, VER, SIZE])
 
 def proyect_lst_pro(*nm):
-    print(nm)
     num = nm[1][2]
     nme = nm[1][1][num]
     info = nm[1][0][nme]
 
-    input("owo")
-    _procces([nme, info[1], info[0], True, info[2]])
+    _procces([nme, info[1], info[0], True, info[2], nm[1][3], nm[1][4]])
 
-#final functions
+
+#################################################
+#                FINAL FUNCTIONS                #
+#################################################
 def _save_all(*n): #or compile
     root:str;lib:dict;nme_arch:str
     root, lib, nme_arch = n
@@ -77,123 +79,6 @@ def _save_all(*n): #or compile
                     f.write(line)
 
         f.close()
-
-_pre_acro = ["Sy", "Ma", "Vn", "Mt", "Ar", "Er", "Op", "Ts"]
-_pre_all  = ["Snowy", "Magma", "Vivian", "Margaret", "Asher", "Ember", "Opal", "Thomas"]
-_yes = ["y", "Y", "yes"]
-_lb_all = []
-CUR_:int=0
-
-VER : str = "a1.1.5.1"
-
-def _get_lst()-> tuple[list, str]:
-    root_local = getcwd()
-    lst_final = []
-
-    for lst in list(filter(path.isdir, listdir())):
-        if not lst in [".config"]: #ADD EXCEPT DIRs
-            lst_final.append(lst)
-
-    for lst in list(filter(path.isfile, listdir())):
-        if not lst in ["base.info", "meta.info"]: #ADD EXCEPT FOR ARCHIVES
-            lst_final.append(lst)
-
-    return lst_final, root_local
-
-def _cast_all()->dict:
-    from datetime import datetime as dtime
-    from json import dump
-    
-    with open(getcwd()+f"/.config/autosaves/{dtime.now().day}_{dtime.now().month}_end.json", "w") as f:
-        lib = {"root":{}}
-        for data in _lb_all:
-            data:label_statemnt
-            lib["root"][data.nme] = data.meta
-
-        dump(lib, f, indent=1) 
-        return lib
-
-def __refresh_lb(menu:Page, pos:tuple[int, int], what:str): 
-    menu.create_text(what, "CUSTOM", pos)
-
-def _lb_procc(*nm):
-    info=nm[0]
-    menu:Page = nm[1][0]
-
-    _lb_all.append(label_statemnt(info[0], int(info[1]), int(info[2]), int(info[3])))
-        
-    __refresh_lb(menu, (1, 4), f"Current label that working on: {_lb_all[-1].nme}")
-    menu.start_cast()
-
-def _lb_sec(*nm):
-    menu:Page=nm[1][0]
-    _chk_window()
-    if not len(_lb_all) == 0:
-        c = -1
-        for nme in _lb_all:
-            nme:label_statemnt
-            c+=1
-            print("NAME: ", nme.nme, "ID: ", c)
-
-        CUR_=int(input("What label u want to work? \n>"))
-        __refresh_lb(menu, (1, 4), f"Current label that working on: {_lb_all[CUR_].nme}")
-    else:
-        print("u need create a label first")
-        sleep(5)
-    
-    menu.start_cast()
-    
-
-def _chararacter(*nm):
-    menu:Page=nm[1][0]
-    _chk_window()
-    if not len(_lb_all) == 0:
-        lab:label_statemnt = _lb_all[CUR_]
-        lab.character(input("What's the name of your character?\n>"))
-
-        __refresh_lb(menu, (1, 10), f"Character num: {len(_lb_all[-1].char_hard)}")
-
-    menu.start_cast()
-        
-def _say(*nm):
-    menu:Page=nm[1][0]
-
-    _chk_window()
-    if not len(_lb_all) == 0:
-        print("REMEMBER, HERE U CAN USE \\n or special character like that")
-        sleep(5)
-        lab:label_statemnt = _lb_all[CUR_]
-        if input("Do you want to use pre-define characters? (y/n)\n> ") in _yes :
-            c = -1
-            for nme in _pre_all:
-                c+=1
-                print("NAME: ", nme, "ID: ", c)
-
-            lab.say(_pre_acro[int(input("What's the ID (number)? \n>"))], 
-                    True, 
-                    input("What do u want that this character say? \n>"))
-        elif input("is your character still exits? (y/n) \n>") in _yes:
-            c = -1
-            for nme in lab.char_hard:
-                c+=1
-                print("NAME: ", nme, "ID: ", c)
-            lab.say(lab.char_simple[int(input("What's the ID (number)? \n>"))], 
-                    True, 
-                    input("What do u want that this character say? \n>"))
-        else:
-            print("We recommend u use 'Character' option to don't repeat many time this... (wait a few seconds)")
-            sleep(5)
-
-            if input("Do u want use a character's name (we don't save it)? (y/n) \n>") in _yes:
-                lab.say(input("What's the name?: >"), 
-                        False,
-                        input("What do u want that this character say? \n>"))
-            else:
-                lab.say(None, 
-                        False,
-                        input("What do u want that this character say? \n>"))
-
-    menu.start_cast()
 
 def _end_proces(*nm):
     try:
@@ -230,7 +115,135 @@ def _end_proces(*nm):
         print_debug("NEED CREATE SOMETHING")
     sleep(5)
     menu.start_cast()
+   
+#################################################
+#                INFO FUNCTIONS                 #
+#################################################
+_pre_acro = ["Sy", "Ma", "Vn", "Mt", "Ar", "Er", "Op", "Ts"]
+_pre_all  = ["Snowy", "Magma", "Vivian", "Margaret", "Asher", "Ember", "Opal", "Thomas"]
+_yes = ["y", "Y", "yes"]
+_lb_all = []
+CUR_:int=0
+
+
+def _get_lst()-> tuple[list, str]:
+    root_local = getcwd()
+    lst_final = []
+
+    for lst in list(filter(path.isdir, listdir())):
+        if not lst in [".config"]: #ADD EXCEPT DIRs
+            lst_final.append(lst)
+
+    for lst in list(filter(path.isfile, listdir())):
+        if not lst in ["base.info", "meta.info"]: #ADD EXCEPT FOR ARCHIVES
+            lst_final.append(lst)
+
+    return lst_final, root_local
+
+def _cast_all()->dict:
+    from datetime import datetime as dtime
+    from json import dump
     
+    with open(getcwd()+f"/.config/autosaves/{dtime.now().day}_{dtime.now().month}_end.json", "w") as f:
+        lib = {"root":{}}
+        for data in _lb_all:
+            data:label_statemnt
+            lib["root"][data.nme] = data.meta
+
+        dump(lib, f, indent=1) 
+        return lib
+
+def __refresh_lb(menu:Page, pos:tuple[int, int], what:str): 
+    menu.create_text(what, "CUSTOM", pos)
+
+#################################################
+#                STABLE FUNCTIONS               #
+#################################################
+
+def _lb_procc(*nm):
+    info=nm[0]
+    menu:Page = nm[1][0]
+
+    _lb_all.append(label_statemnt(info[0], int(info[1]), int(info[2]), int(info[3])))
+        
+    __refresh_lb(menu, (1, 4), f"Current label that working on: {_lb_all[-1].nme}")
+    menu.start_cast()
+
+def _lb_sec(*nm):
+    menu:Page=nm[1][0]
+    erase_screen()
+    if not len(_lb_all) == 0:
+        c = -1
+        for nme in _lb_all:
+            nme:label_statemnt
+            c+=1
+            print("NAME: ", nme.nme, "ID: ", c)
+
+        CUR_=int(input("What label u want to work? \n>"))
+        __refresh_lb(menu, (1, 4), f"Current label that working on: {_lb_all[CUR_].nme}")
+    else:
+        print("u need create a label first")
+        sleep(5)
+    
+    menu.start_cast()
+    
+#################################################
+#                OWN-C FUNCTIONS                #
+#################################################
+def _chararacter(*nm):
+    menu:Page=nm[1][0]
+    erase_screen()
+    if not len(_lb_all) == 0:
+        lab:label_statemnt = _lb_all[CUR_]
+        lab.character(input("What's the name of your character?\n>"))
+
+        __refresh_lb(menu, (1, 10), f"Character num: {len(_lb_all[-1].char_hard)}")
+
+    menu.start_cast()
+        
+def _say(*nm):
+    menu:Page=nm[1][0]
+
+    erase_screen()
+    if not len(_lb_all) == 0:
+        print("REMEMBER, HERE U CAN USE \\n or special character like that")
+        sleep(5)
+        lab:label_statemnt = _lb_all[CUR_]
+        if input("Do you want to use pre-define characters? (y/n)\n> ") in _yes :
+            c = -1
+            for nme in _pre_all:
+                c+=1
+                print("NAME: ", nme, "ID: ", c)
+
+            lab.say(_pre_acro[int(input("What's the ID (number)? \n>"))], 
+                    True, 
+                    input("What do u want that this character say? \n>"))
+        elif input("is your character still exits? (y/n) \n>") in _yes:
+            c = -1
+            for nme in lab.char_hard:
+                c+=1
+                print("NAME: ", nme, "ID: ", c)
+            lab.say(lab.char_simple[int(input("What's the ID (number)? \n>"))], 
+                    True, 
+                    input("What do u want that this character say? \n>"))
+        else:
+            print("We recommend u use 'Character' option to don't repeat many time this... (wait a few seconds)")
+            sleep(5)
+
+            if input("Do u want use a character's name (we don't save it)? (y/n) \n>") in _yes:
+                lab.say(input("What's the name?: >"), 
+                        False,
+                        input("What do u want that this character say? \n>"))
+            else:
+                lab.say(None, 
+                        False,
+                        input("What do u want that this character say? \n>"))
+
+    menu.start_cast()
+
+#################################################
+#                MAIN FUNCTIONS                 #
+#################################################
 def _procces(info):
     nme:str;ver_:str;aut:str;ch:list|bool;ctn:str; VER:int; SIZE:int
     nme, ver_, aut, ch, ctn, VER, SIZE = info
@@ -249,7 +262,7 @@ def _procces(info):
         ch = info[3]
 
     inf = _get_lst()
-    lst_final = inf[0]
+    #lst_final = inf[0]
 
     menu = Page(X=SIZE[0], Y=SIZE[1], CHR="#")
     menu.create_text(f"Hello, this the version: {VER}", "CUSTOM", (1, 1))
@@ -285,3 +298,7 @@ def _procces(info):
     menu.add_btn(btn)
 
     menu.start_cast()
+    #menu.get_pre_view()
+
+#TEST
+#_procces(["mc", "1.0", "me", True, web, "1.0", [100, 15]])

@@ -333,7 +333,8 @@ def _procces(info):
 
 
     
-    menu.start_cast()
+    #menu.start_cast()
+    menu.get_pre_view()
     #sleep(10)
 
 """

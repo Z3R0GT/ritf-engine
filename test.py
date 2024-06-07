@@ -76,45 +76,40 @@ def _refresh_zone(*nm):
 def _procces_lst_info(*nm):
     _in:int; menu:Page; sec:int; info:dict
     _in, menu, sec, info = nm[0][0], nm[1][0], nm[1][1], nm[1][2]
-    _in_ = int(_in)
-
+    _in_ = int(_in)+int(sec)
+    _in = int(_in)
     lst_pro = [i for i in info]
 
     for i in range(3):
         menu.create_text(" "*25, "CUSTOM", (62, 12+i))
 
-    if sec <= 0:
-        pass
-    else:
-        _in_ += 10*sec
+   # if len(lst_pro[_in_-1]) >= 32:
+ #       nme = f"Mod's name: {lst_pro[_in_-1][:16]}..."
+ #   else:
+#        nme = f"Mod's name: {lst_pro[_in_-1]}"
 
-    if len(lst_pro[_in_-1]) >= 32:
-        nme = f"Mod's name: {lst_pro[_in_-1][:16]}..."
-    else:
-        nme = f"Mod's name: {lst_pro[_in_-1]}"
-
-    ref = info[lst_pro[_in_-1]]
-    if not ref == "Error!":
+    #ref = info[lst_pro[_in_-1]]
+    #if not ref == "Error!":
         inf = []
-        for _in in range(2):
-            if len(ref[_in]) >= 25:
-                inf.append(ref[_in][:20]+"...")
-            else:
-                inf.append(ref[_in])
+    #    for _in in range(2):
+   #         if len(ref[_in]) >= 25:
+   #             inf.append(ref[_in][:20]+"...")
+   #         else:
+   #             inf.append(ref[_in])
+#
+   #     aut = inf[0]
+   #     ver_ = inf[1]
+  #      lnk = ref[2]
+  #  else:
+   #     aut = "meta not found"
+   #     ver_ = "meta not found"
+   #     lnk = WEB
 
-        aut = inf[0]
-        ver_ = inf[1]
-        lnk = ref[2]
-    else:
-        aut = "meta not found"
-        ver_ = "meta not found"
-        lnk = WEB
+  #  menu.btns[4].var = (info, lst_pro, _in_-1)
 
-    menu.btns[4].var = (info, lst_pro, _in_-1)
-
-    menu.create_text(nme, "CUSTOM", (62, 12))
-    menu.create_text(f"Autor: {aut}", "CUSTOM", (62, 13))
-    menu.create_text(f"Version: {ver_}", "CUSTOM", (62, 14))
+  #  menu.create_text(nme, "CUSTOM", (62, 12))
+ #   menu.create_text(f"Autor: {aut}", "CUSTOM", (62, 13))
+ #   menu.create_text(f"Version: {ver_}", "CUSTOM", (62, 14))
 
     menu.get_pre_view()
 
