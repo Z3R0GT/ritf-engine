@@ -6,7 +6,7 @@ from engine.config.gen_arch import *
 from engine.models.internal.tool.debug import erase_screen, print_debug
 
 root_global = getcwd()
-COMPILER = "7093c49658620b64e78973b1def66a8e2f704520"
+COMPILER = "19c63a58a4b1a4c025cb0a53273edfbe7236a5da"
 web ="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
 #procces functions
@@ -352,9 +352,9 @@ def _up_sec(*nm):
 #################################################
 def _procces(info):
     global CUR_CH
-    DEV[0] = False
-    nme:str;ver_:str;aut:str;ch:list|bool;ctn:str; VER:int; SIZE:int
-    nme, ver_, aut, ch, ctn, VER, SIZE = info
+    #DEV[0] = False
+    nme:str;ver:str;aut:str;ch:list|bool;ctn:str; VER:int; SIZE:int
+    nme, ver, aut, ch, ctn, VER, SIZE = info
 
     chdir(root_global+f"/proyects/{nme}")
     start_()
@@ -375,12 +375,12 @@ def _procces(info):
 
     menu = Page(X=SIZE[0], Y=SIZE[1]+3, CHR="#")
     if len(VER) >= 10:
-        menu.create_text(f"Hello, mod's version: {VER[:10]}", "CUSTOM", (1, 1))
+        menu.create_text(f"Hello, mod's version: {ver[:10]}", "CUSTOM", (1, 1))
     else:
-        menu.create_text(f"Hello, mod's version: {VER}", "CUSTOM", (1, 1))
+        menu.create_text(f"Hello, mod's version: {ver}", "CUSTOM", (1, 1))
     
     menu.create_text(f"Compiled version: {COMPILER[:8]}", "CUSTOM", (72, 1))
-
+    menu.create_text(f"App version: {VER}", "CUSTOM", (80, 16))
     #LABEL
     menu.create_text("Current label: None","CUSTOM", (1,2))
 
@@ -453,7 +453,8 @@ def _procces(info):
     btn = Button(1, 15, TEXT="Back", DEFAULT="BACK")
     menu.add_btn(btn)
 
-    menu.start_cast()
+    #menu.start_cast()
+    menu.get_pre_view()
 
 #TEST
-_procces(["mc", "1.0", "me", True, web, "1.0", [100, 15]])
+_procces(["mc", "1.0", "me", True, web, "a1.1.5.6", [100, 15]])

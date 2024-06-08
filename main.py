@@ -5,8 +5,8 @@ from engine.models.internal.tool.debug import _chk_window, print_debug
 from rec import *
 from time import sleep
 
-VER : str = "a1.1.5.1"
-VER_MAIN : str = "1.0"
+VER : str = "a1.1.6.0"
+VER_MAIN : str = "1.5"
 
 SIZE = [100, 15]
 
