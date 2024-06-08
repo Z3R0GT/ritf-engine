@@ -85,66 +85,19 @@ def _procces_lst_info(*nm):
 
 def _refresh_zone(*nm):
     menu:Page; ID:int; item_cul:int;list_to:list
-    ID_btn:list[int, int, int];NUM_LT:list[int, int];INFO:dict
+    ID_btn_in:list[int, int];ID_btn_ou:list;NUM_LT:list[int, int];INFO:dict
     is_new:bool
 
-    menu, ID, item_cul,list_to, ID_btn, NUM_LT, INFO, is_new = nm[1]
-
-    CUR_PANEL = menu.panel[ID]
-
-    LIMIT_TEXT:int = CUR_PANEL["transform"][0]  #X
-    LIMIT_ITEM:int = item_cul                   #Y
-    LIMIT_X_OR_Y = 1
-
-    #ERASER
-    for in_ in range(LIMIT_ITEM):
-        menu.create_text(" "*(LIMIT_TEXT-2), 
-                         "CUSTOM", 
-                         (CUR_PANEL["vec"][0]+LIMIT_X_OR_Y, in_+CUR_PANEL["vec"][1]+LIMIT_X_OR_Y))
-
-    for in_ in range(NUM_LT[0], NUM_LT[1]):
-        if in_ >= len(list_to):
-            ch = True
-            break
-
-        if len(list_to[in_]) < LIMIT_TEXT-6: #6 -> TEXT ADDED
-            menu.create_text(f"{in_%LIMIT_ITEM}) {list_to[in_]}", 
-                             "CUSTOM", 
-                             (CUR_PANEL["vec"][0]+LIMIT_X_OR_Y, (in_%LIMIT_ITEM)+CUR_PANEL["vec"][1]+LIMIT_X_OR_Y))
-        else:
-            menu.create_text(f"{in_%LIMIT_ITEM}) {list_to[in_][:LIMIT_TEXT-6]}...", 
-                             "CUSTOM", 
-                             (CUR_PANEL["vec"][0]+LIMIT_X_OR_Y, (in_%LIMIT_ITEM)+CUR_PANEL["vec"][1]+LIMIT_X_OR_Y))
-
-        ch = False
-
-    if is_new:
-        return
-
-    BUTTON_FOW:Button = menu.btns[ID_btn[0]-1]
-    BUTTON_BAC:Button = menu.btns[ID_btn[1]-1]
-    BUTTON_INP:Button = menu.btns[ID_btn[2]-1]
-
-    BUTTON_INP.var = [menu, NUM_LT[0], list_to, INFO]
-    menu.add_btn(BUTTON_INP, False)
-
-    #WHEN IS IN THE MAX AND MIN CASE
-    if ch:                            #IN THE MAX
-        menu.del_btn(ID_btn[0], False)
-        menu.add_btn(BUTTON_BAC, False)
-    elif NUM_LT[1] == LIMIT_ITEM:     #IN THE MIN
-        menu.del_btn(ID_btn[1], False)
-        menu.add_btn(BUTTON_FOW, False)
-    else:
-        BUTTON_BAC.var = [menu, ID, item_cul, list_to, ID_btn, 
-                          [BUTTON_FOW.var[5][0]-LIMIT_ITEM, BUTTON_FOW.var[5][1]-LIMIT_ITEM], 
-                          False]
-        BUTTON_FOW.var = [menu, ID, item_cul, list_to, ID_btn, 
-                          [NUM_LT[0]+10, NUM_LT[1]+LIMIT_ITEM], 
-                          False]
-
-        menu.add_btn(BUTTON_FOW, False)
-        menu.add_btn(BUTTON_BAC, False)
+    menu, ID, item_cul,list_to, ID_btn_in,ID_btn_ou, NUM_LT, INFO, is_new = nm[1]
+    menu.edit_panel_w_btn(ID,
+                          item_cul,
+                          list_to,
+                          ID_btn_in,
+                          ID_btn_ou,
+                          NUM_LT,
+                          INFO,
+                          is_new)
+    
     menu.start_cast()
 
 def proyect_new(*nm):
@@ -244,21 +197,22 @@ def proyect_list(*nm):
         else:
             menu.create_text(f"{nme+1}) "+lst_pro[nme][:16]+"...", "CUSTOM", (1,nme+5))
     del nme
-    _refresh_zone([],[menu, 
+    menu.edit_panel_w_btn(
                 1, 
                 10, 
                 lst_pro, 
-                (1, 2, 4), 
+                (1, 2), 
+                [4],
                 (0, 10),
                 info, 
-                True])
+                True)
 
     btn = Button(1, 17, "Next", _refresh_zone, DEFAULT="CUSTOM")
-    btn.caster((""), menu, 1, 10, lst_pro, (1, 2, 4), (10, 20), info, False)
+    btn.caster((""), menu, 1, 10, lst_pro, (1, 2), [4], (10, 20), info, False)
     menu.add_btn(btn)
 
     btn = Button(15, 17, "Back", _refresh_zone, DEFAULT="CUSTOM")
-    btn.caster((""), menu, 1, 10, lst_pro, (1, 2, 4), (0, 10), info, False)
+    btn.caster((""), menu, 1, 10, lst_pro, (1, 2), [4], (0, 10), info, False)
     menu.add_btn(btn)
     menu.del_btn(2, False)
 
