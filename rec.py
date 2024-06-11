@@ -6,7 +6,7 @@ from engine.config.gen_arch import *
 from engine.models.internal.tool.debug import erase_screen, print_debug
 
 root_global = getcwd()
-COMPILER = "19c63a58a4b1a4c025cb0a53273edfbe7236a5da"
+COMPILER = "e3f537aa32f27da07dee85ffa2ed9406b33a856b"
 web ="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
 #procces functions
@@ -453,8 +453,8 @@ def _procces(info):
     btn = Button(1, 15, TEXT="Back", DEFAULT="BACK")
     menu.add_btn(btn)
 
-    #menu.start_cast()
-    menu.get_pre_view()
+    menu.start_cast()
+    #menu.get_pre_view()
 
 #TEST
-_procces(["mc", "1.0", "me", True, web, "a1.1.5.6", [100, 15]])
+#_procces(["mc", "1.0", "me", True, web, "a1.1.5.6", [100, 15]])

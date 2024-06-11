@@ -1,5 +1,5 @@
 from engine import *
-from engine.models.internal.tool.debug import _chk_window, print_debug
+from engine.models.internal.tool.debug import print_debug
 #from proyect_func import *
 #from redirection import *
 from rec import *
@@ -133,7 +133,7 @@ def proyect_new(*nm):
     menu.add_panel(68, 4, 32, 8, 0)
     menu.create_text("Tutorial:", "CUSTOM", (71,5))
 
-    menu.start_cast()
+    #menu.start_cast()
 
 def proyect_list(*nm):
     info = check_proyects()
@@ -197,25 +197,16 @@ def proyect_list(*nm):
         else:
             menu.create_text(f"{nme+1}) "+lst_pro[nme][:16]+"...", "CUSTOM", (1,nme+5))
     del nme
-    menu.edit_panel_w_btn(
-                1, 
-                10, 
-                lst_pro, 
-                (1, 2), 
-                [4],
-                (0, 10),
-                info, 
-                True)
 
     btn = Button(1, 17, "Next", _refresh_zone, DEFAULT="CUSTOM")
     btn.caster((""), menu, 1, 10, lst_pro, (1, 2), [4], (10, 20), info, False)
     menu.add_btn(btn)
 
     btn = Button(15, 17, "Back", _refresh_zone, DEFAULT="CUSTOM")
-    btn.caster((""), menu, 1, 10, lst_pro, (1, 2), [4], (0, 10), info, False)
+    btn.caster((""), menu, 1, 10, lst_pro, (1, 2), [4], (0, 10), info, True)
     menu.add_btn(btn)
-    menu.del_btn(2, False)
 
+    
     btn = Button(X=62, Y=15, TEXT="Autor site/download", ACTION=lnk, DEFAULT="LINK")
     menu.add_btn(btn)
 
@@ -229,9 +220,13 @@ def proyect_list(*nm):
 
     btn = Button(X=84, Y=17, TEXT="Back menu", DEFAULT="BACK")
     menu.add_btn(btn)
+
+    menu.execute_btn(2)
+    menu.btns[1].var[8] = False
+
     del btn, lst_pro, info
 
-    menu.start_cast()
+    #menu.start_cast()
 
 page = Page(X=SIZE[0], Y=SIZE[1], CHR="#")
 page.create_text("Roses In The Flame's mod engine", "CUSTOM", (3, 3))
