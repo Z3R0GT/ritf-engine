@@ -166,3 +166,6 @@ cython_debug/
 /engine
 /pro
 /output
+
+rec.py
+redirection.py
