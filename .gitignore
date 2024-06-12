@@ -167,5 +167,6 @@ cython_debug/
 /pro
 /output
 
+main_1-0.py
 rec.py
 redirection.py

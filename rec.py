@@ -5,19 +5,19 @@ from engine import *
 from engine.config.gen_arch import *
 from engine.models.internal.tool.debug import erase_screen, print_debug
 
-root_global = getcwd()
+ROOT = getcwd()
 COMPILER = "e3f537aa32f27da07dee85ffa2ed9406b33a856b"
 web ="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
 #procces functions
 def check_proyects() -> dict:
-    global root_global
+    global ROOT
     
     try:
-        chdir(root_global+"/proyects")
+        chdir(ROOT+"/proyects")
     except:
-        mkdir(root_global+"/proyects")
-        chdir(root_global+"/proyects")
+        mkdir(ROOT+"/proyects")
+        chdir(ROOT+"/proyects")
 
     info={}
     for nme in list(filter(path.isdir, listdir())):
@@ -34,8 +34,8 @@ def proyect_new_pro(*mn):
     nme, vers, cre, ch, ctn, VER, SIZE = mn[1]
 
     if not check_proyects().__contains__(nme):
-        mkdir(root_global+f"/proyects/{nme}")
-        chdir(root_global+f"/proyects/{nme}")
+        mkdir(ROOT+f"/proyects/{nme}")
+        chdir(ROOT+f"/proyects/{nme}")
 
         open(getcwd()+"/base.info", "w").close()
         open(getcwd()+"/main.rpy", "w").close()
@@ -119,10 +119,10 @@ def _end_proces(*nm):
 #################################################
 #                INFO FUNCTIONS                 #
 #################################################
-_pre_acro = ["Sy", "Ma", "Vn", "Mt", "Ar", "Er", "Op", "Ts"]
-_pre_all  = ["Snowy", "Magma", "Vivian", "Margaret", "Asher", "Ember", "Opal", "Thomas"]
+_PRE_ACRO_GAME = ["Sy", "Ma", "Vn", "Mt", "Ar", "Er", "Op", "Ts"]
+_PRE_ALL_GAME  = ["Snowy", "Magma", "Vivian", "Margaret", "Asher", "Ember", "Opal", "Thomas"]
 _yes = ["y", "Y", "yes"]
-_lb_all = []
+_LB_STORED = []
 
 CUR_CH:list
 
@@ -149,7 +149,7 @@ def _cast_all()->dict:
     
     with open(getcwd()+f"/.config/autosaves/{dtime.now().day}_{dtime.now().month}_end.json", "w") as f:
         lib = {"root":{}}
-        for data in _lb_all:
+        for data in _LB_STORED:
             data:label_statemnt
             lib["root"][data.nme] = data.meta
 
@@ -160,7 +160,7 @@ def __refresh_lb(menu:Page, pos:tuple[int, int], what:str):
     menu.create_text(what, "CUSTOM", pos)
 
 def _say_zone(menu:Page) -> list:
-    lab:label_statemnt = _lb_all[CUR_]
+    lab:label_statemnt = _LB_STORED[CUR_]
     SPACE_JUMP = 1
     temp = []
     for i in lab.dialog:
@@ -184,13 +184,13 @@ def _lb_procc(*nm):
     info=nm[0]
     menu:Page = nm[1][0]
     if int(info[3]) in CUR_CH:
-        _lb_all.append(label_statemnt(info[0], int(info[1]), int(info[2]), int(info[3])))
+        _LB_STORED.append(label_statemnt(info[0], int(info[1]), int(info[2]), int(info[3])))
         __refresh_lb(menu, (1, 2), f" Current label: {" "*10}")
 
-        if not len(_lb_all[-1].nme) >= 10:
-            __refresh_lb(menu, (1, 2), f" Current label: {_lb_all[-1].nme}")
+        if not len(_LB_STORED[-1].nme) >= 10:
+            __refresh_lb(menu, (1, 2), f" Current label: {_LB_STORED[-1].nme}")
         else:
-            __refresh_lb(menu, (1, 2), f" Current label: {_lb_all[-1].nme[:10]}")
+            __refresh_lb(menu, (1, 2), f" Current label: {_LB_STORED[-1].nme[:10]}")
     else:
         print_debug(f"U NEED HAVE CONFIGURATED THIS MOD TO: {int(info[3])} chapter")
         sleep(5)
@@ -199,9 +199,9 @@ def _lb_procc(*nm):
 
 def _lb_sec(*nm):
     menu:Page=nm[1][0]
-    if not len(_lb_all) == 0:
+    if not len(_LB_STORED) == 0:
         c = -1
-        for nme in _lb_all:
+        for nme in _LB_STORED:
             nme:label_statemnt
             c+=1
             print("NAME: ", nme.nme, "ID: ", c)
@@ -210,10 +210,10 @@ def _lb_sec(*nm):
         CUR_=int(input("What label u want to work? \n>"))
 
         __refresh_lb(menu, (1, 2), f" Current label: {" "*10}")
-        if not len(_lb_all[CUR_].nme) >= 10:
-            __refresh_lb(menu, (1, 2), f" Current label: {_lb_all[CUR_].nme}")
+        if not len(_LB_STORED[CUR_].nme) >= 10:
+            __refresh_lb(menu, (1, 2), f" Current label: {_LB_STORED[CUR_].nme}")
         else:
-            __refresh_lb(menu, (1, 2), f" Current label: {_lb_all[CUR_].nme[:10]}")
+            __refresh_lb(menu, (1, 2), f" Current label: {_LB_STORED[CUR_].nme[:10]}")
 
     else:
         print_debug("LABELS NOT FOUND, REDIRECTING TO CREATE A NEW ONE...")
@@ -228,18 +228,18 @@ def _lb_sec(*nm):
 def _chararacter(*nm):
     menu:Page=nm[1][0]
     erase_screen()
-    if not len(_lb_all) == 0:
-        lab:label_statemnt = _lb_all[CUR_]
+    if not len(_LB_STORED) == 0:
+        lab:label_statemnt = _LB_STORED[CUR_]
         lab.add_character(input("What's the name of your character?\n>"))
 
-        __refresh_lb(menu, (1, 10), f"Character num: {len(_lb_all[-1].char_hard)}")
+        __refresh_lb(menu, (1, 10), f"Character num: {len(_LB_STORED[-1].char_hard)}")
 
     menu.start_cast()
 
 def _del_char(*nm):
     menu:Page=nm[1][0]
-    if not len(_lb_all) == 0:
-        lab:label_statemnt = _lb_all[CUR_]
+    if not len(_LB_STORED) == 0:
+        lab:label_statemnt = _LB_STORED[CUR_]
         c -= 1
         for nme in lab.char_simple:
             c+=1
@@ -255,17 +255,17 @@ def _say(*nm):
     menu:Page=nm[1][0]
 
     #erase_screen()
-    if not len(_lb_all) == 0:
+    if not len(_LB_STORED) == 0:
         print("REMEMBER, HERE U CAN USE \\n or special character like that")
         sleep(5)
-        lab:label_statemnt = _lb_all[CUR_]
+        lab:label_statemnt = _LB_STORED[CUR_]
         if input("Do you want to use pre-define characters? (y/n)\n> ") in _yes :
             c = -1
-            for nme in _pre_all:
+            for nme in _PRE_ALL_GAME:
                 c+=1
                 print("NAME: ", nme, "ID: ", c)
 
-            lab.add_say(_pre_acro[int(input("What's the ID (number)? \n>"))], 
+            lab.add_say(_PRE_ACRO_GAME[int(input("What's the ID (number)? \n>"))], 
                     True, 
                     input("What do u want that this character say? \n>"))
         elif input("is your character still exits? (y/n) \n>") in _yes:
@@ -301,8 +301,8 @@ def _say(*nm):
 
 def _edit_say(*nm):
     menu:Page=nm[1][0]
-    if not len(_lb_all) == 0:
-        lab:label_statemnt = _lb_all[CUR_]
+    if not len(_LB_STORED) == 0:
+        lab:label_statemnt = _LB_STORED[CUR_]
 
         lab.edit_say(int(nm[0][0])+int(nm[1][1])+2, 
                      input("What do u want that this character say instead of the other one? \n>"))
@@ -319,8 +319,8 @@ def _edit_say(*nm):
 
 def _del_say(*nm):
     menu:Page=nm[1][0]
-    if not len(_lb_all) == 0:
-        lab:label_statemnt = _lb_all[CUR_]
+    if not len(_LB_STORED) == 0:
+        lab:label_statemnt = _LB_STORED[CUR_]
 
         lab.del_say(int(nm[0][0])+int(nm[1][1])+2)
 
@@ -356,8 +356,8 @@ def _procces(info):
     nme:str;ver:str;aut:str;ch:list|bool;ctn:str; VER:int; SIZE:int
     nme, ver, aut, ch, ctn, VER, SIZE = info
 
-    chdir(root_global+f"/proyects/{nme}")
-    start_()
+    chdir(ROOT+f"/proyects/{nme}")
+    start_path()
 
     if ch == True:
         _nm = open("base.info", "rt").read().split(",")
