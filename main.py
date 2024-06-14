@@ -11,7 +11,7 @@ from os import chdir, path, listdir, mkdir, getcwd, remove
 from time import sleep
 
 #GEN-STATS
-VER : str = "1.0"
+VER : str = "1.0.1"
 COMPILER : str = "41fc14ca97d996580b6e68eb61f3402f87ea29ce"
 
 #GEN-VAR
@@ -353,14 +353,16 @@ def _say_zone(menu:Page) -> list:
 
 def _end_proces(*nm):
     import zipfile as zip
-
+    
     menu:Page=nm[1][1]
     try:
         root = nm[1][0]
         ch = nm[1][2]
         info = _cast_all()
+        if len(list(info["root"].keys())) == 0:
+            raise TypeError("NEED CREATE SOME LABELS")
         keys = list(info["root"].keys())[0]
-
+        
         _save_all(root, info, keys)    
         open(root+"/base.info", "w").close()
         dic = open(root+"/base.info", "w")
@@ -381,21 +383,21 @@ def _end_proces(*nm):
         for i in in_:
             dic.write(i)
         dic.close()
-
         with zip.ZipFile(ROOT_LOCAL+f"/dist_{nm[1][3]}.zip", "w", compression=zip.ZIP_DEFLATED) as zip_file:
-            zip_file.write(root+"/base.info", arcname="base.info")
-            zip_file.write(root+"/meta.info", arcname="meta.info")
+            zip_file.write(root+"/base.info", arcname=f"./{nm[1][3]}/base.info")
+            zip_file.write(root+"/meta.info", arcname=f"./{nm[1][3]}/meta.info")
 
-            zip_file.write(root+f"/{keys}.rpy", arcname=f"{keys}.rpy")
+            zip_file.write(root+f"/{keys}.rpy", arcname=f"./{nm[1][3]}/{keys}.rpy")
             zip_file.close()
-
+            
+        del lab, ln, chap, dic, in_, keys, info, ch, root
         print_debug("INFO SAVED!")
         
     except Exception as e:
         print(e)
         print_debug("NEED CREATE SOMETHING")
     
-    del lab, ln, chap, dic, in_, keys, info, ch, root
+    
     sleep(5)
     menu.start_cast()
 
@@ -847,7 +849,7 @@ def modder_menu(info):
 
     #END BUTTONS
     btn = Button(1, 14, "export", _end_proces, DEFAULT="CUSTOM")
-    btn.caster((""), ROOT_LOCAL, menu, ch, ver)
+    btn.caster((""), ROOT_LOCAL, menu, ch, nme)
     menu.add_btn(btn)
 
     btn = Button(1, 15, TEXT="Back", DEFAULT="BACK")
