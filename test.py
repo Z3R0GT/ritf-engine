@@ -16,23 +16,16 @@ def b(n:int):
     print(label_tst._if_obj[n])
     print(label_tst._if_con)
     print("CONDTIONS")
-    c=-1
-    try:
-        for i in label_tst._if_obj[n].meta["condition"]:
-            print(i)
-            for m in label_tst._if_obj[n].meta["condition"][i]:
-                c+=1
-                print(c, m)
+    print(label_tst._if_obj[n].meta["condition"])
         
-        print("DIALOG")
-        c=-1
-        for i in label_tst._if_obj[n].meta["dialog"]:
-            print(i)
-            for m in label_tst._if_obj[n].meta["condition"][i]:
-                c+=1
-                print(c, m)
-    except:
-        pass
+    print("DIALOG")
+    c=-1
+    for i in range(len(label_tst._if_obj[n].meta["dialog"])):
+        print(i)
+        for m in label_tst._if_obj[n].meta["dialog"][i]:
+            c+=1
+            print(c, m)
+
     
 
 print("ADDING CHARACTER")
