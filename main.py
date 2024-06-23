@@ -1,10 +1,10 @@
 #OWN DESINGS
-import zipfile
 from engine import * 
-from engine.config.gen_arch import *
+from engine.config.gen_arch2 import *
+
 #NEED TO WORK
-DEV[0] = False
-#DEV[1] = True
+#DEV[0] = False
+DEV[1] = True
 
 #GEN-IMPORTS
 from os import chdir, path, listdir, mkdir, getcwd, remove
@@ -12,7 +12,7 @@ from time import sleep
 
 #GEN-STATS
 VER : str = "1.0.1"
-COMPILER : str = "41fc14ca97d996580b6e68eb61f3402f87ea29ce"
+COMPILER : str = "b85ce8b9b731086fa946d17798e896ad0bf19701"
 
 #GEN-VAR
 SIZE = [100, 15]
@@ -874,4 +874,4 @@ with open(ROOT_GLOBAL+"/key.txt", "rt") as file:
         open(ROOT_GLOBAL+"/PATREON_KEY_INCORRECT", "w").close()
         raise KeyError("Patreon key incorrect")
 """
-#main_menu()
+main_menu()
