@@ -874,4 +874,4 @@ with open(ROOT_GLOBAL+"/key.txt", "rt") as file:
         open(ROOT_GLOBAL+"/PATREON_KEY_INCORRECT", "w").close()
         raise KeyError("Patreon key incorrect")
 """
-main_menu()
+#main_menu()
