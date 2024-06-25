@@ -2,6 +2,10 @@
 from engine import * 
 from engine.config.gen_arch2 import *
 
+#BUG: THE PROGRAM SOMETIME WILL FOLLOW ONE LINE, BUT IN CERTAIN THAT CREATE SOME THREADS THAT
+# ALLOW THAT CREATE MULTIPLE, AND WHEN ONE THREATH END, EXECUTE THE BEFORE THREAD AND SO... 
+# well, the hell after all 
+
 #NEED TO WORK
 #DEV[0] = False
 DEV[1] = True
@@ -116,6 +120,7 @@ def _procces_lst(*nm):
         aut = inf[0]
         ver_ = inf[1]
         lnk = ref[2]
+        del inf
     else:
         aut = "meta not found"
         ver_ = "meta not found"
@@ -128,7 +133,7 @@ def _procces_lst(*nm):
     menu.create_text(f"Autor: {aut}", "CUSTOM", (62, 13))
     menu.create_text(f"Version: {ver_}", "CUSTOM", (62, 14))
 
-    del ref, lst_nme, info, num, nme, inf, aut, ver_, lnk
+    del ref, lst_nme, info, num, nme, aut, ver_, lnk
     if not is_new:
         menu.start_cast()
     else:
@@ -675,6 +680,7 @@ def proyect_list(*nm):
         print_debug(f"{VER} REDIRECTING TO CREATE A NEW... {VER}")
         sleep(5)
         proyect_new()
+        return
 
     menu = Page(X=SIZE[0], Y=SIZE[1]+4, CHR="#", NMO="Proyect's page")  
 
@@ -874,4 +880,4 @@ with open(ROOT_GLOBAL+"/key.txt", "rt") as file:
         open(ROOT_GLOBAL+"/PATREON_KEY_INCORRECT", "w").close()
         raise KeyError("Patreon key incorrect")
 """
-#main_menu()
+main_menu()

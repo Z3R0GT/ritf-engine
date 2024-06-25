@@ -5,7 +5,7 @@ from time import sleep
 
 global_config(cwd=getcwd()+"/proyects/asb")
 label_tst = Label(1, "owo", [1], 1)
-
+'''
 def a(n:str, m=True):
     """    
     print(label_tst.meta[n])
@@ -183,13 +183,29 @@ a("dialog")
 print("DELETING THE ENTIRE IF LATER OF PUT A 'say', statement")
 label_tst.add_say(2, "normal", "That's crazy men!")
 a("dialog")
-label_tst.del_condition(1)
-a("dialog")
+#label_tst.del_condition(1)
+#a("dialog")
 
 label_tst.add_source("SAD", "owo")
+label_tst.edit_source(1, "value", "uwu", "INSERT", 3)
 
 print("LOAD AUTO")
 from json import load
-with open(getcwd()+"/proyects/asb/.config/autosaves/if_complete.json", "r") as file:
+with open(getcwd()+"/proyects/asb/.config/autosaves/temp_owo_27.json", "r") as file:
     data:dict = load(file)
     anm = create_instance(data)
+    print(anm.meta["dialog"])
+'''
+
+_yes_ = ["Y", "y", "yes"]
+a = True
+match a:
+    case choice if input("y/n") in _yes_:
+        print("Y")
+        print(choice)
+    case choice if input("y/n") in _yes_:
+        print("N")
+        print(choice)
+
+    
+print(choice)

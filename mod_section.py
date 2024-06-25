@@ -1,6 +1,8 @@
 #OWN DESINGS
+from ast import List
+from cProfile import label
 from engine import * 
-from engine.config.gen_arch2 import *
+from engine.config.gen_arch import *
 
 #NEED TO WORK
 #DEV[0] = False
@@ -11,8 +13,9 @@ from os import chdir, path, listdir, mkdir, getcwd, remove
 from time import sleep
 
 #GEN-STATS
-VER : str = "1.0.1"
-COMPILER : str = "b85ce8b9b731086fa946d17798e896ad0bf19701"
+VER : str = "1.3.0"
+VER_COM :str = "1.1.8.2"
+COMPILER : str = "20ed71461bba82440a6e981e1a8799788b21c337"
 
 #GEN-VAR
 SIZE = [100, 15]
@@ -60,8 +63,8 @@ def start_loading():
     
     if len(info) == 0:
         chdir(ROOT_LOCAL)
-        return
-
+        return False
+    
     #SEARCH PRIOR FILES
     if "end.json" in info:
         name_loaded = ["end.json"]
@@ -89,11 +92,25 @@ def start_loading():
 
     chapters = []
 
-    #CREATE INSTANCES OF LABELS
     for name in name_loaded:
         with open(getcwd()+f"/{name}", "r") as file:
-            info_file = load(file)
+            info_file:dict = load(file)
+            if ch:
+                ...
+            else:
+                for chap in info_file["chapter"]:
+                    if not str(chap) in chapters:
+                        chapters.append(str(chap))
+                _LB_STORED.append(create_instance(info_file))
 
+        #ERASE ARCHIVES LOADED
+        #remove(getcwd()+f"/{name}")
+
+    CUR_CH = chapters
+    chdir(ROOT_LOCAL)
+    return True
+
+    """#CREATE INSTANCES OF LABELS WITH END FILE
             if ch:
                 data = info_file["root"]
                 for name in data:
@@ -117,44 +134,8 @@ def start_loading():
                         label.dialog.append(data[name]["dialog"][i])
                     
                     _LB_STORED.append(label)
-            else:
-                if not info_file["chapter"] in chapters:
-                    chapters.append(str(info_file["chapter"]))
-
-                label = label_statemnt(info_file["name"], 
-                                       info_file["section"],
-                                       len(info_file["level"])%INFO["tab"]+1,
-                                       info_file["chapter"]
-                                      )
-                
-                label.char_hard = info_file["character"][0]
-                label.char_simple = info_file["character"][1]
-
-                for i in range(len(info_file["dialog"])):
-                    if i == 0:
-                        continue
-
-                    label.dialog.append(info_file["dialog"][i])
-                
-                _LB_STORED.append(label)
-
-    CUR_CH = chapters
-
-    #REMOVE ALL OF TEMP-END FILES
-    for i in range(len(info)):
-        remove(getcwd()+f"/{info[i]}")
-
-    #CREATE NEW TEMP FILES
-    for label in _LB_STORED:
-        label:label_statemnt
-
-        label.meta["character"] = [label.char_hard, label.char_simple]
-        label.meta["dialog"] = label.dialog
-
-        label.refresh_save()
-
-    chdir(ROOT_LOCAL)
-    return
+    """
+    
 
 def _cast_all()->dict:
     """
@@ -173,25 +154,32 @@ def _cast_all()->dict:
         return data_save
 
 def _say_zone(menu:Page) -> list:
-    lab:label_statemnt = _LB_STORED[CUR_LB]
+    lab = _LB_STORED[CUR_LB]
     LIM_TEXT = 20
     SPACE_JUMP = 1
     temp = []
-    for i in lab.dialog:
-        i:str
-        if not (i.replace(" ","")[:5] == "label" or \
-                i.replace(" ","")[:6] == "return") \
+
+    for line_dialog in lab.dialog:
+        line_dialog:str
+        if not (line_dialog.replace(" ","")[:5] == "label" or \
+                line_dialog.replace(" ","")[:6] == "return") \
                 and \
-           not (i.replace("\\n","")[len(lab.level):len(i)-SPACE_JUMP] in temp or \
-                i.replace("\\n","")[len(lab.level):len(i)-LIM_TEXT-SPACE_JUMP]+"..." in temp):
+           not (line_dialog.replace("\\n","")[len(lab.tab):len(line_dialog)-SPACE_JUMP] in temp or \
+                line_dialog.replace("\\n","")[len(lab.tab):len(line_dialog)-LIM_TEXT-SPACE_JUMP]+"..." in temp):
             
-            if len(i)-len(lab.level) >= LIM_TEXT:
-                temp.append(i.replace("\\n","")[len(lab.level):len(i)-LIM_TEXT-SPACE_JUMP]+"...")
+            if len(line_dialog)-len(lab.tab) >= LIM_TEXT:
+                temp.append(line_dialog.replace("\\n","")[len(lab.tab):len(line_dialog)-LIM_TEXT-SPACE_JUMP]+"...")
             else:
-                temp.append(i.replace("\\n","")[len(lab.level):len(i)-SPACE_JUMP])
+                temp.append(line_dialog.replace("\\n","")[len(lab.tab):len(line_dialog)-SPACE_JUMP])
     del lab
     return temp
 
+def _select_menu_print(obj:List):
+    c=0
+    for name in obj:
+        c+=1
+        print(f"NAME: {name} <---> ID: {c}")
+    del c, name
 
 def _end_proces(*nm):
     import zipfile as zip
@@ -270,9 +258,10 @@ _PRE_ALL_GAME  = ["Snowy", "Magma", "Vivian", "Margaret",
              "Asher", "Ember", "Opal", "Thomas"]
 
 #PRIV-VAR-SELECT
-_yes = ["y", "Y", "yes"]
+_yes_ = ["Y", "y", "yes"]
+_no_  = ["N", "n", "no"]
 #PRIV-VAR-TO-STORE-LB
-_LB_STORED = []
+_LB_STORED:list[Label] = []
 
 #GEN-VAR-FOR-MOD
 CUR_LB:int=0
@@ -280,30 +269,31 @@ CUR_CH:list
 """
 chapter's list to work on
 """
-
 #################################################
 #                MODDER 1                       #
 #################################################
-
 def _lb_procc(*nm):
-
+    name:str;line:int;tab:int;chapter:int
     info=nm[0]
     menu:Page = nm[1][0]
-    if info[3] in CUR_CH:
-        _LB_STORED.append(label_statemnt(info[0].replace(" ", "A").replace("_", "B").replace("-","C"), 
-                                         int(info[1]), int(info[2]), int(info[3])))
+    name, line, tab, chapter = info
+
+    if chapter in CUR_CH:
+        _LB_STORED.append(Label(int(tab), name.replace(" ", "A").replace("_", "B").replace("-","C"),
+                                int(chapter), int(line)))
+
         menu.create_text(f" Current label: {" "*10}", "CUSTOM", (1,2))
 
-        if not len(_LB_STORED[-1].nme) >= 10:
-            menu.create_text(f" Current label: {_LB_STORED[-1].nme}", "CUSTOM", (1,2))
+        if not len(_LB_STORED[-1].name) >= 10:
+            menu.create_text(f" Current label: {_LB_STORED[-1].name}", "CUSTOM", (1,2))
         else:
-            menu.create_text(f" Current label: {_LB_STORED[-1].nme[:10]}...", "CUSTOM", (1,2))
+            menu.create_text(f" Current label: {_LB_STORED[-1].name[:10]}...", "CUSTOM", (1,2))
     
         global CUR_LB
         CUR_LB = len(_LB_STORED)-1
     
     else:
-        print_debug(f"U NEED HAVE CONFIGURATED THIS MOD TO: {int(info[3])} chapter")
+        print_debug(f"U NEED HAVE CONFIGURATED THIS MOD TO: {chapter} chapter")
         sleep(5)
 
     menu.start_cast()
@@ -311,20 +301,19 @@ def _lb_procc(*nm):
 def _lb_sec(*nm):
     global CUR_LB
     menu:Page=nm[1][0]
+
     if not len(_LB_STORED) == 0:
-        c = -1
-        for nme in _LB_STORED:
-            nme:label_statemnt
-            c+=1
-            print("NAME: ", nme.nme, "ID: ", c)
-        del c
+        tmp_nme =[]
+        for label in _LB_STORED:
+            tmp_nme.append(label.name)
+        _select_menu_print(tmp_nme)
 
-        CUR_LB=int(input("What label u want to work? \n>"))
+        CUR_LB=int(input("What label u want to work? \n>"))-1
 
-        if not len(_LB_STORED[CUR_LB].nme) >= 10:
-            menu.create_text(f" Current label: {_LB_STORED[CUR_LB].nme}", "CUSTOM", (1,2))
+        if not len(_LB_STORED[CUR_LB].name) >= 10:
+            menu.create_text(f" Current label: {_LB_STORED[CUR_LB].name}", "CUSTOM", (1,2))
         else:
-            menu.create_text(f" Current label: {_LB_STORED[CUR_LB].nme[:10]}...", "CUSTOM", (1,2))
+            menu.create_text(f" Current label: {_LB_STORED[CUR_LB].name[:10]}...", "CUSTOM", (1,2))
 
         menu.btns[7].var[3] = _say_zone(menu)
         menu.btns[8].var[3] = _say_zone(menu)
@@ -335,6 +324,7 @@ def _lb_sec(*nm):
         print_debug("LABELS NOT FOUND, REDIRECTING TO CREATE A NEW ONE...")
         sleep(5)
         menu.execute_btn(1)
+        return
     
     menu.start_cast()
     
@@ -344,19 +334,23 @@ def _lb_sec(*nm):
 
 def _chararacter(*nm):
     menu:Page=nm[1][0]
-    if not len(_LB_STORED) == 0:
-        lab:label_statemnt = _LB_STORED[CUR_LB]
-        lab.add_character(input("What's the name of your character?\n>"))
+    name:str;text_size:int
+    name, text_size = nm[0]
 
-        menu.create_text(f"Character num: {len(_LB_STORED[-1].char_hard)}", "CUSTOM", (1,9))
+    if not len(_LB_STORED) == 0:
+        lab = _LB_STORED[CUR_LB]
+        lab.add_character(name, text_size=int(text_size))
+
+        menu.create_text(f"Character num: {len(_LB_STORED[CUR_LB].char_hard)}", "CUSTOM", (1,9))
 
     menu.start_cast()
 
 def _del_char(*nm):
     menu:Page=nm[1][0]
+
     if not len(_LB_STORED) == 0:
-        lab:label_statemnt = _LB_STORED[CUR_LB]
-        c -= 1
+        lab = _LB_STORED[CUR_LB]
+        c = 0
         for nme in lab.char_simple:
             c+=1
             print("NAME: ", nme, "ID: ", c)
@@ -366,43 +360,35 @@ def _del_char(*nm):
 
     menu.start_cast()
 
-
+JUMP_LINE = "\n>  "
 def _say(*nm):
-    menu:Page=nm[1][0]
+    menu:Page = nm[1][0]
+    choice:bool = nm[1][1]
 
     if not len(_LB_STORED) == 0:
-        print("REMEMBER, HERE U CAN USE \\n or special character like that")
+        print("TIP: USE ESPCIAL CHARACTERS LIKE: \\n or similar here")
         sleep(5)
-        lab:label_statemnt = _LB_STORED[CUR_LB]
-        if input("Do you want to use pre-define characters? (y/n)\n> ") in _yes :
-            c = -1
-            for nme in _PRE_ALL_GAME:
-                c+=1
-                print("NAME: ", nme, "ID: ", c)
+        lab = _LB_STORED[CUR_LB]
+        match choice:
+            case is_condition if input(f"Do you want to use pre-define characters? (y/n){JUMP_LINE}") in _yes_:
+                _select_menu_print(_PRE_ALL_GAME)
+                acro_name = _PRE_ACRO_GAME[int(input(f"What's the ID (number)?{JUMP_LINE}"))-1]
 
-            lab.add_say(_PRE_ACRO_GAME[int(input("What's the ID (number)? \n>"))], 
-                    True, 
-                    input("What do u want that this character say? \n>"))
-        elif input("is your character still exits? (y/n) \n>") in _yes:
-            c = -1
-            for nme in lab.char_hard:
-                c+=1
-                print("NAME: ", nme, "ID: ", c)
-            lab.add_say(lab.char_simple[int(input("What's the ID (number)? \n>"))], 
-                    True, 
-                    input("What do u want that this character say? \n>"))
+            case is_condition if input(f"Is your character still exits? (y/n){JUMP_LINE}") in _yes_:
+                _select_menu_print(lab.char_simple)
+                acro_name = int(input(f"What's the ID (number)?{JUMP_LINE}"))
+
+            case is_condition if input(f"Do you want just use a character's name (we don't save it)? (y/n){JUMP_LINE}") in _yes_:
+                acro_name = input(f"What's the name?{JUMP_LINE}")
+
+            case is_condition if True:
+                acro_name = ""
+
+        message   = input(f"What do u want that this character say?{JUMP_LINE}")
+        if not is_condition:
+            lab.add_say(acro_name, "normal", message)
         else:
-            print("We recommend u use 'Character' option to don't repeat many time this... (wait a few seconds)")
-            sleep(5)
-
-            if input("Do u want use a character's name (we don't save it)? (y/n) \n>") in _yes:
-                lab.add_say(input("What's the name?: >"), 
-                        False,
-                        input("What do u want that this character say? \n>"))
-            else:
-                lab.add_say(None, 
-                        False,
-                        input("What do u want that this character say? \n>"))
+            print(acro_name, message, is_condition)
 
         menu.btns[7].var[3] = _say_zone(menu)
         menu.btns[8].var[3] = _say_zone(menu)
@@ -411,10 +397,33 @@ def _say(*nm):
         menu.execute_btn(9)
 
         menu.btns[8].var[8] = False
+    else:
+        print_debug("LABELS NOT FOUND, REDIRECTING TO CREATE A NEW ONE...")
+        sleep(5)
+        menu.execute_btn(1)
 
     menu.start_cast()
 
 def _edit_say(*nm):
+    menu:Page=nm[1][0]
+    #choice:bool = nm[1][1]
+    print(nm)
+    if not len(_LB_STORED) == 0:
+        lab = _LB_STORED[CUR_LB]
+
+        if not len(nm[1]) > 1:
+            ID = int[0][0]+int[nm[1][1]]+2
+            
+        else:
+            print_debug("NEED CREATE MORE 'say' STAMENTS TO DO THIS")
+    else:
+        print_debug("LABELS NOT FOUND, REDIRECTING TO CREATE A NEW ONE...")
+        sleep(5)
+        menu.execute_btn(1)
+        return
+    
+    menu.start_cast()
+def _temp_edit_say(*nm):
     menu:Page=nm[1][0]
     if not len(_LB_STORED) == 0:
         lab:label_statemnt = _LB_STORED[CUR_LB]
@@ -472,11 +481,21 @@ def modder_menu(info):
     CUR_LB = 0
     CUR_CH = []
     _LB_STORED = []
+
+    #FOR TEST
+    chdir(getcwd()+"/proyects/default")
+    ROOT_LOCAL = getcwd()
+    global_config(cwd=ROOT_LOCAL)
+
+    #FOR TEST
+    _LB_STORED.append(Label(1, "owo", [1], 1))
+    _LB_STORED[0].add_character("pedro")
+
     nme:str;ver:str;aut:str;ch:list|bool;ctn:str
     nme, ver, aut, ch, ctn = info
-    
-    start_path(ROOT_LOCAL)
-    chk = start_loading()
+    #global_config(cwd=ROOT_LOCAL)
+    #chk = start_loading()
+    chk = False
     if not chk:
         CUR_CH = ch
 
@@ -506,7 +525,7 @@ def modder_menu(info):
 
     #CHARACTER
     btn = Button(1, 7, "Add character", _chararacter, DEFAULT="CUSTOM")
-    btn.caster((""), menu)
+    btn.caster(("What's the name of your character?", "What's would be the text size?"), menu)
     menu.add_btn(btn)
 
     btn = Button(1, 8, "Delete character", _del_char, DEFAULT="CUSTOM")
@@ -515,7 +534,7 @@ def modder_menu(info):
 
     #SAY
     btn = Button(1, 10, "Add say to 'character'", _say, DEFAULT="CUSTOM")
-    btn.caster((""), menu)
+    btn.caster((""), menu, False)
     menu.add_btn(btn)
 
     btn = Button(1, 11, "Edit say", _edit_say, DEFAULT="CUSTOM")
@@ -555,5 +574,8 @@ def modder_menu(info):
     btn = Button(1, 15, TEXT="Back", DEFAULT="BACK")
     menu.add_btn(btn)
 
-    menu.start_cast()
-    #menu.get_pre_view()
+    #menu.start_cast()
+    menu.get_pre_view()
+
+
+modder_menu(["default", "1.0", "me", [1], WEB_MOD_DEFAULT])
