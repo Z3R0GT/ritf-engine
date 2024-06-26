@@ -1,6 +1,4 @@
 #OWN DESINGS
-from ast import List
-from cProfile import label
 from engine import * 
 from engine.config.gen_arch import *
 
@@ -174,7 +172,7 @@ def _say_zone(menu:Page) -> list:
     del lab
     return temp
 
-def _select_menu_print(obj:List):
+def _select_menu_print(obj:list):
     c=0
     for name in obj:
         c+=1
