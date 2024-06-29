@@ -549,7 +549,14 @@ def modder_menu(info):
     
     #ID : 7 - 8
     btn = Button(38, 15, "Next", _up_sec, DEFAULT="CUSTOM")
-    btn.caster((""), menu, 1, 10, ["Nothing", "Nothing"], (8, 9), (6, 7), (10, 20), ..., False)
+    btn.caster((""), menu, 1, 
+                           10, 
+                           ["Nothing", "Nothing"], 
+                           (8, 9), 
+                           (6, 7), 
+                           (10, 20), 
+                           ..., 
+                           False)
     menu.add_btn(btn)
 
     btn = Button(50, 15, "Back", _up_sec, DEFAULT="CUSTOM")

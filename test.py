@@ -5,7 +5,7 @@ from time import sleep
 
 global_config(cwd=getcwd()+"/proyects/asb")
 label_tst = Label(1, "owo", [1], 1)
-'''
+
 def a(n:str, m=True):
     """    
     print(label_tst.meta[n])
@@ -195,7 +195,7 @@ with open(getcwd()+"/proyects/asb/.config/autosaves/temp_owo_27.json", "r") as f
     data:dict = load(file)
     anm = create_instance(data)
     print(anm.meta["dialog"])
-'''
+
 
 _yes_ = ["Y", "y", "yes"]
 a = True
