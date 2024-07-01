@@ -1,3 +1,4 @@
+"""
 import sys
 from engine.config.gen_arch import *
 from os import getcwd, system
@@ -7,14 +8,14 @@ global_config(cwd=getcwd()+"/proyects/asb")
 label_tst = Label(1, "owo", [1], 1)
 
 def a(n:str, m=True):
-    """    
+ 
     print(label_tst.meta[n])
     if m or n == "if":
-        input()"""
+        input()
     ...
 
 def b(n:int):
-    """n -= 1
+n -= 1
     print(label_tst._if_obj[n])
     print(label_tst._if_con)
     print("CONDTIONS")
@@ -26,10 +27,8 @@ def b(n:int):
         print(i)
         for m in label_tst._if_obj[n].meta["dialog"][i]:
             c+=1
-            print(c, m)"""
+            print(c, m)
     ...
-
-    
 
 print("ADDING CHARACTER")
 label_tst.add_character("pedro")
@@ -209,3 +208,15 @@ match a:
 
     
 print(choice)
+"""
+
+
+a= ["a", "b", "c"]
+
+def mn(v:list):
+    b = v
+    b.insert(1, "d")
+
+print(a)
+mn(a)
+print(a)
