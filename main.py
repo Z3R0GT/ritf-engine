@@ -25,13 +25,6 @@ WEB_MOD_DEFAULT = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 WEB_MAIN_GAME = "https://rosesintheflames.com/"
 WEB_TALE_GAME = "https://tales.rosesintheflames.com/"
 
-PATREON_KEY:list = ["BBB"]
-"""
-in the future, get a list from the future data base
-and all of them is encripted
-"""
-
-
 ROOT_GLOBAL = getcwd()
 ROOT_LOCAL:str
 """
@@ -632,7 +625,7 @@ def _up_sec(*nm):
 #MAIN
 def main_menu():   
     menu = Page(X=SIZE[0], Y=SIZE[1], CHR="#")
-    menu.create_text("Roses In The Flame's mod engine", "CUSTOM", (3, 1))
+    menu.create_text("RenTgen (Roses In The Flame's mod engine)", "CUSTOM", (3, 1))
     menu.create_text(f"version {VER}", "CUSTOM", (menu.vec[0]-len(VER)-12, 1))
     menu.create_text("CREATED BY: Z3R0_GT/OFFZ3R0           ENGINE (VOP): ScoStudios", "LOWER")
 
@@ -867,17 +860,4 @@ def modder_menu(info):
 ################################################
 #                 MAIN SIDE                    #
 ################################################
-"""
-with open(ROOT_GLOBAL+"/key.txt", "rt") as file:
-              #ENCRYPTED? XD
-    if file.read().replace("A", "B") in PATREON_KEY and \
-        type(PATREON_KEY) == type([]) and \
-        type(file.read()) == type(""):
-
-        ...
-        #main_menu()
-    else:
-        open(ROOT_GLOBAL+"/PATREON_KEY_INCORRECT", "w").close()
-        raise KeyError("Patreon key incorrect")
-"""
 main_menu()

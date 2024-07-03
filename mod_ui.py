@@ -1,3 +1,4 @@
+from email import message
 from engine import *
 from engine.config.gen_arch import *
 
@@ -11,8 +12,8 @@ from time import sleep
 WEB_MOD_DEFAULT = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
 VER : str = "1.3.0"
-VER_COM :str = "1.1.8.6"
-COMPILER : str = "d0c3d590186b55b0796dfeb8b34857176603fbc3"
+VER_COM :str = "1.1.8.7"
+COMPILER : str = "944c5d561e60c5e6c1667dae8c214141517a19a7"
 
 _LB_STORED :list[Label] = []
 LB_CUR :Label = ...
@@ -45,20 +46,36 @@ def _str_say_menu(LIM_TEXT=35, obj:list=...) -> list[str]:
             temp.append(line[len(LB_CUR.tab):LIM_TEXT+len(LB_CUR.tab)].replace("\n", "").replace("\"", ""))
     return temp
 
-def _btn_on(menu:Page, ID_NEXT, ID_BACK, lst, LIM_TEXT=35):
+def _btn_on(menu:Page, ID_NEXT, ID_BACK, lst, LIM_TEXT=35, execute=True):
     menu.btns[ID_NEXT].var[3] = _str_say_menu(LIM_TEXT, lst)
     menu.btns[ID_BACK].var[3] = _str_say_menu(LIM_TEXT, lst)
     menu.btns[ID_BACK].var[8] = True
 
-    menu.execute_btn(ID_BACK+1)
+    if execute:
+        menu.execute_btn(ID_BACK+1)
 
     menu.btns[ID_BACK].var[8] = False
 
+def __eval_mod_(choice:str):
+    match choice:
+        case eval_mod if eval_mod == "1" or eval_mod == "==" or eval_mod == "equal":
+            eval_mod = "equal"
+        case eval_mod if eval_mod == "2" or eval_mod == ">=" or eval_mod == "geater":
+            eval_mod = "geater"
+        case eval_mod if eval_mod == "3" or eval_mod == "<=" or eval_mod == "smaller":
+            eval_mod = "smaller"
+        case eval_mod if eval_mod == "4" or eval_mod == "!=" or eval_mod == "not":
+            eval_mod = "not"
+        case _:
+            eval_mod = "equal"
+
+    return eval_mod
 
 def _edi_(*nm):
     menu:Page = nm[1][0]
 
     if nm[1][1] == "non":
+        menu.execute_btn(nm[1][2])
         menu.start_cast()
 
     match nm[1][1]:
@@ -87,6 +104,7 @@ def _edi_(*nm):
             LB_CUR.edit_character(nm[1][3], choice, value)  
 
         case "say":
+            
             match nm[1][1]:
                 case choice if choice == "name":
                     menu.create_text(" "*40, "CUSTOM", (1, 4))
@@ -101,13 +119,19 @@ def _edi_(*nm):
 
             match nm[1][4]:
                 case "normal":
-                    LB_CUR.edit_say(nm[1][3]+1, "normal", choice, value)
-
+                    LB_CUR.edit_say(nm[1][3]+1, nm[1][4], choice, value)
                     _btn_on(nm[1][5], 10, 11, LB_CUR.dialog)
+
                 case "if":
-                    #NEED WORK
-                    print(nm)
-                    input()
+                    LB_CUR.edit_say(nm[1][3],   nm[1][4], choice, value, nm[1][6], nm[1][7])
+                    _lst = []
+
+                    for i in LB_CUR._if_obj[nm[1][6]-1].dialog:
+                        _lst.append(LB_CUR.tab+f"{i}_con\n")
+                        for n in LB_CUR._if_obj[nm[1][6]-1].dialog[i]:
+                            _lst.append(n[4:])
+
+                    _btn_on(nm[1][5], 6, 7, _lst, execute=False)
 
     menu.start_cast()
 
@@ -178,8 +202,31 @@ def _char(*nm):
 
     menu.start_cast()
 
+def _c0n(*nm):
+    menu:Page = nm[1][0]
+
+    match nm[0][0]:
+        case choice if choice == "1" or choice.lower() == "add":
+            vr1 = input("What's the value?")
+            vr2 = input("What's the another value")
+
+            eval_mod = input(f"What's operator? (equal/==/1, geater/>=/2, smaller/<=/3, not/!=/4){JUMP_LINE}")
+            eval_mod = __eval_mod_(eval_mod)
+
+            LB_CUR.edit_condition(nm[1][1], vr1, vr2, "ADD", eval_mod)
+        case choice if choice == "2" or choice.lower() == "edit":
+            ...
+        case choice if choice == "3" or choice.lower() == "del":
+            c = input("What's the condition ID")
+        case _:
+            ...
+
+    
+
+
+    
 def _if_men(*nm):
-    menu = Page(105, 22)
+    menu = Page(105, 22, NMO="owo")
     if not len(_LB_STORED) <= 0:
         ID_CUR:int = int(nm[0][0])+nm[1][1]
         _if_ = LB_CUR._if_obj[ID_CUR]
@@ -206,8 +253,8 @@ def _if_men(*nm):
         menu.add_btn(btn)
 
         #3-2
-        btn = Button(20, 9, "Edit con", ...)
-        btn.caster((""), menu)
+        btn = Button(20, 9, "Edit con", _c0n)
+        btn.caster(("U want ADD-1/EDIT-2/DEL-3 a condition?"), menu, ID_CUR)
         menu.add_btn(btn)
 
         #4-3
@@ -325,7 +372,6 @@ def _if_men(*nm):
         menu.create_text(f"Compiled: {COMPILER[:10]}", "CUSTOM", (80, 20))
 
         menu.start_cast()
-        #menu.get_pre_view()
     else:
         print_debug("LABELS NOT FOUND, REDIRECTING TO CREATE A NEW ONE...")
         sleep(5)
@@ -333,17 +379,7 @@ def _if_men(*nm):
 def _if(*nm):
     menu:Page = nm[1][0]
     if not len(_LB_STORED) <= 0 or not len(LB_CUR._init_obj) <= 0:
-        match nm[0][1]:
-            case eval_mod if eval_mod == "1" or eval_mod == "==" or eval_mod == "equal":
-                eval_mod = "equal"
-            case eval_mod if eval_mod == "2" or eval_mod == ">=" or eval_mod == "geater":
-                eval_mod = "geater"
-            case eval_mod if eval_mod == "3" or eval_mod == "<=" or eval_mod == "smaller":
-                eval_mod = "smaller"
-            case eval_mod if eval_mod == "4" or eval_mod == "!=" or eval_mod == "not":
-                eval_mod = "not"
-            case _:
-                eval_mod = "equal"
+        eval_mod = __eval_mod_(nm[0][1])
 
         var_from = LB_CUR._init_obj[int(nm[0][0])+1].name
         if nm[0][2].isnumeric():
@@ -364,29 +400,34 @@ def _if(*nm):
 
 def _say_men(*nm):
     sel = int(input(f"What's the say's ID?{JUMP_LINE}"))+nm[1][1]
+    type_op:str = nm[1][3][1]
 
-    print(nm[1])
-    input()
     match type_op:
         case "normal":
             var = not "$" in LB_CUR.dialog[sel]
         case "if":
-            var = not "$" in LB_CUR._if_obj[nm[1][7][2]].dialog[nm[0][0]][sel]
+            sel -= 1
+            id_if  = int(nm[0][0])
+
+            var = not "$" in LB_CUR._if_obj[nm[1][3][2]].dialog[id_if][sel]
     
     if not len(LB_CUR._say_obj) == 0 or var:
         menu = Page(60, 15)
         
-        type_op:str = nm[1][3][1]
         match type_op:
             case "normal":
+                ID = 12
                 name = [menu, "name",   "say", sel, type_op, nm[1][0]]
                 mess = [menu, "message","say", sel, type_op, nm[1][0]]
+                sa:say = LB_CUR._say_obj[sel]
             case "if":
-                name = ...
-                mess = ...
+                ID = 8
+                name = [menu, "name",    "say", sel, type_op, nm[1][0], id_if+1, sel+1]
+                mess = [menu, "message", "say", sel, type_op, nm[1][0], id_if+1, sel+1]
+                id_con = nm[1][3][2]
+                
+                sa:say = LB_CUR._if_obj[id_con]._say_obj[id_if][sel]
 
-        sa = LB_CUR._say_obj[sel]
-        
         menu.create_text("TYPE: say", "UPPER")
         menu.create_text("NAME", "CUSTOM", (1,3))
         #1
@@ -402,7 +443,7 @@ def _say_men(*nm):
 
         #3
         btn = Button(1, 13, "Save", _edi_)
-        btn.var = [nm[1][0], "non"]
+        btn.var = [nm[1][0], "non", ID]
         menu.add_btn(btn)
 
         menu.create_text(f"Compiled: {COMPILER[:10]}", "CUSTOM", (38, 13))
@@ -450,9 +491,11 @@ def _say(*nm):
             match type_op:
                 case "normal":
                     LB_CUR.del_say(id_say, "normal")
+                    operation = type_op
                 
                 case "if":
-                    id_con = nm[1][3][2]+1
+                    operation = type_op
+                    id_con = nm[1][3][2]
                     id_if  = int(input(f"What's the 'if' ID?{JUMP_LINE}"))+1
 
                     LB_CUR.del_say(id_say, "if", id_con, id_if)
