@@ -1,4 +1,3 @@
-from email import message
 from engine import *
 from engine.config.gen_arch import *
 
@@ -12,7 +11,7 @@ from time import sleep
 WEB_MOD_DEFAULT = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
 VER : str = "1.3.0"
-VER_COM :str = "1.1.8.7"
+VER_COM :str = "1.1.8.8"
 COMPILER : str = "944c5d561e60c5e6c1667dae8c214141517a19a7"
 
 _LB_STORED :list[Label] = []
@@ -32,6 +31,14 @@ def _select_menu_print(obj:list):
         print(f"NAME: {name} <---> ID: {c}")
     del c, name
 
+def de_cip(word:str) -> int:
+    c=0
+    for _in in word:
+        c+=1
+        if _in == "_":
+            break
+    return c
+
 def _str_say_menu(LIM_TEXT=35, obj:list=...) -> list[str]:
     temp = []
     for line in obj:
@@ -45,6 +52,7 @@ def _str_say_menu(LIM_TEXT=35, obj:list=...) -> list[str]:
         if not line.replace(" ", "")[:6] == "return":
             temp.append(line[len(LB_CUR.tab):LIM_TEXT+len(LB_CUR.tab)].replace("\n", "").replace("\"", ""))
     return temp
+
 
 def _btn_on(menu:Page, ID_NEXT, ID_BACK, lst, LIM_TEXT=35, execute=True):
     menu.btns[ID_NEXT].var[3] = _str_say_menu(LIM_TEXT, lst)
@@ -135,50 +143,129 @@ def _edi_(*nm):
 
     menu.start_cast()
 
+def paths_finder() -> tuple[list[str], bool, list[str]]:
+    global ROOT_LOCAL
+
+    chdir(ROOT_LOCAL+"/.config/autosaves")
+    info = list(filter(path.isfile, listdir()))
+
+    if len(info) == 0:
+        chdir(ROOT_LOCAL)
+        return ["pass"]
+    
+    if "end.json" in info:
+        name_loaded = ["end.json"]
+        ch = True
+    else:
+        name_loaded = ["temp_ñ_0.json"]
+
+        for names in info:
+            name_from = names[5:].replace(".json", "")
+            if not names in name_loaded:
+                name_to = name_loaded[-1][5:].replace(".json", "")
+
+                num_from, num_to = de_cip(name_from), de_cip(name_to)
+                if name_from[:num_from-1] == name_to[:num_to-1] and \
+                    int(name_from[num_from:]) >= int(name_to[num_to:]):
+
+                    name_loaded[-1] = names
+                else:
+                    name_loaded.append(names)
+        if name_loaded[0] == "temp_ñ_0.json":
+            del name_loaded[0]
+        ch = False
+
+    lst = []
+    if not len(name_loaded) == 1:
+        for name in name_loaded:
+            lst.append(getcwd()+f"/{name}")
+    else:
+        lst.append(getcwd()+"/"+name_loaded[0])
+        
+    return lst, ch, info
+
+def loader_label():
+    global ROOT_LOCAL
+    from json import load
+
+    info = paths_finder()
+
+    info_load:list[dict] = []
+    if info[1]:
+        with open(info[0][0], "r") as file:
+            dit = load(file)
+
+            for in_ in dit["root"]:
+                info_load.append(dit["root"][in_])
+    else:
+        if len(info[0]) == 1:
+            info_load.append(load(open(info[0][0], "r")))
+        else:
+            for paths in info[0][0]:
+                with open(paths, "r") as file:
+                    info_load.append(load(file))
+
+    #Eraser of all archive
+    for paths in info[2]:
+        remove(paths)
+
+    for info in info_load:
+        create_instance(info)
+
+    chdir(ROOT_LOCAL)
+    return
+        
+
 def _char_men(*nm):
-    _select_menu_print(LB_CUR.char_simple)
-    sel = int(input(f"What's the character's ID?{JUMP_LINE}"))
-    name  = LB_CUR.char_simple[sel-1][0][:22]
-    color = LB_CUR.char_simple[sel-1][1]
-    text  = LB_CUR.char_simple[sel-1][2]
+    if not len(_LB_STORED) == 0:
+        _select_menu_print(LB_CUR.char_simple)
+        sel = int(input(f"What's the character's ID?{JUMP_LINE}"))
+        name  = LB_CUR.char_simple[sel-1][0][:22]
+        color = LB_CUR.char_simple[sel-1][1]
+        text  = LB_CUR.char_simple[sel-1][2]
 
-    menu = Page(60, 9)
+        menu = Page(60, 9)
 
-    menu.create_text("TYPE: Character", "UPPER")
-    menu.create_text("NAME", "CUSTOM", (1, 3))
-    menu.create_text("|",    "CUSTOM", (23,3))
-    menu.create_text("|",    "CUSTOM", (23,4))
-    #1
-    btn = Button(1,4, name , _edi_)
-    btn.var = [menu, "name", "char",sel]
-    menu.add_btn(btn)
+        menu.create_text("TYPE: Character", "UPPER")
+        menu.create_text("NAME", "CUSTOM", (1, 3))
+        menu.create_text("|",    "CUSTOM", (23,3))
+        menu.create_text("|",    "CUSTOM", (23,4))
+        #1
+        btn = Button(1,4, name , _edi_)
+        btn.var = [menu, "name", "char",sel]
+        menu.add_btn(btn)
 
-    menu.create_text("COLOR", "CUSTOM", (24,3))
-    menu.create_text("|",     "CUSTOM", (43,3))
-    menu.create_text("|",     "CUSTOM", (43,4))
-    #2
-    btn = Button(24, 4, color, _edi_)
-    btn.var = [menu, "color", "char",sel]
-    menu.add_btn(btn)
+        menu.create_text("COLOR", "CUSTOM", (24,3))
+        menu.create_text("|",     "CUSTOM", (43,3))
+        menu.create_text("|",     "CUSTOM", (43,4))
+        #2
+        btn = Button(24, 4, color, _edi_)
+        btn.var = [menu, "color", "char",sel]
+        menu.add_btn(btn)
 
-    menu.create_text("TEXT SIZE", "CUSTOM", (44, 3))
-    menu.create_text("|",         "CUSTOM", (58, 3)) 
-    menu.create_text("|",         "CUSTOM", (58, 4)) 
-    #3
-    btn = Button(44, 4, str(text), _edi_)
-    btn.var = [menu, "textzs", "char",sel]
-    menu.add_btn(btn)
+        menu.create_text("TEXT SIZE", "CUSTOM", (44, 3))
+        menu.create_text("|",         "CUSTOM", (58, 3)) 
+        menu.create_text("|",         "CUSTOM", (58, 4)) 
+        #3
+        btn = Button(44, 4, str(text), _edi_)
+        btn.var = [menu, "textzs", "char",sel]
+        menu.add_btn(btn)
 
-    #4
-    btn = Button(1, 7, "Save", _edi_)
-    btn.var = [nm[1][0], "non"]
-    menu.add_btn(btn)
+        #4
+        btn = Button(1, 7, "Save", _edi_)
+        btn.var = [nm[1][0], "non"]
+        menu.add_btn(btn)
 
-    menu.create_text(f"Compiled: {COMPILER[:10]}", "CUSTOM", (38, 7))
-    menu.create_text(f"App ver: {VER}/{VER_COM}", "CUSTOM", (14, 7))
+        menu.create_text(f"Compiled: {COMPILER[:10]}", "CUSTOM", (38, 7))
+        menu.create_text(f"App ver: {VER}/{VER_COM}", "CUSTOM", (14, 7))
 
-    menu.start_cast()
-
+        menu.start_cast()
+    else:
+        print_debug("LABELS NOT FOUND, REDIRECTING TO CREATE A NEW ONE...")
+        sleep(5)
+        _sel(["y"], nm[1])
+        return
+    
 def _char(*nm):
     menu:Page=nm[1][0]
 
@@ -199,7 +286,9 @@ def _char(*nm):
     else:
         print_debug("LABELS NOT FOUND, REDIRECTING TO CREATE A NEW ONE...")
         sleep(5)
-
+        _sel(["y"], nm[1])
+        return
+    
     menu.start_cast()
 
 def _c0n(*nm):
@@ -207,22 +296,50 @@ def _c0n(*nm):
 
     match nm[0][0]:
         case choice if choice == "1" or choice.lower() == "add":
-            vr1 = input("What's the value?")
-            vr2 = input("What's the another value")
+            vr1 = input(f"What's the value?{JUMP_LINE}")
+            vr2 = input(f"What's the another value{JUMP_LINE}")
 
             eval_mod = input(f"What's operator? (equal/==/1, geater/>=/2, smaller/<=/3, not/!=/4){JUMP_LINE}")
             eval_mod = __eval_mod_(eval_mod)
 
             LB_CUR.edit_condition(nm[1][1], vr1, vr2, "ADD", eval_mod)
         case choice if choice == "2" or choice.lower() == "edit":
-            ...
+            c = int(input(f"What's the condition ID{JUMP_LINE}"))
+
+            vr1 = input(f"What's the value?{JUMP_LINE}")
+            vr2 = input(f"What's the another value{JUMP_LINE}")
+
+            eval_mod = input(f"What's operator? (equal/==/1, geater/>=/2, smaller/<=/3, not/!=/4){JUMP_LINE}")
+            eval_mod = __eval_mod_(eval_mod)
+
+            LB_CUR.edit_condition(nm[1][1], vr1, vr2, "EDIT", eval_mod, c)
+
         case choice if choice == "3" or choice.lower() == "del":
-            c = input("What's the condition ID")
+            c = int(input(f"What's the condition ID{JUMP_LINE}"))
+
+            LB_CUR.edit_condition(nm[1][1], ..., ..., "DEL", ..., c+1)
         case _:
-            ...
+            vr1 = input(f"What's the value?{JUMP_LINE}")
+            vr2 = input(f"What's the another value{JUMP_LINE}")
 
+            eval_mod = input(f"What's operator? (equal/==/1, geater/>=/2, smaller/<=/3, not/!=/4){JUMP_LINE}")
+            eval_mod = __eval_mod_(eval_mod)
+
+            LB_CUR.edit_condition(nm[1][1], vr1, vr2, "ADD", eval_mod)
+    _lst = []
+    for con in LB_CUR._if_obj[nm[1][1]].condition:
+        _lst.append(con[0][:6]+con[1]+ con[2][:6])
+
+    menu.btns[4].var[3] = _lst
+    menu.btns[5].var[3] = _lst
+
+    menu.btns[5].var[7][0] = True
+
+    menu.execute_btn(6)
     
-
+    menu.btns[5].var[7][0] = False
+    
+    menu.start_cast()
 
     
 def _if_men(*nm):
@@ -258,10 +375,11 @@ def _if_men(*nm):
         menu.add_btn(btn)
 
         #4-3
-        btn = Button(20, 10, "Edit vars", ...)
+        btn = Button(20, 10, "Edit vars", _sou_men)
         btn.caster(("What u want change? (name - 1/value -2)",
                     "What's the new value?",
-                    "What's the ID"), 
+                    "What's the ID",
+                    "What's if's ID?"), 
                     menu, False, 0)
         menu.add_btn(btn)
 
@@ -330,12 +448,11 @@ def _if_men(*nm):
         btn.caster((""), menu,
                 3,
                 10,
-                ["Create vars", 
-                    "Here"],
+                _str_say_menu(20, LB_CUR.init),
                 (9, 10),
                 (4),
                 (10, 20),
-                [True, "if"],
+                [True, "if", ID_CUR],
                 False
                 )
         menu.add_btn(btn)
@@ -345,12 +462,11 @@ def _if_men(*nm):
         btn.caster((""), menu, 
                 3,
                 10,
-                ["Create vars",
-                    "Here"],
+                _str_say_menu(20, LB_CUR.init),
                 (9, 10),
                 (4),
                 (0, 10),
-                [True, "if"],
+                [True, "if", ID_CUR],
                 False
                 )
         menu.add_btn(btn)
@@ -375,10 +491,12 @@ def _if_men(*nm):
     else:
         print_debug("LABELS NOT FOUND, REDIRECTING TO CREATE A NEW ONE...")
         sleep(5)
-
+        _sel(["y"], nm[1])
+        return
+    
 def _if(*nm):
     menu:Page = nm[1][0]
-    if not len(_LB_STORED) <= 0 or not len(LB_CUR._init_obj) <= 0:
+    if not len(_LB_STORED) == 0 and not len(LB_CUR._init_obj) == 0:
         eval_mod = __eval_mod_(nm[0][1])
 
         var_from = LB_CUR._init_obj[int(nm[0][0])+1].name
@@ -395,64 +513,71 @@ def _if(*nm):
     else:
         print_debug("LABELS NOT FOUND, REDIRECTING TO CREATE A NEW ONE...")
         sleep(5)
-
+        _sel(["y"], nm[1])
+        return
     menu.start_cast()
 
 def _say_men(*nm):
-    sel = int(input(f"What's the say's ID?{JUMP_LINE}"))+nm[1][1]
-    type_op:str = nm[1][3][1]
+    if not len(_LB_STORED) == 0:
+        sel = int(input(f"What's the say's ID?{JUMP_LINE}"))+nm[1][1]
+        type_op:str = nm[1][3][1]
 
-    match type_op:
-        case "normal":
-            var = not "$" in LB_CUR.dialog[sel]
-        case "if":
-            sel -= 1
-            id_if  = int(nm[0][0])
-
-            var = not "$" in LB_CUR._if_obj[nm[1][3][2]].dialog[id_if][sel]
-    
-    if not len(LB_CUR._say_obj) == 0 or var:
-        menu = Page(60, 15)
-        
         match type_op:
             case "normal":
-                ID = 12
-                name = [menu, "name",   "say", sel, type_op, nm[1][0]]
-                mess = [menu, "message","say", sel, type_op, nm[1][0]]
-                sa:say = LB_CUR._say_obj[sel]
+                var = not "$" in LB_CUR.dialog[sel]
             case "if":
-                ID = 8
-                name = [menu, "name",    "say", sel, type_op, nm[1][0], id_if+1, sel+1]
-                mess = [menu, "message", "say", sel, type_op, nm[1][0], id_if+1, sel+1]
-                id_con = nm[1][3][2]
-                
-                sa:say = LB_CUR._if_obj[id_con]._say_obj[id_if][sel]
+                sel -= 1
+                id_if  = int(nm[0][0])
 
-        menu.create_text("TYPE: say", "UPPER")
-        menu.create_text("NAME", "CUSTOM", (1,3))
-        #1
-        btn = Button(1,4, sa.name, _edi_)
-        btn.var = name
-        menu.add_btn(btn)
+                var = not "$" in LB_CUR._if_obj[nm[1][3][2]].dialog[id_if][sel]
+        if not len(LB_CUR._say_obj) == 0 or var:
+            menu = Page(60, 15)
+            
+            match type_op:
+                case "normal":
+                    ID = 12
+                    name = [menu, "name",   "say", sel, type_op, nm[1][0]]
+                    mess = [menu, "message","say", sel, type_op, nm[1][0]]
+                    sa:say = LB_CUR._say_obj[sel]
+                case "if":
+                    ID = 8
+                    name = [menu, "name",    "say", sel, type_op, nm[1][0], id_if+1, sel+1]
+                    mess = [menu, "message", "say", sel, type_op, nm[1][0], id_if+1, sel+1]
+                    id_con = nm[1][3][2]
+                    
+                    sa:say = LB_CUR._if_obj[id_con]._say_obj[id_if][sel]
 
-        menu.create_text("MESSAGE", "CUSTOM", (1, 6))
-        #2
-        btn = Button(1,7, sa.message, _edi_)
-        btn.var = mess
-        menu.add_btn(btn)
+            menu.create_text("TYPE: say", "UPPER")
+            menu.create_text("NAME", "CUSTOM", (1,3))
+            #1
+            btn = Button(1,4, sa.name, _edi_)
+            btn.var = name
+            menu.add_btn(btn)
 
-        #3
-        btn = Button(1, 13, "Save", _edi_)
-        btn.var = [nm[1][0], "non", ID]
-        menu.add_btn(btn)
+            menu.create_text("MESSAGE", "CUSTOM", (1, 6))
+            #2
+            btn = Button(1,7, sa.message, _edi_)
+            btn.var = mess
+            menu.add_btn(btn)
 
-        menu.create_text(f"Compiled: {COMPILER[:10]}", "CUSTOM", (38, 13))
-        menu.create_text(f"App ver: {VER}/{VER_COM}", "CUSTOM", (14, 13))
+            #3
+            btn = Button(1, 13, "Save", _edi_)
+            btn.var = [nm[1][0], "non", ID]
+            menu.add_btn(btn)
+
+            menu.create_text(f"Compiled: {COMPILER[:10]}", "CUSTOM", (38, 13))
+            menu.create_text(f"App ver: {VER}/{VER_COM}", "CUSTOM", (14, 13))
+        
+        else:
+            print_debug("U NEED CREATE MORE 'say' objects or maybe, your line is not convertable")
     else:
-        print_debug("U NEED CREATE MORE 'say' objects or maybe, your line is not convertable")
+        print_debug("LABELS NOT FOUND, REDIRECTING TO CREATE A NEW ONE...")
         sleep(5)
-        menu:Page = nm[1][0]
-    
+        if input(f"U want be redirect to create a new label? (y/n){JUMP_LINE}") in _yes_:
+            _sel(["y"], nm[1])
+            return
+        else:
+            menu:Page=nm[1][0]
     menu.start_cast()
 
 def _say(*nm):
@@ -465,26 +590,29 @@ def _say(*nm):
                 case operation if input(f"Do you want to use pre-define characters? (y/n){JUMP_LINE}") in _yes_:
                     _select_menu_print(_PRE_ALL_GAME)
                     acro_name = _PRE_ACRO_GAME[int(input(f"What's the ID (number)?{JUMP_LINE}"))-1]
-                
+                    exists = True    
                 case operation  if input(f"Is your character still exits? (y/n){JUMP_LINE}") in _yes_:
                     _select_menu_print(LB_CUR.char_simple)
                     acro_name = int(input(f"What's the ID (number)?{JUMP_LINE}"))
-                
+                    exists = True
+
                 case operation if input(f"Do you want just use a character's name (we don't save it)? (y/n){JUMP_LINE}") in _yes_:
                     acro_name = input(f"What's the name?{JUMP_LINE}")
+                    exists=False
 
                 case operation:
                     acro_name = ""
+                    exists=False
             
             #THIS'S IMPORTANT (case 'say' or 'if')
             message   = input(f"What do u want that this character say?{JUMP_LINE}")
             if operation == "normal":
-                LB_CUR.add_say(acro_name, operation, message)
+                LB_CUR.add_say(acro_name, operation, message, exits=exists)
             elif operation == "if":
                 id_con = nm[1][3][2]+1
                 id_if  = int(input(f"What's the 'if' ID?{JUMP_LINE}"))+1
 
-                LB_CUR.add_say(acro_name, operation, message, id_con, id_if)
+                LB_CUR.add_say(acro_name, operation, message, id_con, id_if, exists)
         else:
             #DEL CASE
             id_say = int(input(f"What's the say's ID?{JUMP_LINE}"))+nm[1][1]
@@ -511,18 +639,20 @@ def _say(*nm):
                     for n in LB_CUR._if_obj[id_con-1].dialog[i]:
                         _lst.append(n[4:])
 
-                _btn_on(menu,  6,  7, _lst, 15)
+                _btn_on(menu,  6,  7, _lst)
     
     else:
         print_debug("LABELS NOT FOUND, REDIRECTING TO CREATE A NEW ONE...")
         sleep(5)
-
+        _sel(["y"], nm[1])
+        return
+    
     menu.start_cast()
 
 def _sou_men(*nm):
     menu:Page=nm[1][0]
 
-    if not len(_LB_STORED) <= 0 or len(LB_CUR._init_obj) <= 0:
+    if not len(_LB_STORED) == 0 and not len(LB_CUR._init_obj) == 0:
         type_op = input(f"What's the mode? (ADD-1; EDIT-2; DEL-3; INSERT-4){JUMP_LINE}")
         match type_op:
             case choice if choice == "1" or choice == "ADD":
@@ -553,7 +683,6 @@ def _sou_men(*nm):
         type_obj = nm[1][3][1]
         ID_SEL:int = int(nm[0][2])+nm[1][1]
 
-
         match type_obj:
             case "normal":
                 LB_CUR.edit_source(ID_SEL, mode, 
@@ -564,12 +693,27 @@ def _sou_men(*nm):
                 
                 _btn_on(menu, 10, 11, LB_CUR.dialog)
             case "if":
-                ...
+                LB_CUR.edit_source(ID_SEL, mode,
+                                   nm[0][1],
+                                   type_obj,
+                                   choice,
+                                   dia,
+                                   nm[1][3][2]+1,
+                                   int(nm[0][3])+1
+                                   )
+                _lst = []
 
+                for i in LB_CUR._if_obj[nm[1][3][2]].dialog:
+                    _lst.append(LB_CUR.tab+f"{i}_con\n")
+                    for n in LB_CUR._if_obj[nm[1][3][2]].dialog[i]:
+                        _lst.append(n[4:])
+
+                _btn_on(menu, 6, 7, _lst)
     else:
         print_debug("LABELS NOT FOUND, REDIRECTING TO CREATE A NEW ONE...")
         sleep(5)
-
+        _sel(["y"], nm[1])
+        return
     menu.start_cast()
 
 def _sou(*nm):
@@ -590,12 +734,113 @@ def _sou(*nm):
     else:
         print_debug("LABELS NOT FOUND, REDIRECTING TO CREATE A NEW ONE...")
         sleep(5)
+        _sel(["y"], nm[1])
+        return
+    
     menu.start_cast()
+   
+def _save_menu(root:str, lib:dict, nme_arch:str):
+    with open(root+f"/{nme_arch}.rpy", "w") as file:
+        file.write("")
+        file.close()
     
-def _save(*nm):
-    
+    with open(root+f"/{nme_arch}.rpy", "a") as file:
+        for nme in lib["root"]:
 
-    print(*nm)
+            for ch in lib["root"][nme]["character"][0]:
+                for line in ch:
+                    file.write(line)
+
+            lst = lib["root"][nme]["init"].copy()
+            del lst[0]
+
+            if len(lst) >= 1:
+                for init in lib["root"][nme]["init"]:
+                    for line in init:
+                        file.write(line)
+            else:
+                file.write(lib["root"][nme]["init"][0])
+                file.write("    pass\n")
+
+            file.write(f"label {lib["root"][nme]["name"]}:\n")
+
+            if len(lib["root"][nme]["dialog"]) <= 0:
+                file.write("    return\n")
+                continue
+
+            for dia in lib["root"][nme]["dialog"]:
+                for line in dia:
+                    if type(line) == type(0):
+                        inf = lib["root"][nme]["if"][line]
+                        print(inf)
+                        for con in inf["condition"]:
+                            file.write(f"{LB_CUR.tab}if {con[0]} {con[1]} {con[2]}:\n")
+                            for di in inf["dialog"][str(line)]:
+                                file.write(di)
+                    else:   
+                        file.write(line)
+            
+            file.close()
+
+def _save(*nm):
+    import zipfile as zip
+    from json import dump
+    menu:Page=nm[1][0]
+
+    if not len(_LB_STORED) == 0:
+        try:
+            global ROOT_LOCAL
+
+            ch = nm[1][1]
+            with open(ROOT_LOCAL+f"/.config/autosaves/end.json", "w") as file:
+                info = {"root":{}}
+                for labe in _LB_STORED:
+                    labe:Label
+                    info["root"][labe.name] = labe.meta
+
+                dump(info, file, indent=1)
+
+            keys = list(info["root"].keys())[0]
+            _save_menu(ROOT_LOCAL, info, keys)
+            
+            open(ROOT_LOCAL+"/base.info", "w").close()
+            dic = open(ROOT_LOCAL+"/base.info", "w")
+            in_ = []
+
+            for chap in ch:
+                ln = []
+                lb = []
+                for inf in info["root"]:
+                    if int(chap) in info["root"][inf]["chapter"]:
+                        ln.append(info["root"][inf]["section"])
+                        lb.append(inf)
+                
+                if len(ln) == 0 or len(lb) == 0:
+                    continue
+                in_.append(f"chapter_{chap}.rpy,{ln},{str(lb).replace("'", "")},[n];")
+            
+            for i in in_:
+                dic.write(i)
+            dic.close()
+            with zip.ZipFile(ROOT_LOCAL+f"/dist_{nm[1][2]}.zip", "w", compression=zip.ZIP_DEFLATED) as zip_file:
+                zip_file.write(ROOT_LOCAL+"/base.info", arcname=f"./{nm[1][2]}/base.info")
+                zip_file.write(ROOT_LOCAL+"/meta.info", arcname=f"./{nm[1][2]}/meta.info")
+
+                zip_file.write(ROOT_LOCAL+f"/{keys}.rpy", arcname=f"./{nm[1][2]}/{keys}.rpy")
+                zip_file.close()
+
+            del lb, ln, dic, in_, keys, info, ch
+            print_debug("INFO SAVED!")
+        except Exception as e:
+            print(e)
+            print_debug("NEED CREATE SOMETHING")
+    else:
+        print_debug("LABELS NOT FOUND, REDIRECTING TO CREATE A NEW ONE...")
+        sleep(5)
+        _sel(["y"], nm[1])
+        return
+    sleep(5)
+    menu.start_cast()
 
 def _con(*nm):
     menu:Page=nm[1][0]
@@ -612,33 +857,55 @@ def _con(*nm):
         menu.start_cast()
 
 def _sel(*nm):
-    menu:Page=nm[1][0]
-    print(nm)
+    global _LB_STORED, LB_CUR
+    menu:Page= nm[1][0]
+
+    match nm[0][0]:
+        case choice if choice in _yes_:
+            name = input(f"What's name of your label?{JUMP_LINE }").replace(" ", "A").replace("_", "B").replace("-","C")
+            ln_n = int(input(f"enter the number of the line?{JUMP_LINE}"))
+            ln_b = int(input(f"What's the level of your label? (tabulator){JUMP_LINE}"))
+            cha_ = [int(input(f"What chapters this must appear?{JUMP_LINE}"))]
+
+            if cha_[0] in nm[1][1]:
+                _LB_STORED.append(Label(ln_b, name, cha_, ln_n))
+                LB_CUR = _LB_STORED[-1]
+            else:
+                print_debug(f"U NEED CONFIGURE THIS MOD TO {cha_} CHAPTER")
+                sleep(5)
+
+        case _:
+            if not len(_LB_STORED) == 0:
+                lst = []
+                for nme in _LB_STORED:
+                    lst.append(nme.name)
+                _select_menu_print(lst)
+                ln_n = int(input(f"What label u want to work?{JUMP_LINE}"))
+                LB_CUR = _LB_STORED[ln_n]
+
+                _btn_on(menu, 10, 11, LB_CUR.dialog)
+                _btn_on(menu, 12, 13, LB_CUR.init)
+            else:
+                print_debug("LABELS NOT FOUND, REDIRECTING TO CREATE A NEW ONE...")
+                sleep(5)
+                _sel(["y"], nm[1])
+                return
+
+    menu.create_text(f"Current label working on:"+" "*20, "CUSTOM", (1,2))
+    menu.create_text(f"Current label working on: {LB_CUR.name}", "CUSTOM", (1,2))
+    menu.start_cast()
+    
 
 
 chdir(getcwd()+"/proyects/default")
 ROOT_LOCAL = getcwd()
 global_config(cwd=ROOT_LOCAL)
-
-#FOR TEST
-_LB_STORED.append(Label(1, "owo", [1], 1))
-_LB_STORED[0].add_character("pedro")
-LB_CUR = _LB_STORED[-1]
-
-LB_CUR.add_source("sy_end", "1")
-LB_CUR.add_condition("sy_end", "1", "equal", "flow_chart")
-
-
+#loader_label()
 menu = Page(105, 22)
 
-"""
 #MENU PRINCIPAL
 nme:str;ver:str;aut:str;ch:list|bool;ctn:str
 nme, ver, aut, ch, ctn = ["default", "1.0", "me", [1], WEB_MOD_DEFAULT]
-
-MAX_NAME_LABEL = 10
-MAX_NAME_CWD   = 10
-
 
 menu.create_text(f"Current proyect working on: {nme}", "CUSTOM", (1,1))
 menu.create_text(f"Current label working on: None", "CUSTOM", (1,2))
@@ -703,7 +970,7 @@ menu.add_btn(btn)
 
 #9-8
 btn = Button(1, 16, "Export mod", _save, "save")
-btn.caster((""), menu)
+btn.caster((""), menu, ch, nme)
 menu.add_btn(btn)
 
 #10-9
@@ -774,7 +1041,7 @@ menu.add_btn(btn)
 
 #15-14
 btn = Button(1, 20, "Select flowchart", _sel)
-btn.caster(("You want change to a 'if'? (y/n)"), menu)
+btn.caster(("U want add a label? (y/n)?"), menu, ch)
 menu.add_btn(btn)
 
 menu.create_text(f"App ver: {VER}/{VER_COM}", "CUSTOM", (50, 20))
@@ -788,9 +1055,5 @@ menu.btns[13].var[8] = False
 
 menu.btns[11].var[7][0] = False
 menu.btns[13].var[7][0] = False
-"""
 
-#menu.start_cast()
-#menu.get_pre_view()
-
-_if_men(["0"], [menu, 0, ["a", "b"], [False, "normal"]])
+menu.start_cast()
