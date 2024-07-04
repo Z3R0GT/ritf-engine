@@ -12,7 +12,7 @@ WEB_MOD_DEFAULT = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
 
 VER : str = "1.3.0"
 VER_COM :str = "1.1.8.8"
-COMPILER : str = "944c5d561e60c5e6c1667dae8c214141517a19a7"
+COMPILER : str = "3f2f8eab90949334956b4a13165a4be41c3d777f"
 
 _LB_STORED :list[Label] = []
 LB_CUR :Label = ...
@@ -900,7 +900,7 @@ def _sel(*nm):
 chdir(getcwd()+"/proyects/default")
 ROOT_LOCAL = getcwd()
 global_config(cwd=ROOT_LOCAL)
-#loader_label()
+loader_label()
 menu = Page(105, 22)
 
 #MENU PRINCIPAL
