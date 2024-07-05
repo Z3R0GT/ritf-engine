@@ -16,7 +16,7 @@ from time import sleep
 
 #GEN-STATS
 VER : str = "2.0.0"
-VER_COM :str = "1.1.9.2"
+VER_COM :str = "1.1.9.3"
 COMPILER : str = "3f2f8eab90949334956b4a13165a4be41c3d777f"
 
 #GEN-VAR
@@ -306,11 +306,17 @@ def _edi_(*nm):
                     _btn_on(nm[1][5], 10, 11, LB_CUR.dialog)
 
                 case "if":
-                    LB_CUR.edit_say(nm[1][3],   nm[1][4], choice, value, nm[1][6], nm[1][7])
+                    LB_CUR.edit_say(nm[1][7],   
+                                    nm[1][4], 
+                                    choice, 
+                                    value, 
+                                    nm[1][8],
+                                    nm[1][6]
+                                    )
                     _lst = []
 
                     for i in LB_CUR._if_obj[nm[1][6]-1].dialog:
-                        _lst.append(LB_CUR.tab+f"{i}_con\n")
+                        _lst.append(LB_CUR.tab+f"condition_{i}\n")
                         for n in LB_CUR._if_obj[nm[1][6]-1].dialog[i]:
                             _lst.append(n[4:])
 
@@ -383,8 +389,8 @@ def loader_label() -> bool:
                     info_load.append(load(file))
 
     #Eraser of all archive
-    for paths in info[2]:
-        remove(paths)
+    #for paths in info[2]:
+    #    remove(paths)
 
     for info in info_load:
         if not str(info["chapter"]) in CUR_CH:
@@ -410,7 +416,6 @@ def _save_menu(root:str, lib:dict, nme_arch:str):
 
             lst = lib["root"][nme]["init"].copy()
             del lst[0]
-
             if len(lst) >= 1:
                 for init in lib["root"][nme]["init"]:
                     for line in init:
@@ -425,17 +430,15 @@ def _save_menu(root:str, lib:dict, nme_arch:str):
                 file.write("    return\n")
                 continue
 
-            for dia in lib["root"][nme]["dialog"]:
-                for line in dia:
-                    if type(line) == type(0):
-                        inf = lib["root"][nme]["if"][line]
-                        print(inf)
-                        for con in inf["condition"]:
-                            file.write(f"{LB_CUR.tab}if {con[0]} {con[1]} {con[2]}:\n")
-                            for di in inf["dialog"][str(line)]:
-                                file.write(di)
-                    else:   
-                        file.write(line)
+            for line in lib["root"][nme]["dialog"]:
+                if type(line) == type(0):
+                    inf = lib["root"][nme]["if"][line]
+                    for con in inf["condition"]:
+                        file.write(f"{LB_CUR.tab}if {con[0]} {con[1]} {con[2]}:\n")
+                        for di in inf["dialog"][line]:
+                            file.write(di)
+                else:   
+                    file.write(line)
             
             file.close()
 
@@ -656,7 +659,6 @@ def _say_men(*nm):
                 case "normal":
                     var = not "$" in LB_CUR.dialog[sel]
                 case "if":
-                    sel -= 1
                     id_if  = int(nm[0][0])
 
                     var = not "$" in LB_CUR._if_obj[nm[1][3][2]].dialog[id_if][sel]
@@ -671,11 +673,11 @@ def _say_men(*nm):
                         sa:say = LB_CUR._say_obj[sel]
                     case "if":
                         ID = 8
-                        name = [menu, "name",    "say", sel, type_op, nm[1][0], id_if, sel+2]
-                        mess = [menu, "message", "say", sel, type_op, nm[1][0], id_if, sel+2]
                         id_con = nm[1][3][2]
-                        
-                        sa:say = LB_CUR._if_obj[id_con]._say_obj[id_if][sel+2]
+                        name = [menu, "name",    "say", sel, type_op, nm[1][0], id_if, sel+1, id_con]
+                        mess = [menu, "message", "say", sel, type_op, nm[1][0], id_if, sel+1, id_con]
+
+                        sa:say = LB_CUR._if_obj[id_con]._say_obj[id_if][sel]
 
                 menu.create_text("TYPE: say", "UPPER")
                 menu.create_text("NAME", "CUSTOM", (1,3))
@@ -770,7 +772,7 @@ def _say(*nm):
                 _lst = []
 
                 for i in LB_CUR._if_obj[id_con-1].dialog:
-                    _lst.append(LB_CUR.tab+f"{i}_con\n")
+                    _lst.append(LB_CUR.tab+f"condition_{i}\n")
                     for n in LB_CUR._if_obj[id_con-1].dialog[i]:
                         _lst.append(n[4:])
 
@@ -878,51 +880,55 @@ def _sou(*nm):
 def _c0n(*nm):
     menu:Page = nm[1][0]
 
-    match nm[0][0]:
-        case choice if choice == "1" or choice.lower() == "add":
-            vr1 = input(f"What's the value?{JUMP_LINE}")
-            vr2 = input(f"What's the another value{JUMP_LINE}")
+    if not len(LB_CUR._init_obj) == 1:
+        match nm[0][0]:
+            case choice if choice == "1" or choice.lower() == "add":
+                vr1 = input(f"What's the value?{JUMP_LINE}")
+                vr2 = input(f"What's the another value{JUMP_LINE}")
 
-            eval_mod = input(f"What's operator? (equal/==/1, geater/>=/2, smaller/<=/3, not/!=/4){JUMP_LINE}")
-            eval_mod = __eval_mod_(eval_mod)
+                eval_mod = input(f"What's operator? (equal/==/1, geater/>=/2, smaller/<=/3, not/!=/4){JUMP_LINE}")
+                eval_mod = __eval_mod_(eval_mod)
 
-            LB_CUR.edit_condition(nm[1][1], vr1, vr2, "ADD", eval_mod)
-        case choice if choice == "2" or choice.lower() == "edit":
-            c = int(input(f"What's the condition ID{JUMP_LINE}"))
+                LB_CUR.edit_condition(nm[1][1], vr1, vr2, "ADD", eval_mod)
+            case choice if choice == "2" or choice.lower() == "edit":
+                c = int(input(f"What's the condition ID{JUMP_LINE}"))
 
-            vr1 = input(f"What's the value?{JUMP_LINE}")
-            vr2 = input(f"What's the another value{JUMP_LINE}")
+                vr1 = input(f"What's the value?{JUMP_LINE}")
+                vr2 = input(f"What's the another value{JUMP_LINE}")
 
-            eval_mod = input(f"What's operator? (equal/==/1, geater/>=/2, smaller/<=/3, not/!=/4){JUMP_LINE}")
-            eval_mod = __eval_mod_(eval_mod)
+                eval_mod = input(f"What's operator? (equal/==/1, geater/>=/2, smaller/<=/3, not/!=/4){JUMP_LINE}")
+                eval_mod = __eval_mod_(eval_mod)
 
-            LB_CUR.edit_condition(nm[1][1], vr1, vr2, "EDIT", eval_mod, c)
+                LB_CUR.edit_condition(nm[1][1], vr1, vr2, "EDIT", eval_mod, c)
 
-        case choice if choice == "3" or choice.lower() == "del":
-            c = int(input(f"What's the condition ID{JUMP_LINE}"))
+            case choice if choice == "3" or choice.lower() == "del":
+                c = int(input(f"What's the condition ID{JUMP_LINE}"))
 
-            LB_CUR.edit_condition(nm[1][1], ..., ..., "DEL", ..., c+1)
-        case _:
-            vr1 = input(f"What's the value?{JUMP_LINE}")
-            vr2 = input(f"What's the another value{JUMP_LINE}")
+                LB_CUR.edit_condition(nm[1][1], ..., ..., "DEL", ..., c+1)
+            case _:
+                vr1 = input(f"What's the value?{JUMP_LINE}")
+                vr2 = input(f"What's the another value{JUMP_LINE}")
 
-            eval_mod = input(f"What's operator? (equal/==/1, geater/>=/2, smaller/<=/3, not/!=/4){JUMP_LINE}")
-            eval_mod = __eval_mod_(eval_mod)
+                eval_mod = input(f"What's operator? (equal/==/1, geater/>=/2, smaller/<=/3, not/!=/4){JUMP_LINE}")
+                eval_mod = __eval_mod_(eval_mod)
 
-            LB_CUR.edit_condition(nm[1][1], vr1, vr2, "ADD", eval_mod)
-    _lst = []
-    for con in LB_CUR._if_obj[nm[1][1]].condition:
-        _lst.append(con[0][:6]+con[1]+ con[2][:6])
+                LB_CUR.edit_condition(nm[1][1], vr1, vr2, "ADD", eval_mod)
+        _lst = []
+        for con in LB_CUR._if_obj[nm[1][1]].condition:
+            _lst.append(con[0][:6]+con[1]+ con[2][:6])
 
-    menu.btns[4].var[3] = _lst
-    menu.btns[5].var[3] = _lst
+        menu.btns[4].var[3] = _lst
+        menu.btns[5].var[3] = _lst
 
-    menu.btns[5].var[7][0] = True
+        menu.btns[5].var[7][0] = True
 
-    menu.execute_btn(6)
-    
-    menu.btns[5].var[7][0] = False
-    
+        menu.execute_btn(6)
+        
+        menu.btns[5].var[7][0] = False
+    else:
+        print_debug("U NEED CREATE MORE VARIABLES")
+        sleep(5)
+
     menu.start_cast()
 
 
@@ -977,7 +983,7 @@ def _if_men(*nm):
             if not len(_if_._say_obj) == 0:
                 _lst = []
                 for i in _if_.dialog:
-                    _lst.append(LB_CUR.tab+f"{i}_con\n")
+                    _lst.append(LB_CUR.tab+f"condition_{i}\n")
                     for n in _if_.dialog[i]:
                         _lst.append(n[4:])
 
