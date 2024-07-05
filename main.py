@@ -7,16 +7,16 @@ from engine.config.gen_arch import *
 # well, the hell after all 
 
 #NEED TO WORK
-#DEV[0] = False
-DEV[1] = True
+DEV[0] = False
+#DEV[1] = True
 
 #GEN-IMPORTS
 from os import chdir, path, listdir, mkdir, getcwd, remove
 from time import sleep
 
 #GEN-STATS
-VER : str = "2.0.0"
-VER_COM :str = "1.1.9.3"
+VER : str = "1.2.0"
+VER_COM :str = "1.1.9.4"
 COMPILER : str = "3f2f8eab90949334956b4a13165a4be41c3d777f"
 
 #GEN-VAR
@@ -389,8 +389,8 @@ def loader_label() -> bool:
                     info_load.append(load(file))
 
     #Eraser of all archive
-    #for paths in info[2]:
-    #    remove(paths)
+    for paths in info[2]:
+        remove(paths)
 
     for info in info_load:
         if not str(info["chapter"]) in CUR_CH:
@@ -434,7 +434,10 @@ def _save_menu(root:str, lib:dict, nme_arch:str):
                 if type(line) == type(0):
                     inf = lib["root"][nme]["if"][line]
                     for con in inf["condition"]:
-                        file.write(f"{LB_CUR.tab}if {con[0]} {con[1]} {con[2]}:\n")
+                        if not con[3]:
+                            file.write(f"{LB_CUR.tab}elif {con[0]} {con[1]} {con[2]}:\n")
+                        else:
+                            file.write(f"{LB_CUR.tab}if {con[0]} {con[1]} {con[2]}:\n")
                         for di in inf["dialog"][line]:
                             file.write(di)
                 else:   
