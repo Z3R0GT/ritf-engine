@@ -16,7 +16,7 @@ from time import sleep
 
 #GEN-STATS
 VER : str = "2.0.0"
-VER_COM :str = "1.1.9.1"
+VER_COM :str = "1.1.9.2"
 COMPILER : str = "3f2f8eab90949334956b4a13165a4be41c3d777f"
 
 #GEN-VAR
@@ -53,6 +53,7 @@ def check_proyects() -> dict:
         chdir(f"{nme}")
         try:
             info[nme] = open(f"{getcwd()}/meta.info", "rt").read().split(";")
+            info[nme][3] = info[nme][3].replace("]", "").replace("[","").replace("'","").split(",")
         except FileNotFoundError:
             info[nme] = "Error!"
         chdir("..")
@@ -191,13 +192,13 @@ def proyect_new_pro(*mn):
         mkdir(ROOT_LOCAL+"/.config/autosaves")
 
         meta = open(getcwd()+"/meta.info", "w")
-        meta.write(f"{cre};{vers};{ctn}")
+        meta.write(f"{cre};{vers};{ctn};{ch}")
         meta.close()
     else:
         chdir(ROOT_GLOBAL+f"/proyects/{nme}")
         ROOT_LOCAL = getcwd()
 
-    modder_menu([nme, vers, cre, ch, ctn])
+    modder_menu(nme, vers, cre, ch, ctn)
 
 def proyect_lst_pro(*nm):
     global ROOT_GLOBAL, ROOT_LOCAL
@@ -205,12 +206,12 @@ def proyect_lst_pro(*nm):
     nme = nm[1][1][nm[1][2]]
     info = nm[1][0][nme]
 
-    vers, cre, ch, ctn = info[1], info[0], [1], info[2]
+    vers, cre, ch, ctn = info[1], info[0], info[3], info[2]
 
     chdir(ROOT_GLOBAL+f"/proyects/{nme}")
     ROOT_LOCAL = getcwd()
 
-    modder_menu([nme, vers, cre, ch, ctn])
+    modder_menu(nme, vers, cre, ch, ctn)
 
 def _str_say_menu(LIM_TEXT=35, obj:list=...) -> list[str]:
     temp = []
@@ -256,7 +257,8 @@ def _edi_(*nm):
     menu:Page = nm[1][0]
 
     if nm[1][1] == "non":
-        menu.execute_btn(nm[1][2])
+        if len(nm[1]) == 3:
+            menu.execute_btn(nm[1][2])
         menu.start_cast()
 
     match nm[1][1]:
@@ -324,7 +326,7 @@ def paths_finder() -> tuple[list[str], bool, list[str]]:
 
     if len(info) == 0:
         chdir(ROOT_LOCAL)
-        return ["pass"]
+        return "pass"
     
     if "end.json" in info:
         name_loaded = ["end.json"]
@@ -358,13 +360,11 @@ def paths_finder() -> tuple[list[str], bool, list[str]]:
     return lst, ch, info
 
 def loader_label() -> bool:
-    global ROOT_LOCAL
+    global ROOT_LOCAL, CUR_CH
     from json import load
 
     info = paths_finder()
-    print(info)
-    input()
-    if len(info[0]) == 0:
+    if info == "pass":
         return True
 
     info_load:list[dict] = []
@@ -387,7 +387,10 @@ def loader_label() -> bool:
         remove(paths)
 
     for info in info_load:
-        create_instance(info)
+        if not str(info["chapter"]) in CUR_CH:
+            CUR_CH.append(str(info["chapter"]))
+
+        _LB_STORED.append(create_instance(info))
 
     chdir(ROOT_LOCAL)
     return False
@@ -509,7 +512,7 @@ _yes_ = ["y", "Y", "yes"]
 #PRIV-VAR-TO-STORE-LB
 _LB_STORED :list[Label] = []
 LB_CUR :Label = ...
-
+CUR_CH = []
 
 #GEN-VAR-FOR-MOD
 JUMP_LINE = "\n>  "
@@ -519,18 +522,18 @@ JUMP_LINE = "\n>  "
 #################################################
 
 def _sel(*nm):
-    global _LB_STORED, LB_CUR
+    global _LB_STORED, LB_CUR, CUR_CH
     menu:Page= nm[1][0]
-
+    
     match nm[0][0]:
         case choice if choice in _yes_:
             name = input(f"What's name of your label?{JUMP_LINE }").replace(" ", "A").replace("_", "B").replace("-","C")
             ln_n = int(input(f"enter the number of the line?{JUMP_LINE}"))
             ln_b = int(input(f"What's the level of your label? (tabulator){JUMP_LINE}"))
-            cha_ = [int(input(f"What chapters this must appear?{JUMP_LINE}"))]
+            cha_ = input(f"What chapters this must appear?{JUMP_LINE}")
 
-            if cha_[0] in nm[1][1]:
-                _LB_STORED.append(Label(ln_b, name, cha_, ln_n))
+            if cha_ in CUR_CH:
+                _LB_STORED.append(Label(ln_b, name, [int(cha_)], ln_n))
                 LB_CUR = _LB_STORED[-1]
             else:
                 print_debug(f"U NEED CONFIGURE THIS MOD TO {cha_} CHAPTER")
@@ -542,7 +545,7 @@ def _sel(*nm):
                 for nme in _LB_STORED:
                     lst.append(nme.name)
                 _select_menu_print(lst)
-                ln_n = int(input(f"What label u want to work?{JUMP_LINE}"))
+                ln_n = int(input(f"What label u want to work?{JUMP_LINE}"))-1
                 LB_CUR = _LB_STORED[ln_n]
 
                 _btn_on(menu, 10, 11, LB_CUR.dialog)
@@ -563,48 +566,54 @@ def _sel(*nm):
 
 def _char_men(*nm):
     if not len(_LB_STORED) == 0:
-        _select_menu_print(LB_CUR.char_simple)
-        sel = int(input(f"What's the character's ID?{JUMP_LINE}"))
-        name  = LB_CUR.char_simple[sel-1][0][:22]
-        color = LB_CUR.char_simple[sel-1][1]
-        text  = LB_CUR.char_simple[sel-1][2]
+        if not len(LB_CUR._char_obj) == 0:
+            _select_menu_print(LB_CUR.char_simple)
+            sel = int(input(f"What's the character's ID?{JUMP_LINE}"))
+            name  = LB_CUR.char_simple[sel-1][0][:22]
+            color = LB_CUR.char_simple[sel-1][1]
+            text  = LB_CUR.char_simple[sel-1][2]
 
-        menu = Page(60, 9)
+            menu = Page(60, 9)
 
-        menu.create_text("TYPE: Character", "UPPER")
-        menu.create_text("NAME", "CUSTOM", (1, 3))
-        menu.create_text("|",    "CUSTOM", (23,3))
-        menu.create_text("|",    "CUSTOM", (23,4))
-        #1
-        btn = Button(1,4, name , _edi_)
-        btn.var = [menu, "name", "char",sel]
-        menu.add_btn(btn)
+            menu.create_text("TYPE: Character", "UPPER")
+            menu.create_text("NAME", "CUSTOM", (1, 3))
+            menu.create_text("|",    "CUSTOM", (23,3))
+            menu.create_text("|",    "CUSTOM", (23,4))
+            #1
+            btn = Button(1,4, name , _edi_)
+            btn.var = [menu, "name", "char",sel]
+            menu.add_btn(btn)
 
-        menu.create_text("COLOR", "CUSTOM", (24,3))
-        menu.create_text("|",     "CUSTOM", (43,3))
-        menu.create_text("|",     "CUSTOM", (43,4))
-        #2
-        btn = Button(24, 4, color, _edi_)
-        btn.var = [menu, "color", "char",sel]
-        menu.add_btn(btn)
+            menu.create_text("COLOR", "CUSTOM", (24,3))
+            menu.create_text("|",     "CUSTOM", (43,3))
+            menu.create_text("|",     "CUSTOM", (43,4))
+            #2
+            btn = Button(24, 4, color, _edi_)
+            btn.var = [menu, "color", "char",sel]
+            menu.add_btn(btn)
 
-        menu.create_text("TEXT SIZE", "CUSTOM", (44, 3))
-        menu.create_text("|",         "CUSTOM", (58, 3)) 
-        menu.create_text("|",         "CUSTOM", (58, 4)) 
-        #3
-        btn = Button(44, 4, str(text), _edi_)
-        btn.var = [menu, "textzs", "char",sel]
-        menu.add_btn(btn)
+            menu.create_text("TEXT SIZE", "CUSTOM", (44, 3))
+            menu.create_text("|",         "CUSTOM", (58, 3)) 
+            menu.create_text("|",         "CUSTOM", (58, 4)) 
+            #3
+            btn = Button(44, 4, str(text), _edi_)
+            btn.var = [menu, "textzs", "char",sel]
+            menu.add_btn(btn)
 
-        #4
-        btn = Button(1, 7, "Save", _edi_)
-        btn.var = [nm[1][0], "non"]
-        menu.add_btn(btn)
+            #4
+            btn = Button(1, 7, "Save", _edi_)
+            btn.var = [nm[1][0], "non"]
+            menu.add_btn(btn)
 
-        menu.create_text(f"Compiled: {COMPILER[:10]}", "CUSTOM", (38, 7))
-        menu.create_text(f"App ver: {VER}/{VER_COM}", "CUSTOM", (14, 7))
+            menu.create_text(f"Compiled: {COMPILER[:10]}", "CUSTOM", (38, 7))
+            menu.create_text(f"App ver: {VER}/{VER_COM}", "CUSTOM", (14, 7))
 
-        menu.start_cast()
+            menu.start_cast()
+        else:
+            print_debug("U NEED CREATE MORE CHARACTERS FIRST")
+            sleep(5)
+            menu:Page=nm[1][0]
+            menu.start_cast()
     else:
         print_debug("LABELS NOT FOUND, REDIRECTING TO CREATE A NEW ONE...")
         sleep(5)
@@ -642,54 +651,60 @@ def _say_men(*nm):
         sel = int(input(f"What's the say's ID?{JUMP_LINE}"))+nm[1][1]
         type_op:str = nm[1][3][1]
 
-        match type_op:
-            case "normal":
-                var = not "$" in LB_CUR.dialog[sel]
-            case "if":
-                sel -= 1
-                id_if  = int(nm[0][0])
-
-                var = not "$" in LB_CUR._if_obj[nm[1][3][2]].dialog[id_if][sel]
-        if not len(LB_CUR._say_obj) == 0 or var:
-            menu = Page(60, 15)
-            
+        if not len(LB_CUR._say_obj) == 0:
             match type_op:
                 case "normal":
-                    ID = 12
-                    name = [menu, "name",   "say", sel, type_op, nm[1][0]]
-                    mess = [menu, "message","say", sel, type_op, nm[1][0]]
-                    sa:say = LB_CUR._say_obj[sel]
+                    var = not "$" in LB_CUR.dialog[sel]
                 case "if":
-                    ID = 8
-                    name = [menu, "name",    "say", sel, type_op, nm[1][0], id_if+1, sel+1]
-                    mess = [menu, "message", "say", sel, type_op, nm[1][0], id_if+1, sel+1]
-                    id_con = nm[1][3][2]
-                    
-                    sa:say = LB_CUR._if_obj[id_con]._say_obj[id_if][sel]
+                    sel -= 1
+                    id_if  = int(nm[0][0])
 
-            menu.create_text("TYPE: say", "UPPER")
-            menu.create_text("NAME", "CUSTOM", (1,3))
-            #1
-            btn = Button(1,4, sa.name, _edi_)
-            btn.var = name
-            menu.add_btn(btn)
+                    var = not "$" in LB_CUR._if_obj[nm[1][3][2]].dialog[id_if][sel]
+            if var:
+                menu = Page(60, 15)
+                
+                match type_op:
+                    case "normal":
+                        ID = 12
+                        name = [menu, "name",   "say", sel, type_op, nm[1][0]]
+                        mess = [menu, "message","say", sel, type_op, nm[1][0]]
+                        sa:say = LB_CUR._say_obj[sel]
+                    case "if":
+                        ID = 8
+                        name = [menu, "name",    "say", sel, type_op, nm[1][0], id_if, sel+2]
+                        mess = [menu, "message", "say", sel, type_op, nm[1][0], id_if, sel+2]
+                        id_con = nm[1][3][2]
+                        
+                        sa:say = LB_CUR._if_obj[id_con]._say_obj[id_if][sel+2]
 
-            menu.create_text("MESSAGE", "CUSTOM", (1, 6))
-            #2
-            btn = Button(1,7, sa.message, _edi_)
-            btn.var = mess
-            menu.add_btn(btn)
+                menu.create_text("TYPE: say", "UPPER")
+                menu.create_text("NAME", "CUSTOM", (1,3))
+                #1
+                btn = Button(1,4, sa.name, _edi_)
+                btn.var = name
+                menu.add_btn(btn)
 
-            #3
-            btn = Button(1, 13, "Save", _edi_)
-            btn.var = [nm[1][0], "non", ID]
-            menu.add_btn(btn)
+                menu.create_text("MESSAGE", "CUSTOM", (1, 6))
+                #2
+                btn = Button(1,7, sa.message, _edi_)
+                btn.var = mess
+                menu.add_btn(btn)
 
-            menu.create_text(f"Compiled: {COMPILER[:10]}", "CUSTOM", (38, 13))
-            menu.create_text(f"App ver: {VER}/{VER_COM}", "CUSTOM", (14, 13))
-        
+                #3
+                btn = Button(1, 13, "Save", _edi_)
+                btn.var = [nm[1][0], "non", ID]
+                menu.add_btn(btn)
+
+                menu.create_text(f"Compiled: {COMPILER[:10]}", "CUSTOM", (38, 13))
+                menu.create_text(f"App ver: {VER}/{VER_COM}", "CUSTOM", (14, 13))
+            
+            else:
+                print_debug("your line is not convertable")
+                menu:Page=nm[1][0]
         else:
-            print_debug("U NEED CREATE MORE 'say' objects or maybe, your line is not convertable")
+            print_debug("U NEED CREATE MORE 'say' OBJECTS")
+            sleep(5)
+            menu:Page=nm[1][0]
     else:
         print_debug("LABELS NOT FOUND, REDIRECTING TO CREATE A NEW ONE...")
         sleep(5)
@@ -914,149 +929,166 @@ def _c0n(*nm):
 def _if_men(*nm):
     menu = Page(105, 22, NMO="owo")
     if not len(_LB_STORED) <= 0:
-        ID_CUR:int = int(nm[0][0])+nm[1][1]
-        _if_ = LB_CUR._if_obj[ID_CUR]
+        if not len(LB_CUR._if_obj) == 0:
+            ID_CUR:int = int(nm[0][0])+nm[1][1]
+            _if_ = LB_CUR._if_obj[ID_CUR]
 
-        menu.add_panel(0,  5, 20, 11, 0) #CONTIDTIONS
-        menu.add_panel(33, 3, 48, 14, 0) #DIALOG
-        menu.add_panel(83, 3, 20, 14, 0) #VAR
+            menu.add_panel(0,  5, 20, 11, 0) #CONTIDTIONS
+            menu.add_panel(33, 3, 48, 14, 0) #DIALOG
+            menu.add_panel(83, 3, 20, 14, 0) #VAR
 
-        menu.create_text(f"Name Space: {_if_.name[:10]}", "UPPER")
+            menu.create_text(f"Name Space: {_if_.name[:10]}", "UPPER")
 
-        menu.create_text("CONDITIONS (con)", "CUSTOM", (1,4))
+            menu.create_text("CONDITIONS (con)", "CUSTOM", (1,4))
 
-        menu.create_text(f"Currect flowchart: {_if_.name[:10]}", "CUSTOM", (46, 2))
-        menu.create_text("Variables Created", "CUSTOM", (85,2))
+            menu.create_text(f"Currect flowchart: {_if_.name[:10]}", "CUSTOM", (46, 2))
+            menu.create_text("Variables Created", "CUSTOM", (85,2))
 
-        #1-0
-        btn = Button(20, 6, "Set say", _say)
-        btn.caster(("You want add a say? (y/n)"), menu, "if", ID_CUR)
-        menu.add_btn(btn)
+            #1-0
+            btn = Button(20, 6, "Set say", _say)
+            btn.caster(("You want add a say? (y/n)"), menu, "if", ID_CUR)
+            menu.add_btn(btn)
 
-        #2-1
-        btn = Button(20, 7, "Edit say", _say_men)
-        btn.caster(("What's the 'if' ID?"), menu)
-        menu.add_btn(btn)
+            #2-1
+            btn = Button(20, 7, "Edit say", _say_men)
+            btn.caster(("What's the 'if' ID?"), menu)
+            menu.add_btn(btn)
 
-        #3-2
-        btn = Button(20, 9, "Edit con", _c0n)
-        btn.caster(("U want ADD-1/EDIT-2/DEL-3 a condition?"), menu, ID_CUR)
-        menu.add_btn(btn)
+            #3-2
+            btn = Button(20, 9, "Edit con", _c0n)
+            btn.caster(("U want ADD-1/EDIT-2/DEL-3 a condition?"), menu, ID_CUR)
+            menu.add_btn(btn)
 
-        #4-3
-        btn = Button(20, 10, "Edit vars", _sou_men)
-        btn.caster(("What u want change? (name - 1/value -2)",
-                    "What's the new value?",
-                    "What's the ID",
-                    "What's if's ID?"), 
-                    menu, False, 0)
-        menu.add_btn(btn)
+            #4-3
+            btn = Button(20, 10, "Edit vars", _sou_men)
+            btn.caster(("What u want change? (name - 1/value -2)",
+                        "What's the new value?",
+                        "What's the ID",
+                        "What's if's ID?"), 
+                        menu, False, 0)
+            menu.add_btn(btn)
 
-        _lst = []
-        for con in LB_CUR._if_obj[ID_CUR].condition:
-            _lst.append(con[0][:6]+con[1]+ con[2][:6])
+            con_lst = []
+            for con in LB_CUR._if_obj[ID_CUR].condition:
+                con_lst.append(con[0][:6]+con[1]+ con[2][:6])
 
-        #5-4
-        btn = Button(1, 17, "Next", _con)
-        btn.caster((""), menu,
-                   1,
-                   10,
-                   _lst,
-                   (5, 6),
-                   (3),
-                   (10, 20),
-                   [True, ID_CUR],
-                   False)
-        menu.add_btn(btn)
+            say_lst = ["Create a new say!", "That will appear here"]
+            var_lst = ["Create vars", "Here"]
+            if not len(_if_._say_obj) == 0:
+                _lst = []
+                for i in _if_.dialog:
+                    _lst.append(LB_CUR.tab+f"{i}_con\n")
+                    for n in _if_.dialog[i]:
+                        _lst.append(n[4:])
 
-        #6-5
-        btn = Button(12, 17, "Back", _con)
-        btn.caster((""), menu,
-                   1,
-                   10,
-                   _lst,
-                   (5, 6),
-                   (3),
-                   (0, 10),
-                   [True, ID_CUR],
-                   False)
-        menu.add_btn(btn)
+                say_lst = _str_say_menu(obj=_lst)
+            if not len(LB_CUR.init) == 1:
+                var_lst = _str_say_menu(20, LB_CUR.init)
 
-        #7-6
-        btn = Button(33, 18, "Next", _con, "next")
-        btn.caster((""), menu, 
-                2,
-                10,
-                ["Create a new say!",
-                    "That will appear here"],
-                (7, 8),
-                (1, 2),
-                (10, 20),
-                [True, "if", ID_CUR],
-                False
-                )
-        menu.add_btn(btn)
+            #5-4
+            btn = Button(1, 17, "Next", _con)
+            btn.caster((""), menu,
+                    1,
+                    10,
+                    con_lst,
+                    (5, 6),
+                    (3),
+                    (10, 20),
+                    [True, ID_CUR],
+                    False)
+            menu.add_btn(btn)
 
-        #8-7
-        btn = Button(42, 18, "Back", _con, "back")
-        btn.caster((""), menu, 
-                2,
-                10,
-                ["Create a new say!",
-                    "That will appear here"],
-                (7, 8),
-                (1, 2),
-                (0, 10),
-                [True, "if", ID_CUR],
-                False
-                )
-        menu.add_btn(btn)
+            #6-5
+            btn = Button(12, 17, "Back", _con)
+            btn.caster((""), menu,
+                    1,
+                    10,
+                    con_lst,
+                    (5, 6),
+                    (3),
+                    (0, 10),
+                    [True, ID_CUR],
+                    False)
+            menu.add_btn(btn)
 
-        #9-8
-        btn = Button(85, 18, "Next", _con)
-        btn.caster((""), menu,
-                3,
-                10,
-                _str_say_menu(20, LB_CUR.init),
-                (9, 10),
-                (4),
-                (10, 20),
-                [True, "if", ID_CUR],
-                False
-                )
-        menu.add_btn(btn)
+            #7-6
+            btn = Button(33, 18, "Next", _con, "next")
+            btn.caster((""), menu, 
+                    2,
+                    10,
+                    say_lst,
+                    (7, 8),
+                    (1, 2),
+                    (10, 20),
+                    [True, "if", ID_CUR],
+                    False
+                    )
+            menu.add_btn(btn)
 
-        #10-9
-        btn = Button(95, 18, "Back", _con)
-        btn.caster((""), menu, 
-                3,
-                10,
-                _str_say_menu(20, LB_CUR.init),
-                (9, 10),
-                (4),
-                (0, 10),
-                [True, "if", ID_CUR],
-                False
-                )
-        menu.add_btn(btn)
+            #8-7
+            btn = Button(42, 18, "Back", _con, "back")
+            btn.caster((""), menu, 
+                    2,
+                    10,
+                    say_lst,
+                    (7, 8),
+                    (1, 2),
+                    (0, 10),
+                    [True, "if", ID_CUR],
+                    False
+                    )
+            menu.add_btn(btn)
 
-        menu.execute_btn(6)
-        menu.execute_btn(8)
-        menu.execute_btn(10)
+            #9-8
+            btn = Button(85, 18, "Next", _con)
+            btn.caster((""), menu,
+                    3,
+                    10,
+                    var_lst,
+                    (9, 10),
+                    (4),
+                    (10, 20),
+                    [True, "if", ID_CUR],
+                    False
+                    )
+            menu.add_btn(btn)
 
-        menu.btns[5].var[7][0] = False
-        menu.btns[7].var[7][0] = False
-        menu.btns[9].var[7][0] = False
-        
-        #11-10
-        btn = Button(1, 20, "Save", ...)
-        btn.caster((""), menu)
-        menu.add_btn(btn)
+            #10-9
+            btn = Button(95, 18, "Back", _con)
+            btn.caster((""), menu, 
+                    3,
+                    10,
+                    var_lst,
+                    (9, 10),
+                    (4),
+                    (0, 10),
+                    [True, "if", ID_CUR],
+                    False
+                    )
+            menu.add_btn(btn)
 
-        menu.create_text(f"App ver: {VER}/{VER_COM}", "CUSTOM", (50, 20))
-        menu.create_text(f"Compiled: {COMPILER[:10]}", "CUSTOM", (80, 20))
+            menu.execute_btn(6)
+            menu.execute_btn(8)
+            menu.execute_btn(10)
 
-        menu.start_cast()
+            menu.btns[5].var[7][0] = False
+            menu.btns[7].var[7][0] = False
+            menu.btns[9].var[7][0] = False
+            
+            #11-10
+            btn = Button(1, 20, "Save", _edi_)
+            btn.var = [nm[1][0], "non"]
+            menu.add_btn(btn)
+
+            menu.create_text(f"App ver: {VER}/{VER_COM}", "CUSTOM", (50, 20))
+            menu.create_text(f"Compiled: {COMPILER[:10]}", "CUSTOM", (80, 20))
+
+            menu.start_cast()
+        else:
+            print_debug("NEED CREATE MORE 'if' FIRST")
+            sleep(5)
+            menu:Page=nm[1][0]
+            menu.start_cast()
     else:
         print_debug("LABELS NOT FOUND, REDIRECTING TO CREATE A NEW ONE...")
         sleep(5)
@@ -1065,20 +1097,24 @@ def _if_men(*nm):
     
 def _if(*nm):
     menu:Page = nm[1][0]
-    if not len(_LB_STORED) == 0 and not len(LB_CUR._init_obj) == 0:
-        eval_mod = __eval_mod_(nm[0][1])
+    if not len(_LB_STORED) == 0:
+        if not len(LB_CUR._init_obj) <= 1:
+            eval_mod = __eval_mod_(nm[0][1])
 
-        var_from = LB_CUR._init_obj[int(nm[0][0])+1].name
-        if nm[0][2].isnumeric():
-            var_to = LB_CUR._init_obj[int(nm[0][2])+1].name
+            var_from = LB_CUR._init_obj[int(nm[0][0])+1].name
+            if nm[0][2].isnumeric():
+                var_to = LB_CUR._init_obj[int(nm[0][2])+1].name
+            else:
+                var_to = nm[0][2]
+
+            name_space = nm[0][3]
+
+            LB_CUR.add_condition(var_from, var_to, eval_mod, name_space)
+
+            _btn_on(menu, 10, 11, LB_CUR.dialog)
         else:
-            var_to = nm[0][2]
-
-        name_space = nm[0][3]
-
-        LB_CUR.add_condition(var_from, var_to, eval_mod, name_space)
-
-        _btn_on(menu, 10, 11, LB_CUR.dialog)
+            print_debug("NEED CREATE MORE VARIABLE FIRST")
+            sleep(5)
     else:
         print_debug("LABELS NOT FOUND, REDIRECTING TO CREATE A NEW ONE...")
         sleep(5)
@@ -1249,25 +1285,33 @@ def proyect_new(*nm):
     #menu.get_pre_view()
 
 #MOD
-def modder_menu(info):
-    global CUR_CH, CUR_LB, _LB_STORED
-    CUR_LB = 0
-    CUR_CH = []
+def modder_menu(nme:str, ver:str, aut:str, ch:list|bool, ctn:str):
+    global _LB_STORED, CUR_CH, LB_CUR
     _LB_STORED = []
+    CUR_CH     = []
 
     #MENU PRINCIPAL
-    nme:str;ver:str;aut:str;ch:list|bool;ctn:str
-    nme, ver, aut, ch, ctn = info
-    
     global_config(cwd=ROOT_LOCAL)
     chk = loader_label()
-    if not chk:
+
+    say_lst = ["Create a new say!", "That will appear here"]
+    var_lst = ["Create vars", "Here"]
+
+    if chk:
         CUR_CH = ch
+        mne = None
+    else:
+        LB_CUR = _LB_STORED[0]
+        mne = LB_CUR.name
+        if not len(LB_CUR.dialog) == 0:
+            say_lst = _str_say_menu(obj=LB_CUR.dialog)
+        if not len(LB_CUR.init) == 1:
+            var_lst = _str_say_menu(15, LB_CUR.init)
 
     menu = Page(105, 22)
 
     menu.create_text(f"Current proyect working on: {nme}", "CUSTOM", (1,1))
-    menu.create_text(f"Current label working on: None", "CUSTOM", (1,2))
+    menu.create_text(f"Current label working on: {mne}", "CUSTOM", (1,2))
 
     menu.create_text("Currect flowchart: Main", "CUSTOM", (46, 2))
     menu.create_text("Variables Created", "CUSTOM", (85,2))
@@ -1342,8 +1386,7 @@ def modder_menu(info):
     btn.caster((""), menu, 
             2,
             10,
-            ["Create a new say!",
-                "That will appear here"],
+            say_lst,
             (11, 12),
             (5, 6, 7, 8),
             (10, 20),
@@ -1357,8 +1400,7 @@ def modder_menu(info):
     btn.caster((""), menu, 
             2,
             10,
-            ["Create a new say!",
-                "That will appear here"],
+            say_lst,
             (11, 12),
             (5, 6, 7, 8),
             (0, 10),
@@ -1373,8 +1415,7 @@ def modder_menu(info):
     btn.caster((""), menu,
             3,
             10,
-            ["Create vars", 
-                "Here"],
+            var_lst,
             (13, 14),
             (3, 4),
             (10, 20),
@@ -1388,8 +1429,7 @@ def modder_menu(info):
     btn.caster((""), menu, 
             3,
             10,
-            ["Create vars",
-                "Here"],
+            var_lst,
             (13, 14),
             (3, 4),
             (0, 10),
