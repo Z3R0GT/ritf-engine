@@ -17,7 +17,7 @@ from time import sleep
 #GEN-STATS
 VER : str = "1.2.0"
 VER_COM :str = "1.1.9.4"
-COMPILER : str = "3f2f8eab90949334956b4a13165a4be41c3d777f"
+COMPILER : str = "2087f702fcc2b23f0b914399cfc6442caafde5e4"
 
 #GEN-VAR
 SIZE = [100, 15]
