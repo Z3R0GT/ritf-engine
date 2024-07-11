@@ -13,7 +13,7 @@ from time import sleep
 
 #GEN  VARIABLES
 VER     :str = "1.3.0"
-VER_COM :str = "1.10.0"
+VER_COM :str = "1.10.2"
 COMPILER:str = "2087f702fcc2b23f0b914399cfc6442caafde5e4"
 
 SIZE = [100, 15]
@@ -49,15 +49,11 @@ LB_CUR   :Label
 CUR_CH                = []
 
 JUMP_LINE = "\n>  "
-
 ################################################
 #               FUNTIONS SIDE                  #
 ################################################
 
 #GLOBAL SIDE
-def _erase_sec(menu:Page, sec:tuple[int, int], ln:int):
-    menu.create_text(" "*ln, "CUSTOM", sec)
-
 def check_proyects() -> dict:
     """
     Allow you get all current files in "proyects" folder
@@ -84,7 +80,7 @@ def check_proyects() -> dict:
 def _con(*nm):
     menu:Page=nm[1][0]
 
-    menu.edit_panel_w_btn(nm[1][1],
+    menu.edit_panel_w_btn(nm[1][1], 
                           nm[1][2],
                           nm[1][3],
                           nm[1][4],
@@ -119,23 +115,52 @@ def _procces_new(*nm):
         lnk = MOD_DEFAULT["web"]
 
     for i in range(0, 6, 2):
-        _erase_sec(menu, (3, 6+i), 50)
+        menu.create_text(" "*50, "CUSTOM", (3, 6+i))
 
-    menu.create_text(f"{nme}", "CUSTOM",  (3, 6))
-    menu.create_text(f"{vers}", "CUSTOM", (3, 8))
-    menu.create_text(f"{aut}",  "CUSTOM", (3, 10))
-    menu.create_text(f"{ch}",   "CUSTOM", (3, 12))
-    menu.create_text(f"{lnk}",  "CUSTOM", (3, 14))
+    menu.create_text(f"{nme[:50]}",  "CUSTOM", (3,  6))
+    menu.create_text(f"{vers[:50]}", "CUSTOM", (3,  8))
+    menu.create_text(f"{aut[:50]}",  "CUSTOM", (3, 10))
+    menu.create_text(f"{ch[:50]}",   "CUSTOM", (3, 12))
+    menu.create_text(f"{lnk[:50]}",  "CUSTOM", (3, 14))
     
     menu.btns[1].var = [{"name":nme, "version":vers, "creator":aut, "chapter":ch, "web":lnk}]
     del nme, vers, aut, ch, lnk
     menu.start_cast()
 
 def _procces_load(*nm):
+    menu:Page=nm[1][0]
+    if len(nm[0]) == 0:
+        sel = 0
+    else:
+        sel = int(nm[0][0])+nm[1][1]
 
+    info:dict = nm[1][3][1][nm[1][2][sel]]    
+    
+    for i in range(3):
+        menu.create_text(" "*16, "CUSTOM", (62, 12+i))
 
+    nme = nm[1][2][sel]
+    if not info == "Error!":
+        aut = info[0]
+        vers= info[1]
+        lnk = info[2]
+    else:
+        aut = "meta not found"
+        vers= "meta not found"
+        lnk = MOD_DEFAULT["web"]
 
-    print(nm)
+    menu.btns[1].var = [info, nm[1][2][sel]]
+    menu.btns[2].var = lnk
+    
+    menu.create_text(f"Mod's name: {nme[:15]}", "CUSTOM", (62, 12))
+    menu.create_text(f"Autor: {aut[:15]}",      "CUSTOM", (62, 13))
+    menu.create_text(f"Version: {vers[:15]}",   "CUSTOM", (62, 14))
+
+    del i, info, sel, nme, aut, vers, lnk
+
+    if not nm[1][3][0]:
+        menu.start_cast()
+    
 
 #MODDER SIDE
 def proyect_new_pro(*nm):
@@ -163,10 +188,12 @@ def proyect_new_pro(*nm):
     modder_menu(nm[1][0]["name"], nm[1][0]["version"], nm[1][0]["creator"], nm[1][0]["chapter"], nm[1][0]["web"])
 
 def proyect_lst_pro(*nm):
+    global ROOT_GLOBAL, ROOT_LOCAL
+    nme:str; vers:str; cre:str; ch:list; lnk:str
+    nme = nm[1][1]
+    aut, vers, lnk, ch  = nm[1][0]
 
-
-    print(nm)
-
+    modder_menu(nme, vers, aut, ch, lnk)
 
 #################################################
 #                MODDER 1                       #
@@ -180,13 +207,10 @@ def proyect_lst_pro(*nm):
 ################################################
 #               WINDOW SIDE                    #
 ################################################
-def credits(*nm):
-
-
-    ...
 
 
 
+#MAIN
 def main_menu():
     menu = Page(SIZE[0], SIZE[1])
     menu.create_text("RenTgen (Roses In The Flame's mod engine)", "CUSTOM", (3, 1))
@@ -211,6 +235,7 @@ def main_menu():
 
     menu.start_cast()
 
+#MAIN-SUB-1
 def proyect_new(*nm):
     del nm
     menu = Page(SIZE[0], SIZE[1]+4)
@@ -252,6 +277,7 @@ def proyect_new(*nm):
 
     menu.start_cast()
     
+#MAIN-SUB-2
 def proyect_lst(*nm):
     del nm
     info = check_proyects()
@@ -277,12 +303,12 @@ def proyect_lst(*nm):
 
     #1-0
     btn = Button(31, 17, "Select Proyect", _procces_load)
-    btn.caster(("Enter proyect's number"), menu, lst_pro, info)
+    btn.caster(("Enter proyect's number"))
     menu.add_btn(btn)    
 
     #2-1
     btn = Button(70, 17, "Load", proyect_lst_pro)
-    btn.caster((""), info, lst_pro, 0)
+    btn.caster((""), info[lst_pro[0]], lst_pro[0])
     menu.add_btn(btn)
 
     #3-2
@@ -295,11 +321,12 @@ def proyect_lst(*nm):
                1,
                10,
                lst_pro,
-               (2, 3),
-               (4),
+               (4, 5),
+               (1),
                (10, 20),
-               [True, info],
-               False)
+               [False, info],
+               False
+               )
     menu.add_btn(btn)
 
     #5-4
@@ -308,24 +335,35 @@ def proyect_lst(*nm):
                1,
                10, 
                lst_pro,
-               (2, 3),
-               (4),
+               (4, 5),
+               (1),
                (0, 10),
                [True, info],
-               False)
+               False
+               )
     menu.add_btn(btn)
 
     #6-5
     btn = Button(84, 17, "Back", DEFAULT="BACK")
     menu.add_btn(btn)
 
+
+    menu.execute_btn(5)
+    menu.btns[4].var[7][0] = False
+    _procces_load([], [menu, 0, lst_pro, [True, info]])
     del info, lst_pro
+    
     menu.start_cast()
 
+#MAIN-SUB-3
+def credits(*nm):
+    del nm
+
+#MOD
 def modder_menu(nme:str, vers:str, aut:str, ch:list|bool, lnk:str):
 
     print(nme, vers, aut, ch, lnk)
 
 
 
-main_menu()
+#main_menu()
