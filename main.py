@@ -1334,7 +1334,7 @@ def modder_menu(nme:str, ver:str, aut:str, ch:list|bool, ctn:str):
     btn.caster(("You want add a character? (y/n)"), 
             menu)
     menu.add_btn(btn)
-
+    
     #2-1
     btn = Button(1,5, "Edit character", _char_men, "char_men")
     btn.caster((""), 

@@ -210,13 +210,5 @@ match a:
 print(choice)
 """
 
-
-a= ["a", "b", "c"]
-
-def mn(v:list):
-    b = v
-    b.insert(1, "d")
-
-print(a)
-mn(a)
-print(a)
+a = "uwu_89.json"
+print(a.find("_")) 
