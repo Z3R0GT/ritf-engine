@@ -48,6 +48,10 @@ LB_CUR   :Label
 CUR_CH:list[str]      = []
 CUR_VR:list[str]      = []
 
+
+DFT_LB_MSG = "labels not found, create more"
+DFT_CH_MSG = "characters not found, create more"
+
 JUMP_LINE = "\n>  "
 ################################################
 #               FUNTIONS SIDE                  #
@@ -98,6 +102,14 @@ def _select_menu_print(obj:list):
         c+=1
         print(f"NAME: {name} <---> ID: {c}")
     del c, name
+
+def lb_checker(lst:list, msg:str) -> bool:
+    if not len(lst) == 0:
+        return True
+    else: 
+        print_debug(msg)
+        sleep(5)
+        return False
 
 #MENU SIDE
 def _procces_new(*nm):
@@ -407,7 +419,9 @@ def _compiler(*nm):
 #################################################
 
 def _edi_(*nm):
-    ...
+    
+
+    print(nm)
 
 def _sel_label(*nm):
     ...
@@ -416,10 +430,71 @@ def _sel_label(*nm):
 #################################################
 
 def _char_create(*nm):
-    ...
+    menu:Page=nm[1][0]
+    if lb_checker(LB_STORED, DFT_LB_MSG):
+        if nm[0][0] in YES:
+            name:str;text:int
+            name, text = [
+                        input(f"What's the name of your character?{JUMP_LINE}"), 
+                        int(input(f"What's would be the text size?{JUMP_LINE}"))
+                        ]
+            LB_CUR.add_character(name, text_size=text)
+        else:
+            _select_menu_print(LB_CUR.char_simple)
+            ID = int(input(f"What character u want to delete?{JUMP_LINE}"))
+            LB_CUR.del_character(ID)
+
+    menu.start_cast()
 
 def __char_edito(*nm):
-    ...
+    if lb_checker(LB_STORED, DFT_LB_MSG) and lb_checker(LB_CUR._char_obj,DFT_CH_MSG):
+        _select_menu_print(LB_CUR.char_simple)
+        sel = int(input(f"What's the character's ID?{JUMP_LINE}"))
+        name  = LB_CUR.char_simple[sel-1][0][:22]
+        color = LB_CUR.char_simple[sel-1][1]
+        text  = LB_CUR.char_simple[sel-1][2]
+
+        menu = Page(60, 9)
+
+        menu.create_text("TYPE: Character", "UPPER")
+        menu.create_text("NAME", "CUSTOM", (1, 3))
+        menu.create_text("|",    "CUSTOM", (23,3))
+        menu.create_text("|",    "CUSTOM", (23,4))
+        #1
+        print(nm)
+        input()
+        btn = Button(1,4, name , _edi_)
+        btn.var = [menu, "name", "char",sel]
+        menu.add_btn(btn)
+
+        menu.create_text("COLOR", "CUSTOM", (24,3))
+        menu.create_text("|",     "CUSTOM", (43,3))
+        menu.create_text("|",     "CUSTOM", (43,4))
+        #2
+        btn = Button(24, 4, color, _edi_)
+        btn.var = [menu, "color", "char",sel]
+        menu.add_btn(btn)
+
+        menu.create_text("TEXT SIZE", "CUSTOM", (44, 3))
+        menu.create_text("|",         "CUSTOM", (58, 3)) 
+        menu.create_text("|",         "CUSTOM", (58, 4)) 
+        #3
+        btn = Button(44, 4, str(text), _edi_)
+        btn.var = [menu, "textzs", "char",sel]
+        menu.add_btn(btn)
+
+        #4
+        btn = Button(1, 7, "Save", _edi_)
+        btn.var = [nm[1][0], "non"]
+        menu.add_btn(btn)
+
+        menu.create_text(f"Compiled: {COMPILER[:10]}", "CUSTOM", (38, 7))
+        menu.create_text(f"App ver: {VER}/{VER_COM}", "CUSTOM", (14, 7))
+
+        menu.start_cast()
+    else:
+        menu:Page=nm[1][0]
+        menu.start_cast()
 
 def _sou_create(*nm):
     ...
@@ -448,13 +523,12 @@ def main_menu():
     btn = Button (3, 5, "Load proyect's list", proyect_lst)
     menu.add_btn(btn)
 
-    btn = Button(3, 7, "Website main", WEB_MAIN_GAME, DEFAULT="LINK")
+    btn = Button(3, 7, "Creadits", credits)
     menu.add_btn(btn)
 
-    btn = Button(3, 8, "Website tale", WEB_TALE_GAME, DEFAULT="LINK")
+    btn = Button(3, 9, "Website main", WEB_MAIN_GAME, DEFAULT="LINK")
     menu.add_btn(btn)
-
-    btn = Button(3, 11, "Creadits", credits)
+    btn = Button(3, 10, "Website tale", WEB_TALE_GAME, DEFAULT="LINK")
     menu.add_btn(btn)
 
     btn = Button(3,13, "Exit", DEFAULT="EXIT")
@@ -649,43 +723,49 @@ def modder_menu(nme:str, vers:str, aut:str, ch:list|bool, lnk:str):
     #2-1
     btn = Button(1,5, "Edit character", __char_edito, "char_men")
     btn.caster((""), 
-            menu)
+            menu, "normal, char")
     menu.add_btn(btn)
 
     #3-2
     btn = Button(1,7, "Set source", _sou_create, "sou_nm")
     btn.caster(("You want add a 'source'? (y/n)"), 
-            menu)
+            menu, "normal", "if")
     menu.add_btn(btn)
 
     #4-3
-    btn = Button(1, 10, "Add if", _if_create, "if_nm")
+    btn = Button(1, 8, "Set if", _if_create, "if_nm")
     btn.caster(("What's the varible's ID?", 
                 "What's operator? (equal/==/1, geater/>=/2, smaller/<=/3, not/!=/4)", 
                 "What's the Variable's ID/variable?",
                 "What's name of this condition?"), 
-            menu)
+            menu, "normal", "if")
     menu.add_btn(btn)
 
     #5-4
-    btn = Button(1, 13, "Set say", _say_create, "say_nm")
+    btn = Button(1, 10, "Set say", _say_create, "say_nm")
     btn.caster(("You want add a say? (y/n)"), 
-            menu, "normal")
+            menu, "normal", "say")
     menu.add_btn(btn)
 
     #6-5
+    btn = Button(1, 12, "Edit statement", _edi_, "edit_nm")
+    btn.caster(("What's the ID"), 
+               menu, "normal")
+    menu.add_btn(btn)
+
+
     btn = Button(1, 16, "Export mod", _compiler, "save")
     btn.caster((""), menu, ch, nme)
     menu.add_btn(btn)
 
-    #7-6
+
     btn = Button(1, 18, "Back menu", DEFAULT="BACK")
     menu.add_btn(btn)
 
 
 
     #...-...
-    btn = Button(1, 20, "Select flowchart", _sel_label)
+    btn = Button(1, 20, "Select Label", _sel_label)
     btn.caster(("U want add a label? (y/n)?"), menu, ch)
     menu.add_btn(btn)
 
@@ -693,7 +773,8 @@ def modder_menu(nme:str, vers:str, aut:str, ch:list|bool, lnk:str):
     menu.create_text(f"App ver: {VER}/{VER_COM}", "CUSTOM", (50, 20))
     menu.create_text(f"Compiled: {COMPILER[:10]}", "CUSTOM", (80, 20))
 
-    menu.get_pre_view()
+    menu.start_cast()
 
 
-main_menu()
+#main_menu()
+modder_menu("RenTgenTest", "1.0", "Z3R0_GT", ["1"], "https://www.youtube.com/watch?v=dQw4w9WgXcQ")
